@@ -1,0 +1,50 @@
+# Executive Summary — Shadow AI Telemetrie
+
+Generiert: **{{ ctx.generated_at.strftime("%d.%m.%Y %H:%M UTC") }}**
+{% if ctx.period_start and ctx.period_end -%}
+Zeitraum: **{{ ctx.period_start.strftime("%d.%m.%Y") }}** bis **{{ ctx.period_end.strftime("%d.%m.%Y") }}**
+{%- endif %}
+
+> **DSGVO-Hinweis:** Alle Client-Identifikatoren sind pseudonymisiert (HMAC-SHA256).
+> Salt-Fingerprint: `{{ ctx.salt_fingerprint }}`
+
+## Compliance-Status (Gesamtbild)
+
+**{{ ctx.compliance_traffic_light | upper }}** · Erfüllungsgrad über alle 5 Frameworks: **{{ ctx.overall_compliance_percent }}%**
+
+| Kennzahl | Wert |
+|---|---|
+| Erkannte KI-Dienste | {{ ctx.unique_ai_services }} |
+| Betroffene Clients | {{ ctx.unique_clients }} |
+| Verdächtige Uploads (>500 KB) | {{ ctx.upload_events_total }} |
+
+## Compliance-Score je Framework
+
+| Framework | Erfüllt | Non-Compliant | Partially | Review |
+|---|---|---|---|---|
+{% for fv in ctx.framework_scores -%}
+| {{ fv.framework_label }} | {{ fv.score_percent }}% | {{ fv.non_compliant }} | {{ fv.partially_compliant }} | {{ fv.needs_review }} |
+{% endfor %}
+
+## Top-Risiken
+
+{% if ctx.top_findings -%}
+{% for f in ctx.top_findings -%}
+{{ loop.index }}. **{{ f.service }}** ({{ f.provider }}) — {{ f.risk_level }}, Score **{{ f.risk_score }}** · {{ f.queries_per_day }} Queries/Tag durch `{{ f.client_pseudonym }}`{% if f.has_document_upload %}, **Dokument-Upload erkannt**{% endif %}
+{% endfor %}
+{%- else -%}
+*Keine kritischen Findings.*
+{%- endif %}
+
+## Empfehlung
+
+{% if ctx.compliance_traffic_light == "red" -%}
+Der aktuelle Compliance-Erfüllungsgrad von **{{ ctx.overall_compliance_percent }}%** liegt im kritischen Bereich. Sofortmassnahmen erforderlich: Inventarisierung der erkannten {{ ctx.unique_ai_services }} KI-Dienste, Risikobewertung nach EU AI Act Art. 6, DSFA-Pflichtprüfung nach DSGVO Art. 35 für Top-Risiken. Eskalation an Geschäftsleitung und DSB binnen 5 Werktagen.
+{%- elif ctx.compliance_traffic_light == "yellow" -%}
+Mit **{{ ctx.overall_compliance_percent }}%** Erfüllung besteht Handlungsbedarf, aber keine akute Krise. Empfehlung: Top-3 Findings binnen 30 Tagen formal bewerten, AI-Inventar nach ISO 42001 aufbauen, ICT-Drittanbieter nach DORA Art. 28 vertraglich regeln.
+{%- else -%}
+Der Erfüllungsgrad von **{{ ctx.overall_compliance_percent }}%** ist solide. Empfehlung: bestehende Kontrollen aufrechterhalten, periodische Re-Analyse (quartalsweise), AI Endpoint Database erweitern.
+{%- endif %}
+
+---
+*Generiert von Telemetrie Analyzer v0.1.0 · DORA · EU AI Act · ISO 42001 · ISO 27001 · DSGVO*

@@ -1,0 +1,58 @@
+{% extends "base.html.j2" %}
+{% block title %}Compliance Report — Shadow AI Telemetrie{% endblock %}
+{% block report_title %}Compliance Report — Shadow AI Telemetrie{% endblock %}
+{% block content %}
+
+<h2>Framework-Übersicht</h2>
+{% for fv in ctx.framework_scores %}
+  {% with fv = fv %}
+    {% include "partials/_framework_card.html.j2" %}
+  {% endwith %}
+{% endfor %}
+
+<h2>Severity-Verteilung pro Framework</h2>
+{{ ctx.charts.severity_stacked_bar | safe }}
+
+<h2>Detail: Compliance-Mappings je Finding</h2>
+{% if ctx.findings %}
+  {% for f in ctx.findings %}
+    <div class="framework-card">
+      <h3>{{ f.service }} — {{ f.provider }}
+        <span style="float:right;">
+          <span class="badge badge-{{ f.risk_level }}">{{ f.risk_level }}</span>
+          Score {{ f.risk_score }}
+        </span>
+      </h3>
+      <p style="color:#57606a; margin:.3rem 0;">
+        Client: <code>{{ f.client_pseudonym }}</code> ·
+        {{ f.total_queries }} Queries ·
+        {{ f.queries_per_day }}/Tag ·
+        {% if f.has_document_upload %}
+          <strong>Upload: {{ f.upload_events }}× ({{ (f.total_bytes_uploaded / 1024)|round(1) }} KB)</strong>
+        {% endif %}
+      </p>
+      {% if f.compliance_mappings %}
+        <table>
+          <thead><tr>
+            <th>Framework</th><th>Control</th><th>Severity</th><th>Status</th><th>Begründung</th>
+          </tr></thead>
+          <tbody>
+          {% for m in f.compliance_mappings %}
+            <tr>
+              <td><strong>{{ m.framework.value }}</strong></td>
+              <td><code>{{ m.control_id }}</code><br><small>{{ m.control_name }}</small></td>
+              <td><span class="badge badge-{{ m.severity.value }}">{{ m.severity.value }}</span></td>
+              <td><span class="badge badge-{{ m.assessment_status.value }}">{{ m.assessment_status.value }}</span></td>
+              <td>{{ m.rationale }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+    </div>
+  {% endfor %}
+{% else %}
+  <p><em>Keine Findings im Analysezeitraum — keine Compliance-Verletzungen erkannt.</em></p>
+{% endif %}
+
+{% endblock %}

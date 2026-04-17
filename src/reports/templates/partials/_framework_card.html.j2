@@ -1,0 +1,15 @@
+<div class="framework-card">
+  <h3>{{ fv.framework_label }}
+    <span style="float:right; font-weight:normal;">
+      <strong style="color:{% if fv.score_percent >= 80 %}#0E8A16{% elif fv.score_percent >= 50 %}#D4A72C{% else %}#B60205{% endif %};">
+        {{ fv.score_percent }}%
+      </strong> erfüllt
+    </span>
+  </h3>
+  <p style="margin:.3rem 0; color:#57606a;">
+    {{ fv.triggered_controls }} von {{ fv.total_controls }} Controls betroffen ·
+    <span class="badge badge-non_compliant">{{ fv.non_compliant }} non-compliant</span>
+    <span class="badge badge-partially_compliant">{{ fv.partially_compliant }} partially</span>
+    <span class="badge badge-needs_review">{{ fv.needs_review }} review</span>
+  </p>
+</div>
