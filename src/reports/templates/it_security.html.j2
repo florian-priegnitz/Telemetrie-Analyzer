@@ -1,0 +1,33 @@
+{% extends "base.html.j2" %}
+{% block title %}IT-Security Report — Shadow AI Telemetrie{% endblock %}
+{% block report_title %}IT-Security Report — Shadow AI Telemetrie{% endblock %}
+{% block content %}
+
+<h2>Kennzahlen</h2>
+<div class="kpi-grid">
+  <div class="kpi"><div class="kpi-value">{{ ctx.total_queries }}</div>
+    <div class="kpi-label">Gesamt-Queries</div></div>
+  <div class="kpi"><div class="kpi-value">{{ ctx.ai_queries }}</div>
+    <div class="kpi-label">AI-Queries ({{ (ctx.ai_query_ratio * 100)|round(2) }}%)</div></div>
+  <div class="kpi"><div class="kpi-value">{{ ctx.unique_clients }}</div>
+    <div class="kpi-label">Unique Clients</div></div>
+  <div class="kpi"><div class="kpi-value">{{ ctx.unique_ai_services }}</div>
+    <div class="kpi-label">Unique AI-Dienste</div></div>
+  <div class="kpi"><div class="kpi-value">{{ ctx.upload_events_total }}</div>
+    <div class="kpi-label">Document-Uploads</div></div>
+  <div class="kpi"><div class="kpi-value">{{ (ctx.total_bytes_uploaded / 1024 / 1024)|round(2) }}</div>
+    <div class="kpi-label">MB Upload-Volumen total</div></div>
+</div>
+
+<h2>Risiko-Verteilung</h2>
+{{ ctx.charts.risk_distribution_donut | safe }}
+
+<h2>Top-Clients</h2>
+{{ ctx.charts.top_clients_bar | safe }}
+
+<h2>Vollständige Findings (sortiert nach Risk-Score)</h2>
+{% with findings = ctx.findings %}
+  {% include "partials/_finding_table.html.j2" %}
+{% endwith %}
+
+{% endblock %}

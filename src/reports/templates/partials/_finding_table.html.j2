@@ -1,0 +1,36 @@
+{% if findings %}
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Provider</th>
+      <th>Risiko</th>
+      <th>Score</th>
+      <th>Client</th>
+      <th>Queries/Tag</th>
+      <th>Systematisch</th>
+      <th>Upload</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for f in findings %}
+    <tr>
+      <td>{{ f.service }}</td>
+      <td>{{ f.provider }}</td>
+      <td><span class="badge badge-{{ f.risk_level }}">{{ f.risk_level }}</span></td>
+      <td><strong>{{ f.risk_score }}</strong></td>
+      <td><code>{{ f.client_pseudonym }}</code></td>
+      <td>{{ "%.1f"|format(f.queries_per_day) }}</td>
+      <td>{{ "✓" if f.is_systematic else "—" }}</td>
+      <td>
+        {% if f.has_document_upload %}
+          <span class="badge badge-high">{{ f.upload_events }}× ({{ (f.total_bytes_uploaded / 1024)|round(1) }} KB)</span>
+        {% else %}—{% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+  <p><em>Keine Findings im Analysezeitraum.</em></p>
+{% endif %}
