@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.env
+*.log
+!testdata/*.log
+.claude/
+.mcp.json
+*:Zone.Identifier

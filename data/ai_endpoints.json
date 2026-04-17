@@ -1,0 +1,337 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-03-09",
+  "endpoints": [
+    {
+      "service": "OpenAI ChatGPT",
+      "provider": "OpenAI",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "chat.openai.com",
+        "api.openai.com",
+        "cdn.openai.com",
+        "auth0.openai.com",
+        "platform.openai.com"
+      ],
+      "description": "ChatGPT und OpenAI API – LLM-basierter Chatbot und API-Zugang"
+    },
+    {
+      "service": "OpenAI Codex / GPT API",
+      "provider": "OpenAI",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "codex.openai.com"
+      ],
+      "description": "Code-Generierung via OpenAI – hohes Risiko für Code-/Datenabfluss"
+    },
+    {
+      "service": "Anthropic Claude",
+      "provider": "Anthropic",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "claude.ai",
+        "api.anthropic.com",
+        "cdn.anthropic.com",
+        "console.anthropic.com"
+      ],
+      "description": "Claude AI Chatbot und API"
+    },
+    {
+      "service": "Google Gemini",
+      "provider": "Google",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "gemini.google.com",
+        "generativelanguage.googleapis.com",
+        "aistudio.google.com",
+        "bard.google.com"
+      ],
+      "description": "Google Gemini (ehem. Bard) – LLM-Chatbot und API"
+    },
+    {
+      "service": "GitHub Copilot",
+      "provider": "GitHub / Microsoft",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "copilot.github.com",
+        "api.githubcopilot.com",
+        "copilot-proxy.githubusercontent.com",
+        "default.exp-tas.com"
+      ],
+      "description": "KI-Code-Assistent – überträgt Code-Kontext an externe Server"
+    },
+    {
+      "service": "Microsoft Copilot",
+      "provider": "Microsoft",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "copilot.microsoft.com",
+        "sydney.bing.com",
+        "www.bing.com/chat",
+        "edgeservices.bing.com"
+      ],
+      "description": "Microsoft Copilot (Bing Chat) – in Edge/Windows integriert"
+    },
+    {
+      "service": "Midjourney",
+      "provider": "Midjourney",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "www.midjourney.com",
+        "midjourney.com",
+        "cdn.midjourney.com"
+      ],
+      "description": "KI-Bildgenerierung – Prompts können sensible Informationen enthalten"
+    },
+    {
+      "service": "DALL-E",
+      "provider": "OpenAI",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "labs.openai.com"
+      ],
+      "description": "KI-Bildgenerierung von OpenAI"
+    },
+    {
+      "service": "Stability AI",
+      "provider": "Stability AI",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "stability.ai",
+        "api.stability.ai",
+        "dreamstudio.ai"
+      ],
+      "description": "Stable Diffusion – Open-Source KI-Bildgenerierung"
+    },
+    {
+      "service": "Hugging Face",
+      "provider": "Hugging Face",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "domains": [
+        "huggingface.co",
+        "api-inference.huggingface.co",
+        "cdn-lfs.huggingface.co"
+      ],
+      "description": "ML-Modell-Plattform – Modell-Downloads und Inference API"
+    },
+    {
+      "service": "Perplexity AI",
+      "provider": "Perplexity",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "www.perplexity.ai",
+        "perplexity.ai",
+        "api.perplexity.ai"
+      ],
+      "description": "KI-gestützte Suchmaschine mit LLM-Antworten"
+    },
+    {
+      "service": "Jasper AI",
+      "provider": "Jasper",
+      "category": "content_generation",
+      "risk_level": "medium",
+      "domains": [
+        "app.jasper.ai",
+        "jasper.ai",
+        "api.jasper.ai"
+      ],
+      "description": "KI-Content-Generator für Marketing und Texte"
+    },
+    {
+      "service": "Grammarly AI",
+      "provider": "Grammarly",
+      "category": "writing_assistant",
+      "risk_level": "medium",
+      "domains": [
+        "app.grammarly.com",
+        "grammarly.com",
+        "capi.grammarly.com",
+        "gnar.grammarly.com"
+      ],
+      "description": "KI-Schreibassistent – analysiert und überträgt Text"
+    },
+    {
+      "service": "DeepL",
+      "provider": "DeepL",
+      "category": "translation",
+      "risk_level": "medium",
+      "domains": [
+        "www.deepl.com",
+        "api.deepl.com",
+        "api-free.deepl.com",
+        "w.deepl.com"
+      ],
+      "description": "KI-Übersetzungsdienst – überträgt Texte zur Übersetzung"
+    },
+    {
+      "service": "Notion AI",
+      "provider": "Notion",
+      "category": "productivity_ai",
+      "risk_level": "medium",
+      "domains": [
+        "www.notion.so",
+        "api.notion.com"
+      ],
+      "description": "KI-Funktionen in Notion – verarbeitet Workspace-Inhalte"
+    },
+    {
+      "service": "Cursor",
+      "provider": "Anysphere",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "cursor.sh",
+        "api2.cursor.sh",
+        "repo42.cursor.sh"
+      ],
+      "description": "KI-Code-Editor – überträgt gesamten Code-Kontext"
+    },
+    {
+      "service": "Replit AI",
+      "provider": "Replit",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "replit.com",
+        "api.replit.com",
+        "repl.co"
+      ],
+      "description": "KI-gestützte Entwicklungsumgebung – Code wird auf externen Servern ausgeführt"
+    },
+    {
+      "service": "Whisper / OpenAI Audio",
+      "provider": "OpenAI",
+      "category": "speech_to_text",
+      "risk_level": "high",
+      "domains": [
+        "api.openai.com/v1/audio"
+      ],
+      "description": "Sprache-zu-Text – Audiodaten werden an OpenAI übertragen"
+    },
+    {
+      "service": "ElevenLabs",
+      "provider": "ElevenLabs",
+      "category": "text_to_speech",
+      "risk_level": "medium",
+      "domains": [
+        "elevenlabs.io",
+        "api.elevenlabs.io"
+      ],
+      "description": "KI-Sprachsynthese – Text und Stimmprofile werden übertragen"
+    },
+    {
+      "service": "Runway ML",
+      "provider": "Runway",
+      "category": "video_generation",
+      "risk_level": "medium",
+      "domains": [
+        "runwayml.com",
+        "app.runwayml.com",
+        "api.runwayml.com"
+      ],
+      "description": "KI-Videogenerierung und -bearbeitung"
+    },
+    {
+      "service": "Mistral AI",
+      "provider": "Mistral",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "chat.mistral.ai",
+        "api.mistral.ai",
+        "mistral.ai"
+      ],
+      "description": "Mistral LLM – Chatbot und API-Zugang"
+    },
+    {
+      "service": "Cohere",
+      "provider": "Cohere",
+      "category": "llm_api",
+      "risk_level": "high",
+      "domains": [
+        "cohere.com",
+        "api.cohere.ai",
+        "dashboard.cohere.com"
+      ],
+      "description": "Enterprise LLM API – Text-Analyse und Generierung"
+    },
+    {
+      "service": "xAI Grok",
+      "provider": "xAI",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "grok.x.ai",
+        "api.x.ai"
+      ],
+      "description": "Grok LLM von xAI – in X (Twitter) integriert"
+    },
+    {
+      "service": "DeepSeek",
+      "provider": "DeepSeek",
+      "category": "llm_chatbot",
+      "risk_level": "critical",
+      "domains": [
+        "chat.deepseek.com",
+        "api.deepseek.com",
+        "deepseek.com"
+      ],
+      "description": "Chinesischer LLM-Anbieter – erhöhtes Datentransfer-Risiko (Drittland)"
+    },
+    {
+      "service": "Suno AI",
+      "provider": "Suno",
+      "category": "audio_generation",
+      "risk_level": "low",
+      "domains": [
+        "suno.com",
+        "app.suno.ai"
+      ],
+      "description": "KI-Musikgenerierung"
+    },
+    {
+      "service": "Leonardo AI",
+      "provider": "Leonardo",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "leonardo.ai",
+        "app.leonardo.ai",
+        "api.leonardo.ai"
+      ],
+      "description": "KI-Bildgenerierung für kreative Anwendungen"
+    }
+  ],
+  "categories": {
+    "llm_chatbot": "LLM-basierter Chatbot / Konversations-KI",
+    "code_assistant": "KI-Code-Assistent / Entwicklungstool",
+    "image_generation": "KI-Bildgenerierung",
+    "video_generation": "KI-Videogenerierung",
+    "audio_generation": "KI-Audiogenerierung",
+    "speech_to_text": "Sprache-zu-Text",
+    "text_to_speech": "Text-zu-Sprache",
+    "translation": "KI-Übersetzung",
+    "writing_assistant": "KI-Schreibassistent",
+    "content_generation": "KI-Content-Generierung",
+    "productivity_ai": "KI-Produktivitätstool",
+    "ml_platform": "ML-Plattform / Model Hub",
+    "llm_api": "LLM API-Dienst"
+  },
+  "risk_levels": {
+    "critical": "Direkter Code-/Datenabfluss möglich, Drittland-Transfer oder vollständige Datenverarbeitung extern",
+    "high": "Signifikanter Datenabfluss wahrscheinlich, sensible Inhalte werden verarbeitet",
+    "medium": "Moderates Risiko, begrenzte Datenübertragung",
+    "low": "Geringes Risiko, keine sensiblen Daten betroffen"
+  }
+}
