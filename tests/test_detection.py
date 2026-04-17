@@ -5,7 +5,12 @@ from pathlib import Path
 
 from src.parsers.pihole import parse_pihole_log
 from src.privacy.pseudonymizer import Pseudonymizer
-from src.detection.engine import DetectionEngine, SYSTEMATIC_THRESHOLD
+from src.detection.engine import (
+    DetectionEngine,
+    SYSTEMATIC_THRESHOLD,
+    UPLOAD_THRESHOLD_BYTES,
+    UPLOAD_RISK_BOOST,
+)
 
 
 def _make_log(lines: list[str]) -> Path:
@@ -196,3 +201,72 @@ class TestTestdataGenerator:
             p1 = generate_pihole_log(Path(tmpdir) / "a.log", days=1, queries_per_day=50, seed=99)
             p2 = generate_pihole_log(Path(tmpdir) / "b.log", days=1, queries_per_day=50, seed=99)
             assert p1.read_text() == p2.read_text()
+
+
+class TestUploadDetection:
+    """Tests für Volumen-Detection (>500 KB Upload = document_upload)."""
+
+    def _make_squid_df(self, rows: list[dict]):
+        import pandas as pd
+        df = pd.DataFrame(rows)
+        df["bytes_uploaded"] = df["bytes_uploaded"].astype("Int64")
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        return df
+
+    def test_document_upload_detected(self):
+        df = self._make_squid_df([
+            {"timestamp": "2026-03-01 10:00:00", "domain": "chat.openai.com",
+             "client": "ip_aaa", "bytes_uploaded": UPLOAD_THRESHOLD_BYTES + 100},
+        ])
+        result = DetectionEngine().analyze(df)
+        assert len(result.findings) == 1
+        f = result.findings[0]
+        assert f.has_document_upload is True
+        assert f.upload_events == 1
+        assert f.total_bytes_uploaded == UPLOAD_THRESHOLD_BYTES + 100
+
+    def test_upload_below_threshold_not_flagged(self):
+        df = self._make_squid_df([
+            {"timestamp": "2026-03-01 10:00:00", "domain": "chat.openai.com",
+             "client": "ip_bbb", "bytes_uploaded": UPLOAD_THRESHOLD_BYTES - 1},
+        ])
+        result = DetectionEngine().analyze(df)
+        assert len(result.findings) == 1
+        f = result.findings[0]
+        assert f.has_document_upload is False
+        assert f.upload_events == 0
+
+    def test_risk_score_boost_with_upload(self):
+        # Kritischer Service (DeepSeek) ohne Upload
+        df_no_upload = self._make_squid_df([
+            {"timestamp": "2026-03-01 10:00:00", "domain": "chat.deepseek.com",
+             "client": "ip_ccc", "bytes_uploaded": 1000},
+        ])
+        result_no = DetectionEngine().analyze(df_no_upload)
+        score_no_upload = result_no.findings[0].risk_score
+
+        # Gleicher Service mit document_upload
+        df_upload = self._make_squid_df([
+            {"timestamp": "2026-03-01 10:00:00", "domain": "chat.deepseek.com",
+             "client": "ip_ddd", "bytes_uploaded": UPLOAD_THRESHOLD_BYTES + 1000},
+        ])
+        result_yes = DetectionEngine().analyze(df_upload)
+        score_with_upload = result_yes.findings[0].risk_score
+
+        # Boost-Differenz, gecappt bei 100
+        assert score_with_upload >= min(score_no_upload + UPLOAD_RISK_BOOST, 100)
+
+    def test_pihole_dataframe_no_upload_columns(self):
+        """Pi-hole-DataFrames haben keine bytes_uploaded — Findings müssen weiter funktionieren."""
+        lines = [
+            f"Mar  1 10:0{i}:00 dnsmasq[1234]: query[A] chat.openai.com from 192.168.1.42"
+            for i in range(5)
+        ]
+        path = _make_log(lines)
+        df = parse_pihole_log(path, pseudonymizer=Pseudonymizer(key=b"t"), year=2026)
+        result = DetectionEngine().analyze(df)
+        assert len(result.findings) == 1
+        f = result.findings[0]
+        assert f.has_document_upload is False
+        assert f.upload_events == 0
+        assert f.total_bytes_uploaded == 0

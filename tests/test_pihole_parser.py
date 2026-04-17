@@ -32,7 +32,10 @@ def test_parse_basic_log():
 
     # Nur query-Zeilen werden geparst, nicht "forwarded"
     assert len(df) == 5
-    assert list(df.columns) == ["timestamp", "query_type", "domain", "client", "source_file"]
+    assert list(df.columns) == [
+        "timestamp", "query_type", "domain", "client", "source_file", "source_type",
+    ]
+    assert (df["source_type"] == "pihole").all()
 
 
 def test_domains_are_lowercase():
