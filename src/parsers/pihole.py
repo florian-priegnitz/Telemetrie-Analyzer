@@ -44,7 +44,7 @@ def parse_pihole_log(
         year: Jahr für Timestamps (syslog enthält kein Jahr). Default: aktuelles Jahr.
 
     Returns:
-        DataFrame mit Spalten: timestamp, query_type, domain, client, source_file
+        DataFrame mit Spalten: timestamp, query_type, domain, client, source_file, source_type
     """
     if pseudonymizer is None:
         pseudonymizer = Pseudonymizer()
@@ -74,6 +74,7 @@ def parse_pihole_log(
                 "domain": m.group("domain").lower().rstrip("."),
                 "client": pseudonymizer.pseudonymize_ip(m.group("client")),
                 "source_file": source.name,
+                "source_type": "pihole",
             })
 
     df = pd.DataFrame(records)
@@ -106,5 +107,6 @@ def parse_pihole_ftl_csv(
     df["client"] = df["client"].apply(pseudonymizer.pseudonymize_ip)
     df["query_type"] = df.get("type", "A")
     df["source_file"] = source.name
+    df["source_type"] = "pihole"
 
-    return df[["timestamp", "query_type", "domain", "client", "source_file"]]
+    return df[["timestamp", "query_type", "domain", "client", "source_file", "source_type"]]
