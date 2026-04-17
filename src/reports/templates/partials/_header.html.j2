@@ -1,0 +1,10 @@
+<h1>{% block report_title %}Telemetrie Analyzer Report{% endblock %}</h1>
+<p style="color:#57606a;">
+  Erzeugt am <strong>{{ ctx.generated_at.strftime("%d.%m.%Y %H:%M UTC") }}</strong>
+  {% if ctx.period_start and ctx.period_end %}
+    · Analysezeitraum:
+    <strong>{{ ctx.period_start.strftime("%d.%m.%Y") }}</strong>
+    bis
+    <strong>{{ ctx.period_end.strftime("%d.%m.%Y") }}</strong>
+  {% endif %}
+</p>

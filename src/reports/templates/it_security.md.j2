@@ -1,0 +1,47 @@
+# IT-Security Report — Shadow AI Telemetrie
+
+Generiert: **{{ ctx.generated_at.strftime("%d.%m.%Y %H:%M UTC") }}**
+{% if ctx.period_start and ctx.period_end -%}
+Zeitraum: **{{ ctx.period_start.strftime("%d.%m.%Y") }}** bis **{{ ctx.period_end.strftime("%d.%m.%Y") }}**
+{%- endif %}
+
+> **DSGVO:** Pseudonymisiert (HMAC-SHA256), Salt-Fingerprint `{{ ctx.salt_fingerprint }}`
+
+## Kennzahlen
+
+| Metrik | Wert |
+|---|---|
+| Gesamt-Queries | {{ ctx.total_queries }} |
+| AI-Queries | {{ ctx.ai_queries }} ({{ (ctx.ai_query_ratio * 100)|round(2) }}%) |
+| Non-AI-Queries | {{ ctx.non_ai_queries }} |
+| Unique Clients | {{ ctx.unique_clients }} |
+| Unique AI-Dienste | {{ ctx.unique_ai_services }} |
+| Document-Uploads (>500 KB) | {{ ctx.upload_events_total }} |
+| Upload-Volumen total | {{ (ctx.total_bytes_uploaded / 1024 / 1024)|round(2) }} MB |
+
+## Risiko-Verteilung
+
+| Risk-Level | Findings |
+|---|---|
+{% set risk_counts = {} -%}
+{% for f in ctx.findings -%}
+{%- set _ = risk_counts.update({f.risk_level: risk_counts.get(f.risk_level, 0) + 1}) -%}
+{% endfor -%}
+{% for level in ["critical", "high", "medium", "low"] -%}
+| {{ level }} | {{ risk_counts.get(level, 0) }} |
+{% endfor %}
+
+## Findings (sortiert nach Risk-Score)
+
+{% if ctx.findings -%}
+| Service | Provider | Risk | Score | Client | Q/Tag | Systematic | Upload |
+|---|---|---|---|---|---|---|---|
+{% for f in ctx.findings -%}
+| {{ f.service }} | {{ f.provider }} | {{ f.risk_level }} | **{{ f.risk_score }}** | `{{ f.client_pseudonym }}` | {{ "%.1f"|format(f.queries_per_day) }} | {{ "✓" if f.is_systematic else "—" }} | {% if f.has_document_upload %}{{ f.upload_events }}× ({{ (f.total_bytes_uploaded / 1024)|round(1) }} KB){% else %}—{% endif %} |
+{% endfor %}
+{%- else -%}
+*Keine Findings im Analysezeitraum.*
+{%- endif %}
+
+---
+*Generiert von Telemetrie Analyzer v0.1.0*

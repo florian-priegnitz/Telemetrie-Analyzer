@@ -1,0 +1,52 @@
+# Compliance Report — Shadow AI Telemetrie
+
+Generiert: **{{ ctx.generated_at.strftime("%d.%m.%Y %H:%M UTC") }}**
+{% if ctx.period_start and ctx.period_end -%}
+Zeitraum: **{{ ctx.period_start.strftime("%d.%m.%Y") }}** bis **{{ ctx.period_end.strftime("%d.%m.%Y") }}**
+{%- endif %}
+
+> **DSGVO:** Pseudonymisiert (HMAC-SHA256), Salt-Fingerprint `{{ ctx.salt_fingerprint }}`
+
+## Framework-Übersicht
+
+| Framework | Erfüllt | Triggered/Total | Non-Compliant | Partially | Review |
+|---|---|---|---|---|---|
+{% for fv in ctx.framework_scores -%}
+| **{{ fv.framework_label }}** | {{ fv.score_percent }}% | {{ fv.triggered_controls }}/{{ fv.total_controls }} | {{ fv.non_compliant }} | {{ fv.partially_compliant }} | {{ fv.needs_review }} |
+{% endfor %}
+
+## Severity-Verteilung pro Framework
+
+| Framework | Critical | High | Medium | Low |
+|---|---|---|---|---|
+{% for fv in ctx.framework_scores -%}
+| {{ fv.framework_label }} | {{ fv.severity_counts.get("critical", 0) }} | {{ fv.severity_counts.get("high", 0) }} | {{ fv.severity_counts.get("medium", 0) }} | {{ fv.severity_counts.get("low", 0) }} |
+{% endfor %}
+
+## Detail: Compliance-Mappings je Finding
+
+{% if ctx.findings -%}
+{% for f in ctx.findings %}
+### {{ f.service }} — {{ f.provider }}
+
+- **Risk:** {{ f.risk_level }} (Score {{ f.risk_score }})
+- **Client:** `{{ f.client_pseudonym }}`
+- **Queries:** {{ f.total_queries }} ({{ f.queries_per_day }}/Tag)
+{% if f.has_document_upload -%}
+- **Upload:** {{ f.upload_events }}× Dokument-Upload ({{ (f.total_bytes_uploaded / 1024)|round(1) }} KB)
+{% endif %}
+{% if f.compliance_mappings -%}
+
+| Framework | Control | Severity | Status | Begründung |
+|---|---|---|---|---|
+{% for m in f.compliance_mappings -%}
+| **{{ m.framework.value }}** | `{{ m.control_id }}` ({{ m.control_name }}) | {{ m.severity.value }} | {{ m.assessment_status.value }} | {{ m.rationale }} |
+{% endfor %}
+{%- endif %}
+{% endfor %}
+{%- else -%}
+*Keine Findings im Analysezeitraum — keine Compliance-Verletzungen erkannt.*
+{%- endif %}
+
+---
+*Generiert von Telemetrie Analyzer v0.1.0 · Frameworks: DORA, EU AI Act, ISO 42001, ISO 27001, DSGVO*
