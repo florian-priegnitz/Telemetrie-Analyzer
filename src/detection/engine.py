@@ -28,6 +28,9 @@ class Finding:
     queries_per_day: float
     is_systematic: bool  # >10 Requests/Tag
     compliance_mappings: list = field(default_factory=list)
+    upload_events: int = 0
+    total_bytes_uploaded: int = 0
+    has_document_upload: bool = False
 
     @property
     def risk_score(self) -> int:
@@ -48,6 +51,10 @@ class Finding:
         # Hohe Frequenz erhöht Score
         if self.queries_per_day > 50:
             score += 5
+
+        # Document-Upload erhöht Score (Datenabfluss-Risiko)
+        if self.has_document_upload:
+            score += UPLOAD_RISK_BOOST
 
         return min(score, 100)
 
@@ -72,6 +79,8 @@ class DetectionResult:
 
 
 SYSTEMATIC_THRESHOLD = 10  # Requests pro Tag
+UPLOAD_THRESHOLD_BYTES = 500 * 1024  # >500 KB = vermutlich Dokument-Upload (CLAUDE.md)
+UPLOAD_RISK_BOOST = 20  # Additiv zum Base-Score wenn Dokument-Upload erkannt
 
 
 class DetectionEngine:
@@ -121,6 +130,7 @@ class DetectionEngine:
         if ai_df.empty:
             return []
 
+        has_upload_col = "bytes_uploaded" in ai_df.columns
         findings: list[Finding] = []
 
         # Gruppierung nach Client und Service
@@ -132,6 +142,16 @@ class DetectionEngine:
             last_seen = group["timestamp"].max()
             days_active = max((last_seen - first_seen).days, 1)
             queries_per_day = len(group) / days_active
+
+            upload_events = 0
+            total_bytes_uploaded = 0
+            has_document_upload = False
+            if has_upload_col:
+                uploads = group["bytes_uploaded"].dropna()
+                if not uploads.empty:
+                    total_bytes_uploaded = int(uploads.sum())
+                    upload_events = int((uploads > UPLOAD_THRESHOLD_BYTES).sum())
+                    has_document_upload = upload_events > 0
 
             findings.append(Finding(
                 client=client,
@@ -146,6 +166,9 @@ class DetectionEngine:
                 days_active=days_active,
                 queries_per_day=round(queries_per_day, 1),
                 is_systematic=queries_per_day > SYSTEMATIC_THRESHOLD,
+                upload_events=upload_events,
+                total_bytes_uploaded=total_bytes_uploaded,
+                has_document_upload=has_document_upload,
             ))
 
         # Sortierung: höchster Risk-Score zuerst
