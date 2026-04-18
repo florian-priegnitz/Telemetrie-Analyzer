@@ -23,10 +23,22 @@ def _kw(offline: bool) -> dict:
     return _OFFLINE_KW if offline else _PLOTLY_KW
 
 
-def render_framework_scores_bar(ctx: ReportContext, offline: bool = False) -> str:
+def _empty_fallback(message: str, as_figure: bool) -> "str | go.Figure":
+    """Liefert Fallback je nach Output-Modus."""
+    if as_figure:
+        fig = go.Figure()
+        fig.add_annotation(text=message, showarrow=False, font=dict(size=14, color="#57606a"))
+        fig.update_layout(height=200, xaxis=dict(visible=False), yaxis=dict(visible=False))
+        return fig
+    return f"<p><em>{message}</em></p>"
+
+
+def render_framework_scores_bar(
+    ctx: ReportContext, offline: bool = False, as_figure: bool = False,
+) -> "str | go.Figure":
     """Bar-Chart: Compliance-Score pro Framework (Executive)."""
     if not ctx.framework_scores:
-        return "<p><em>Keine Framework-Scores verfügbar.</em></p>"
+        return _empty_fallback("Keine Framework-Scores verfügbar.", as_figure)
 
     labels = [fv.framework_label for fv in ctx.framework_scores]
     scores = [fv.score_percent for fv in ctx.framework_scores]
@@ -42,13 +54,17 @@ def render_framework_scores_bar(ctx: ReportContext, offline: bool = False) -> st
         xaxis=dict(title=""),
         height=380, margin=dict(l=40, r=20, t=60, b=40),
     )
+    if as_figure:
+        return fig
     return fig.to_html(**_kw(offline))
 
 
-def render_risk_distribution_donut(ctx: ReportContext, offline: bool = False) -> str:
+def render_risk_distribution_donut(
+    ctx: ReportContext, offline: bool = False, as_figure: bool = False,
+) -> "str | go.Figure":
     """Donut-Chart: Verteilung der Findings nach Risk-Level (IT-Security)."""
     if not ctx.findings:
-        return "<p><em>Keine Findings.</em></p>"
+        return _empty_fallback("Keine Findings.", as_figure)
 
     counts = {"critical": 0, "high": 0, "medium": 0, "low": 0}
     for f in ctx.findings:
@@ -61,13 +77,17 @@ def render_risk_distribution_donut(ctx: ReportContext, offline: bool = False) ->
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.5, marker_colors=colors)])
     fig.update_layout(title="Findings nach Risiko-Stufe", height=350,
                       margin=dict(l=20, r=20, t=60, b=20))
+    if as_figure:
+        return fig
     return fig.to_html(**_kw(offline))
 
 
-def render_top_clients_bar(ctx: ReportContext, top_n: int = 10, offline: bool = False) -> str:
+def render_top_clients_bar(
+    ctx: ReportContext, top_n: int = 10, offline: bool = False, as_figure: bool = False,
+) -> "str | go.Figure":
     """Horizontaler Bar-Chart: Top-N pseudonymisierte Clients nach Anzahl Findings."""
     if not ctx.findings:
-        return "<p><em>Keine Findings.</em></p>"
+        return _empty_fallback("Keine Findings.", as_figure)
 
     by_client: dict[str, int] = {}
     for f in ctx.findings:
@@ -85,13 +105,17 @@ def render_top_clients_bar(ctx: ReportContext, top_n: int = 10, offline: bool = 
         height=max(280, len(items) * 28 + 100),
         margin=dict(l=120, r=20, t=60, b=40),
     )
+    if as_figure:
+        return fig
     return fig.to_html(**_kw(offline))
 
 
-def render_severity_stacked_bar(ctx: ReportContext, offline: bool = False) -> str:
+def render_severity_stacked_bar(
+    ctx: ReportContext, offline: bool = False, as_figure: bool = False,
+) -> "str | go.Figure":
     """Stacked-Bar: Severity-Verteilung pro Framework (Compliance)."""
     if not ctx.framework_scores:
-        return "<p><em>Keine Framework-Scores verfügbar.</em></p>"
+        return _empty_fallback("Keine Framework-Scores verfügbar.", as_figure)
 
     frameworks = [fv.framework_label for fv in ctx.framework_scores]
     fig = go.Figure()
@@ -108,6 +132,8 @@ def render_severity_stacked_bar(ctx: ReportContext, offline: bool = False) -> st
         yaxis=dict(title="Anzahl Mappings"),
         height=380, margin=dict(l=40, r=20, t=60, b=40),
     )
+    if as_figure:
+        return fig
     return fig.to_html(**_kw(offline))
 
 
@@ -118,4 +144,14 @@ def build_all_charts(ctx: ReportContext, offline: bool = False) -> dict[str, str
         "risk_distribution_donut": render_risk_distribution_donut(ctx, offline=offline),
         "top_clients_bar": render_top_clients_bar(ctx, offline=offline),
         "severity_stacked_bar": render_severity_stacked_bar(ctx, offline=offline),
+    }
+
+
+def build_all_figures(ctx: ReportContext) -> dict[str, "go.Figure"]:
+    """Rendert alle Charts als plotly Figure-Objekte (für Streamlit st.plotly_chart)."""
+    return {
+        "framework_scores_bar": render_framework_scores_bar(ctx, as_figure=True),
+        "risk_distribution_donut": render_risk_distribution_donut(ctx, as_figure=True),
+        "top_clients_bar": render_top_clients_bar(ctx, as_figure=True),
+        "severity_stacked_bar": render_severity_stacked_bar(ctx, as_figure=True),
     }
