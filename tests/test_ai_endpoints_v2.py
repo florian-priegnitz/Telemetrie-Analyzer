@@ -51,15 +51,16 @@ def test_schema_rejects_invalid_risk_level(tmp_path: Path):
 
 
 def test_schema_accepts_v1_entries_without_v2_fields():
-    """Existierende v1-Einträge (ohne aliases/ip_ranges/…) müssen valide bleiben."""
+    """v1-Einträge ohne optionale v2-Felder müssen mit Defaults geladen werden."""
     db = AIEndpointDatabase(validate=True)
-    openai = db.lookup("chat.openai.com")
-    assert openai is not None
-    assert openai.aliases == ()
-    assert openai.ip_ranges == ()
-    assert openai.sni_patterns == ()
-    assert openai.detection_confidence == "high"  # Default
-    assert openai.source == "manual"  # Default
+    # Codex wurde im v1-Import beibehalten und hat keine aliases/ip_ranges
+    codex = db.lookup("codex.openai.com")
+    assert codex is not None
+    assert codex.aliases == ()
+    assert codex.ip_ranges == ()
+    assert codex.sni_patterns == ()
+    assert codex.detection_confidence == "high"  # Default
+    assert codex.source == "manual"  # Default für Einträge ohne expliziten source
 
 
 # ---------------------------------------------------------------------------
