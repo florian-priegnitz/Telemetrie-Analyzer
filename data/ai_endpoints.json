@@ -1,30 +1,89 @@
 {
-  "version": "1.0.0",
-  "last_updated": "2026-03-09",
+  "version": "2.0.0",
+  "last_updated": "2026-04-18",
   "endpoints": [
     {
-      "service": "OpenAI ChatGPT",
-      "provider": "OpenAI",
-      "category": "llm_chatbot",
+      "service": "Adept AI",
+      "provider": "Adept",
+      "category": "ai_agent",
       "risk_level": "high",
       "domains": [
-        "chat.openai.com",
-        "api.openai.com",
-        "cdn.openai.com",
-        "auth0.openai.com",
-        "platform.openai.com"
+        "adept.ai",
+        "app.adept.ai"
       ],
-      "description": "ChatGPT und OpenAI API – LLM-basierter Chatbot und API-Zugang"
+      "description": "Autonomer Browser-Agent — interagiert mit Webanwendungen",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "OpenAI Codex / GPT API",
-      "provider": "OpenAI",
+      "service": "Adobe Firefly",
+      "provider": "Adobe",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "firefly.adobe.com",
+        "firefly-api.adobe.io"
+      ],
+      "description": "Adobes KI-Bildgenerierung, in Creative-Cloud integriert",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "AgentGPT",
+      "provider": "Reworkd",
+      "category": "ai_agent",
+      "risk_level": "high",
+      "domains": [
+        "agentgpt.reworkd.ai"
+      ],
+      "description": "Autonomer Task-Agent im Browser",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Aider",
+      "provider": "Aider",
       "category": "code_assistant",
       "risk_level": "critical",
       "domains": [
-        "codex.openai.com"
+        "aider.chat"
       ],
-      "description": "Code-Generierung via OpenAI – hohes Risiko für Code-/Datenabfluss"
+      "description": "CLI-basierter KI-Code-Assistent, arbeitet mit Git-Repos",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "AIVA",
+      "provider": "AIVA",
+      "category": "audio_generation",
+      "risk_level": "low",
+      "domains": [
+        "aiva.ai"
+      ],
+      "description": "KI-Komposition für Musik",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Akkio",
+      "provider": "Akkio",
+      "category": "data_analysis_ai",
+      "risk_level": "high",
+      "domains": [
+        "akkio.com",
+        "app.akkio.com"
+      ],
+      "description": "No-Code-KI-Datenanalyse für Business Teams",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Amazon Q Developer",
+      "provider": "Amazon",
+      "category": "code_assistant",
+      "risk_level": "high",
+      "domains": [
+        "q.aws.amazon.com"
+      ],
+      "description": "AWS KI-Entwickler-Assistent (ehem. CodeWhisperer)",
+      "aliases": [
+        "CodeWhisperer"
+      ],
+      "source": "bulk-import-2026-04"
     },
     {
       "service": "Anthropic Claude",
@@ -37,20 +96,536 @@
         "cdn.anthropic.com",
         "console.anthropic.com"
       ],
-      "description": "Claude AI Chatbot und API"
+      "description": "Claude AI Chatbot und API",
+      "aliases": [
+        "Claude"
+      ]
     },
     {
-      "service": "Google Gemini",
-      "provider": "Google",
-      "category": "llm_chatbot",
+      "service": "Anyword",
+      "provider": "Anyword",
+      "category": "content_generation",
+      "risk_level": "medium",
+      "domains": [
+        "anyword.com",
+        "app.anyword.com"
+      ],
+      "description": "KI-Copywriting für Marketing",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Artbreeder",
+      "provider": "Artbreeder",
+      "category": "image_generation",
+      "risk_level": "low",
+      "domains": [
+        "artbreeder.com"
+      ],
+      "description": "Kollaborative KI-Bildgenerierung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "AssemblyAI",
+      "provider": "AssemblyAI",
+      "category": "speech_to_text",
       "risk_level": "high",
       "domains": [
-        "gemini.google.com",
-        "generativelanguage.googleapis.com",
-        "aistudio.google.com",
-        "bard.google.com"
+        "assemblyai.com",
+        "api.assemblyai.com"
       ],
-      "description": "Google Gemini (ehem. Bard) – LLM-Chatbot und API"
+      "description": "Enterprise Speech-to-Text API",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Atlassian Rovo",
+      "provider": "Atlassian",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "rovo.atlassian.com"
+      ],
+      "description": "KI in Jira/Confluence — verarbeitet Workspace-Inhalte (DPA vorhanden)",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "AutoGPT",
+      "provider": "Significant Gravitas",
+      "category": "ai_agent",
+      "risk_level": "high",
+      "domains": [
+        "agpt.co",
+        "news.agpt.co"
+      ],
+      "description": "Autonomer LLM-Agent, selbstständige Task-Ausführung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Avoma",
+      "provider": "Avoma",
+      "category": "meeting_ai",
+      "risk_level": "high",
+      "domains": [
+        "avoma.com",
+        "app.avoma.com"
+      ],
+      "description": "Meeting-Intelligence-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Baichuan AI",
+      "provider": "Baichuan",
+      "category": "llm_chatbot",
+      "risk_level": "critical",
+      "domains": [
+        "baichuan-ai.com",
+        "api.baichuan-ai.com"
+      ],
+      "description": "Chinesischer LLM-Anbieter — Drittland-Transfer-Risiko",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Bardeen",
+      "provider": "Bardeen",
+      "category": "productivity_ai",
+      "risk_level": "medium",
+      "domains": [
+        "bardeen.ai",
+        "app.bardeen.ai"
+      ],
+      "description": "KI-gestützte Browser-Automation",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Beautiful.ai",
+      "provider": "Beautiful.ai",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "beautiful.ai",
+        "app.beautiful.ai"
+      ],
+      "description": "KI-gestützter Präsentationsbuilder",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Bolt.new",
+      "provider": "StackBlitz",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "bolt.new"
+      ],
+      "description": "KI-Full-Stack-Entwicklung im Browser",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Boomy",
+      "provider": "Boomy",
+      "category": "audio_generation",
+      "risk_level": "low",
+      "domains": [
+        "boomy.com"
+      ],
+      "description": "KI-Musikgenerierung für Creator",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Browse AI",
+      "provider": "Browse AI",
+      "category": "productivity_ai",
+      "risk_level": "medium",
+      "domains": [
+        "browse.ai"
+      ],
+      "description": "KI-Web-Scraping ohne Code",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Canva Magic Studio",
+      "provider": "Canva",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "canva.com/magic",
+        "www.canva.com"
+      ],
+      "description": "KI-Funktionen in Canva — Text-to-Image, Magic Write",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Character.AI",
+      "provider": "Character Technologies",
+      "category": "llm_chatbot",
+      "risk_level": "medium",
+      "domains": [
+        "character.ai",
+        "beta.character.ai"
+      ],
+      "description": "Rollenspiel-LLM mit User-erstellten Charakteren",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "ChatGLM",
+      "provider": "Zhipu AI",
+      "category": "llm_chatbot",
+      "risk_level": "critical",
+      "domains": [
+        "chatglm.cn",
+        "open.bigmodel.cn"
+      ],
+      "description": "Chinesischer Open-Source-LLM — Drittland-Transfer-Risiko",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Chronicle",
+      "provider": "Chronicle",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "chroniclehq.com"
+      ],
+      "description": "KI-Präsentations-Builder mit Template-Fokus",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Civitai",
+      "provider": "Civitai",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "civitai.com"
+      ],
+      "description": "Community-Hub für Stable-Diffusion-Modelle",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Cline",
+      "provider": "Cline",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "cline.bot"
+      ],
+      "description": "Autonomer KI-Coder als VS Code Extension",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Codeium",
+      "provider": "Exafunction",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "codeium.com",
+        "server.codeium.com",
+        "inference.codeium.com"
+      ],
+      "description": "KI-Code-Completion, IDE-Extensions",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Cognosys",
+      "provider": "Cognosys",
+      "category": "ai_agent",
+      "risk_level": "high",
+      "domains": [
+        "cognosys.ai"
+      ],
+      "description": "Autonomer Research-Agent",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Cohere",
+      "provider": "Cohere",
+      "category": "llm_api",
+      "risk_level": "high",
+      "domains": [
+        "cohere.com",
+        "api.cohere.ai",
+        "dashboard.cohere.com"
+      ],
+      "description": "Enterprise LLM API — Text-Analyse und Generierung"
+    },
+    {
+      "service": "Continue.dev",
+      "provider": "Continue",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "continue.dev"
+      ],
+      "description": "Open-Source-KI-Code-Assistent, IDE-Integration",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Copy.ai",
+      "provider": "Copy.ai",
+      "category": "content_generation",
+      "risk_level": "medium",
+      "domains": [
+        "copy.ai",
+        "app.copy.ai"
+      ],
+      "description": "KI-Copywriting-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Coqui",
+      "provider": "Coqui",
+      "category": "text_to_speech",
+      "risk_level": "low",
+      "domains": [
+        "coqui.ai"
+      ],
+      "description": "Open-Source-TTS-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Crew AI",
+      "provider": "Crew AI",
+      "category": "ai_agent",
+      "risk_level": "high",
+      "domains": [
+        "crewai.com"
+      ],
+      "description": "Multi-Agent-Framework für kollaborative KI",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Cursor",
+      "provider": "Anysphere",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "cursor.sh",
+        "api2.cursor.sh",
+        "repo42.cursor.sh"
+      ],
+      "description": "KI-Code-Editor — überträgt gesamten Code-Kontext"
+    },
+    {
+      "service": "D-ID",
+      "provider": "D-ID",
+      "category": "video_ai",
+      "risk_level": "medium",
+      "domains": [
+        "d-id.com",
+        "studio.d-id.com",
+        "api.d-id.com"
+      ],
+      "description": "KI-Avatar-Video-Generierung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "DALL-E",
+      "provider": "OpenAI",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "labs.openai.com"
+      ],
+      "description": "KI-Bildgenerierung von OpenAI"
+    },
+    {
+      "service": "DataRobot",
+      "provider": "DataRobot",
+      "category": "data_analysis_ai",
+      "risk_level": "high",
+      "domains": [
+        "datarobot.com",
+        "app.datarobot.com"
+      ],
+      "description": "Enterprise AutoML-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Decktopus",
+      "provider": "Decktopus",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "decktopus.com"
+      ],
+      "description": "KI-Slide-Generator",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Deepgram",
+      "provider": "Deepgram",
+      "category": "speech_to_text",
+      "risk_level": "high",
+      "domains": [
+        "deepgram.com",
+        "api.deepgram.com"
+      ],
+      "description": "Enterprise-STT mit Low-Latency",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "DeepInfra",
+      "provider": "DeepInfra",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "domains": [
+        "deepinfra.com",
+        "api.deepinfra.com"
+      ],
+      "description": "Serverless LLM-Inference-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "DeepL",
+      "provider": "DeepL",
+      "category": "translation",
+      "risk_level": "medium",
+      "domains": [
+        "www.deepl.com",
+        "api.deepl.com",
+        "api-free.deepl.com",
+        "w.deepl.com"
+      ],
+      "description": "KI-Übersetzungsdienst — überträgt Texte zur Übersetzung"
+    },
+    {
+      "service": "DeepSeek",
+      "provider": "DeepSeek",
+      "category": "llm_chatbot",
+      "risk_level": "critical",
+      "domains": [
+        "chat.deepseek.com",
+        "api.deepseek.com",
+        "deepseek.com"
+      ],
+      "description": "Chinesischer LLM-Anbieter — erhöhtes Datentransfer-Risiko (Drittland)"
+    },
+    {
+      "service": "Descript",
+      "provider": "Descript",
+      "category": "video_ai",
+      "risk_level": "medium",
+      "domains": [
+        "descript.com",
+        "api.descript.com"
+      ],
+      "description": "KI-Video-/Audio-Editor mit Transkription und Voice-Cloning",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Devin",
+      "provider": "Cognition",
+      "category": "ai_agent",
+      "risk_level": "critical",
+      "domains": [
+        "devin.ai",
+        "app.devin.ai"
+      ],
+      "description": "Autonomer Software-Engineering-Agent",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Doubao",
+      "provider": "ByteDance",
+      "category": "llm_chatbot",
+      "risk_level": "critical",
+      "domains": [
+        "doubao.com",
+        "www.doubao.com"
+      ],
+      "description": "Chinesischer LLM-Anbieter — Drittland-Transfer-Risiko",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "DreamStudio",
+      "provider": "Stability AI",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "dreamstudio.ai",
+        "beta.dreamstudio.ai"
+      ],
+      "description": "Web-UI für Stable Diffusion",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "ElevenLabs",
+      "provider": "ElevenLabs",
+      "category": "text_to_speech",
+      "risk_level": "medium",
+      "domains": [
+        "elevenlabs.io",
+        "api.elevenlabs.io"
+      ],
+      "description": "KI-Sprachsynthese — Text und Stimmprofile werden übertragen"
+    },
+    {
+      "service": "Fathom",
+      "provider": "Fathom",
+      "category": "meeting_ai",
+      "risk_level": "high",
+      "domains": [
+        "fathom.video",
+        "app.fathom.video"
+      ],
+      "description": "KI-Meeting-Notizen-Taker für Zoom/Meet",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Figma AI",
+      "provider": "Figma",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "figma.com/ai"
+      ],
+      "description": "KI-Features in Figma Design-Tool",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Fireflies.ai",
+      "provider": "Fireflies",
+      "category": "meeting_ai",
+      "risk_level": "high",
+      "domains": [
+        "fireflies.ai",
+        "app.fireflies.ai",
+        "api.fireflies.ai"
+      ],
+      "description": "Meeting-Transkription und Notizen — nimmt Audio auf und sendet zur Cloud",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Fireworks AI",
+      "provider": "Fireworks",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "domains": [
+        "fireworks.ai",
+        "api.fireworks.ai"
+      ],
+      "description": "Schnelle LLM-Inference-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Flux",
+      "provider": "Black Forest Labs",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "blackforestlabs.ai",
+        "api.bfl.ml"
+      ],
+      "description": "State-of-the-Art Bildgenerierung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Gamma",
+      "provider": "Gamma",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "gamma.app"
+      ],
+      "description": "KI-Generierung von Slides/Docs/Websites aus Prompts",
+      "source": "bulk-import-2026-04"
     },
     {
       "service": "GitHub Copilot",
@@ -63,7 +638,386 @@
         "copilot-proxy.githubusercontent.com",
         "default.exp-tas.com"
       ],
-      "description": "KI-Code-Assistent – überträgt Code-Kontext an externe Server"
+      "description": "KI-Code-Assistent — überträgt Code-Kontext an externe Server",
+      "aliases": [
+        "Copilot"
+      ]
+    },
+    {
+      "service": "Google Gemini",
+      "provider": "Google",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "gemini.google.com",
+        "generativelanguage.googleapis.com",
+        "aistudio.google.com",
+        "bard.google.com"
+      ],
+      "description": "Google Gemini (ehem. Bard) – LLM-Chatbot und API",
+      "aliases": [
+        "Bard",
+        "Gemini"
+      ]
+    },
+    {
+      "service": "Google Workspace Duet",
+      "provider": "Google",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "duet.google.com"
+      ],
+      "description": "KI in Google Workspace (Gmail, Docs, Sheets)",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Grammarly AI",
+      "provider": "Grammarly",
+      "category": "writing_assistant",
+      "risk_level": "medium",
+      "domains": [
+        "app.grammarly.com",
+        "grammarly.com",
+        "capi.grammarly.com",
+        "gnar.grammarly.com"
+      ],
+      "description": "KI-Schreibassistent – analysiert und überträgt Text"
+    },
+    {
+      "service": "Granola",
+      "provider": "Granola",
+      "category": "meeting_ai",
+      "risk_level": "high",
+      "domains": [
+        "granola.ai",
+        "app.granola.ai"
+      ],
+      "description": "KI-Meeting-Notes, nimmt Audio auf",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Groq Cloud",
+      "provider": "Groq",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "domains": [
+        "groq.com",
+        "api.groq.com",
+        "console.groq.com"
+      ],
+      "description": "Ultra-schnelle LLM-Inference mit LPU-Hardware",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Haiper",
+      "provider": "Haiper",
+      "category": "video_ai",
+      "risk_level": "medium",
+      "domains": [
+        "haiper.ai"
+      ],
+      "description": "KI-Video-Generierung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "HeyGen",
+      "provider": "HeyGen",
+      "category": "video_ai",
+      "risk_level": "medium",
+      "domains": [
+        "heygen.com",
+        "app.heygen.com",
+        "api.heygen.com"
+      ],
+      "description": "KI-Avatar-Video mit Voice-Cloning",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "HubSpot AI",
+      "provider": "HubSpot",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "hubspot.com/ai"
+      ],
+      "description": "KI in HubSpot CRM/Marketing",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Hugging Face",
+      "provider": "Hugging Face",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "domains": [
+        "huggingface.co",
+        "api-inference.huggingface.co",
+        "cdn-lfs.huggingface.co"
+      ],
+      "description": "ML-Modell-Plattform – Modell-Downloads und Inference API"
+    },
+    {
+      "service": "HuggingChat",
+      "provider": "Hugging Face",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "huggingface.co/chat",
+        "hf.co/chat"
+      ],
+      "description": "Open-Source-Chatbot-Hub von Hugging Face",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Ideogram",
+      "provider": "Ideogram",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "ideogram.ai"
+      ],
+      "description": "KI-Bildgenerierung mit starkem Text-Rendering",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "InVideo AI",
+      "provider": "InVideo",
+      "category": "video_ai",
+      "risk_level": "medium",
+      "domains": [
+        "invideo.io",
+        "ai.invideo.io"
+      ],
+      "description": "KI-Video-Generierung aus Text",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Jasper AI",
+      "provider": "Jasper",
+      "category": "content_generation",
+      "risk_level": "medium",
+      "domains": [
+        "app.jasper.ai",
+        "jasper.ai",
+        "api.jasper.ai"
+      ],
+      "description": "KI-Content-Generator für Marketing und Texte"
+    },
+    {
+      "service": "JetBrains AI",
+      "provider": "JetBrains",
+      "category": "code_assistant",
+      "risk_level": "high",
+      "domains": [
+        "jetbrains.com/ai",
+        "api.jetbrains.ai"
+      ],
+      "description": "KI-Assistent in IntelliJ/PyCharm/WebStorm etc.",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Julius AI",
+      "provider": "Julius",
+      "category": "data_analysis_ai",
+      "risk_level": "high",
+      "domains": [
+        "julius.ai"
+      ],
+      "description": "KI-Datenanalyse, Datei-Upload für Analyse",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Kagi Assistant",
+      "provider": "Kagi",
+      "category": "llm_chatbot",
+      "risk_level": "medium",
+      "domains": [
+        "kagi.com/assistant"
+      ],
+      "description": "Multi-Model LLM-Chatbot mit Privacy-Fokus",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Kimi",
+      "provider": "Moonshot AI",
+      "category": "llm_chatbot",
+      "risk_level": "critical",
+      "domains": [
+        "kimi.moonshot.cn",
+        "api.moonshot.cn"
+      ],
+      "description": "Chinesischer Long-Context-LLM — Drittland-Transfer-Risiko",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Kling AI",
+      "provider": "Kuaishou",
+      "category": "video_ai",
+      "risk_level": "critical",
+      "domains": [
+        "kling.kuaishou.com"
+      ],
+      "description": "Chinesische Video-KI — Drittland-Transfer-Risiko",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Krea",
+      "provider": "Krea",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "krea.ai"
+      ],
+      "description": "Echtzeit-KI-Bildgenerierung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Krisp AI",
+      "provider": "Krisp",
+      "category": "meeting_ai",
+      "risk_level": "medium",
+      "domains": [
+        "krisp.ai"
+      ],
+      "description": "KI-Noise-Cancellation + Meeting-Notes",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "LanguageTool",
+      "provider": "LanguageTooler",
+      "category": "writing_assistant",
+      "risk_level": "medium",
+      "domains": [
+        "languagetool.org",
+        "api.languagetool.org"
+      ],
+      "description": "KI-Grammatik- und Stil-Check, EU-Hosting möglich",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Leonardo AI",
+      "provider": "Leonardo",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "leonardo.ai",
+        "app.leonardo.ai",
+        "api.leonardo.ai"
+      ],
+      "description": "KI-Bildgenerierung für kreative Anwendungen"
+    },
+    {
+      "service": "Lex.page",
+      "provider": "Lex",
+      "category": "writing_assistant",
+      "risk_level": "medium",
+      "domains": [
+        "lex.page"
+      ],
+      "description": "KI-Schreibumgebung für Autoren",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Lexica",
+      "provider": "Lexica",
+      "category": "image_generation",
+      "risk_level": "low",
+      "domains": [
+        "lexica.art"
+      ],
+      "description": "Stable-Diffusion-Such- und Generator-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Lightning AI",
+      "provider": "Lightning AI",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "domains": [
+        "lightning.ai"
+      ],
+      "description": "ML-Training- und Deployment-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Lindy",
+      "provider": "Lindy",
+      "category": "ai_agent",
+      "risk_level": "high",
+      "domains": [
+        "lindy.ai"
+      ],
+      "description": "KI-Agenten-Plattform für Business-Workflows",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Lovo",
+      "provider": "LOVO",
+      "category": "text_to_speech",
+      "risk_level": "medium",
+      "domains": [
+        "lovo.ai"
+      ],
+      "description": "KI-Voice-Generator",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Luma Dream Machine",
+      "provider": "Luma",
+      "category": "video_ai",
+      "risk_level": "medium",
+      "domains": [
+        "lumalabs.ai",
+        "dream-machine.lumalabs.ai"
+      ],
+      "description": "KI-Video-Generierung aus Text/Bild",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Magical",
+      "provider": "Magical",
+      "category": "productivity_ai",
+      "risk_level": "medium",
+      "domains": [
+        "getmagical.com"
+      ],
+      "description": "KI-Text-Expansion und -Automation",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "MeetGeek",
+      "provider": "MeetGeek",
+      "category": "meeting_ai",
+      "risk_level": "high",
+      "domains": [
+        "meetgeek.ai"
+      ],
+      "description": "KI-Meeting-Aufzeichnung und Highlights",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Mem",
+      "provider": "Mem Labs",
+      "category": "productivity_ai",
+      "risk_level": "medium",
+      "domains": [
+        "mem.ai",
+        "get.mem.ai"
+      ],
+      "description": "KI-Notiz-Tool mit Knowledge-Graph",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Microsoft 365 Copilot",
+      "provider": "Microsoft",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "copilot.microsoft365.com",
+        "m365.cloud.microsoft"
+      ],
+      "description": "KI in Word/Excel/Outlook/Teams (mit DPA/Commercial Data Protection)",
+      "source": "bulk-import-2026-04"
     },
     {
       "service": "Microsoft Copilot",
@@ -91,38 +1045,188 @@
       "description": "KI-Bildgenerierung – Prompts können sensible Informationen enthalten"
     },
     {
-      "service": "DALL-E",
-      "provider": "OpenAI",
-      "category": "image_generation",
-      "risk_level": "medium",
+      "service": "MiniMax Hailuo",
+      "provider": "MiniMax",
+      "category": "video_ai",
+      "risk_level": "critical",
       "domains": [
-        "labs.openai.com"
+        "hailuoai.com",
+        "api.minimax.chat"
       ],
-      "description": "KI-Bildgenerierung von OpenAI"
+      "description": "Chinesische KI-Video-Generierung — Drittland-Transfer-Risiko",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "Stability AI",
-      "provider": "Stability AI",
-      "category": "image_generation",
+      "service": "Miro AI",
+      "provider": "Miro",
+      "category": "enterprise_embedded",
       "risk_level": "medium",
       "domains": [
-        "stability.ai",
-        "api.stability.ai",
-        "dreamstudio.ai"
+        "miro.com/ai"
       ],
-      "description": "Stable Diffusion – Open-Source KI-Bildgenerierung"
+      "description": "KI in Miro Collaborative Whiteboard",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "Hugging Face",
-      "provider": "Hugging Face",
+      "service": "Mistral AI",
+      "provider": "Mistral",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "chat.mistral.ai",
+        "api.mistral.ai",
+        "mistral.ai"
+      ],
+      "description": "Mistral LLM – Chatbot und API-Zugang",
+      "aliases": [
+        "Le Chat"
+      ]
+    },
+    {
+      "service": "Modal",
+      "provider": "Modal Labs",
       "category": "ml_platform",
       "risk_level": "high",
       "domains": [
-        "huggingface.co",
-        "api-inference.huggingface.co",
-        "cdn-lfs.huggingface.co"
+        "modal.com"
       ],
-      "description": "ML-Modell-Plattform – Modell-Downloads und Inference API"
+      "description": "Serverless-Compute für ML-Workloads",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Mubert",
+      "provider": "Mubert",
+      "category": "audio_generation",
+      "risk_level": "low",
+      "domains": [
+        "mubert.com"
+      ],
+      "description": "KI-Musikgenerierung für Creator/Ad-Tech",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "MultiOn",
+      "provider": "MultiOn",
+      "category": "ai_agent",
+      "risk_level": "high",
+      "domains": [
+        "multion.ai",
+        "app.multion.ai"
+      ],
+      "description": "Autonomer Web-Agent für Tasks",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Murf.ai",
+      "provider": "Murf",
+      "category": "text_to_speech",
+      "risk_level": "medium",
+      "domains": [
+        "murf.ai"
+      ],
+      "description": "KI-Voice-Synthese für Studios",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "NightCafe",
+      "provider": "NightCafe",
+      "category": "image_generation",
+      "risk_level": "low",
+      "domains": [
+        "nightcafe.studio",
+        "creator.nightcafe.studio"
+      ],
+      "description": "Multi-Model KI-Kunst-Generator",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Notion AI",
+      "provider": "Notion",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "www.notion.so",
+        "api.notion.com"
+      ],
+      "description": "KI-Funktionen in Notion – verarbeitet Workspace-Inhalte"
+    },
+    {
+      "service": "NovelAI",
+      "provider": "Anlatan",
+      "category": "writing_assistant",
+      "risk_level": "medium",
+      "domains": [
+        "novelai.net"
+      ],
+      "description": "KI-Fiction-Schreiben und Bild-Generierung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Obviously AI",
+      "provider": "Obviously AI",
+      "category": "data_analysis_ai",
+      "risk_level": "high",
+      "domains": [
+        "obviously.ai",
+        "app.obviously.ai"
+      ],
+      "description": "No-Code Predictive-Analytics",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "OpenAI ChatGPT",
+      "provider": "OpenAI",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "chat.openai.com",
+        "api.openai.com",
+        "cdn.openai.com",
+        "auth0.openai.com",
+        "platform.openai.com"
+      ],
+      "description": "ChatGPT und OpenAI API – LLM-basierter Chatbot und API-Zugang",
+      "aliases": [
+        "ChatGPT",
+        "GPT",
+        "GPT-4"
+      ],
+      "sni_patterns": [
+        "*.openai.com"
+      ]
+    },
+    {
+      "service": "OpenAI Codex / GPT API",
+      "provider": "OpenAI",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "codex.openai.com"
+      ],
+      "description": "Code-Generierung via OpenAI – hohes Risiko für Code-/Datenabfluss"
+    },
+    {
+      "service": "OpenRouter",
+      "provider": "OpenRouter",
+      "category": "llm_api",
+      "risk_level": "high",
+      "domains": [
+        "openrouter.ai"
+      ],
+      "description": "LLM-API-Aggregator (mehrere Provider)",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Otter.ai",
+      "provider": "Otter",
+      "category": "meeting_ai",
+      "risk_level": "high",
+      "domains": [
+        "otter.ai",
+        "api.otter.ai"
+      ],
+      "description": "Meeting-Transkription und Notizen",
+      "source": "bulk-import-2026-04"
     },
     {
       "service": "Perplexity AI",
@@ -134,68 +1238,194 @@
         "perplexity.ai",
         "api.perplexity.ai"
       ],
-      "description": "KI-gestützte Suchmaschine mit LLM-Antworten"
+      "description": "KI-gestützte Suchmaschine mit LLM-Antworten",
+      "aliases": [
+        "Perplexity"
+      ]
     },
     {
-      "service": "Jasper AI",
-      "provider": "Jasper",
-      "category": "content_generation",
+      "service": "Phind",
+      "provider": "Phind",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "phind.com",
+        "www.phind.com"
+      ],
+      "description": "KI-Suche für Entwickler",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Pi",
+      "provider": "Inflection AI",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "pi.ai",
+        "heypi.com"
+      ],
+      "description": "Personal-Assistant-LLM von Inflection",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Pika Labs",
+      "provider": "Pika",
+      "category": "video_ai",
       "risk_level": "medium",
       "domains": [
-        "app.jasper.ai",
-        "jasper.ai",
-        "api.jasper.ai"
+        "pika.art",
+        "pikalabs.org"
       ],
-      "description": "KI-Content-Generator für Marketing und Texte"
+      "description": "KI-Video-Generierung aus Text",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "Grammarly AI",
-      "provider": "Grammarly",
+      "service": "Pitch",
+      "provider": "Pitch",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "pitch.com",
+        "app.pitch.com"
+      ],
+      "description": "Präsentations-Plattform mit KI-Features",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Play.ht",
+      "provider": "PlayHT",
+      "category": "text_to_speech",
+      "risk_level": "medium",
+      "domains": [
+        "play.ht",
+        "api.play.ht"
+      ],
+      "description": "KI-Voice-Cloning und TTS",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Playground AI",
+      "provider": "Playground",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "playground.com",
+        "playgroundai.com"
+      ],
+      "description": "KI-Bildgenerierung mit eigenem Model-Zoo",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Plus AI",
+      "provider": "Plus Docs",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "plusdocs.com"
+      ],
+      "description": "KI für Google Slides und PowerPoint",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Poe",
+      "provider": "Quora",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "poe.com"
+      ],
+      "description": "Multi-Model-Chatbot-Hub von Quora",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Pragma",
+      "provider": "Pragma",
+      "category": "data_analysis_ai",
+      "risk_level": "high",
+      "domains": [
+        "pragma.ai"
+      ],
+      "description": "KI-Datenanalyse und Knowledge-Engineering",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Presentations.ai",
+      "provider": "Presentations",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "presentations.ai"
+      ],
+      "description": "KI-Präsentations-Builder aus Prompts",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "ProWritingAid",
+      "provider": "ProWritingAid",
       "category": "writing_assistant",
       "risk_level": "medium",
       "domains": [
-        "app.grammarly.com",
-        "grammarly.com",
-        "capi.grammarly.com",
-        "gnar.grammarly.com"
+        "prowritingaid.com"
       ],
-      "description": "KI-Schreibassistent – analysiert und überträgt Text"
+      "description": "KI-Grammatik- und Stil-Check",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "DeepL",
-      "provider": "DeepL",
-      "category": "translation",
+      "service": "Quadratic AI",
+      "provider": "Quadratic",
+      "category": "data_analysis_ai",
+      "risk_level": "high",
+      "domains": [
+        "quadratichq.com"
+      ],
+      "description": "KI-Spreadsheet für Datenanalysten",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Quillbot",
+      "provider": "QuillBot",
+      "category": "writing_assistant",
       "risk_level": "medium",
       "domains": [
-        "www.deepl.com",
-        "api.deepl.com",
-        "api-free.deepl.com",
-        "w.deepl.com"
+        "quillbot.com"
       ],
-      "description": "KI-Übersetzungsdienst – überträgt Texte zur Übersetzung"
+      "description": "KI-Paraphrase- und Grammar-Tool",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "Notion AI",
-      "provider": "Notion",
-      "category": "productivity_ai",
+      "service": "Read.ai",
+      "provider": "Read",
+      "category": "meeting_ai",
+      "risk_level": "high",
+      "domains": [
+        "read.ai",
+        "app.read.ai"
+      ],
+      "description": "Meeting-Intelligence mit Sentiment-Analyse",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Recraft",
+      "provider": "Recraft",
+      "category": "image_generation",
       "risk_level": "medium",
       "domains": [
-        "www.notion.so",
-        "api.notion.com"
+        "recraft.ai"
       ],
-      "description": "KI-Funktionen in Notion – verarbeitet Workspace-Inhalte"
+      "description": "KI-Design-Plattform für Vektor- und Raster-Bilder",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "Cursor",
-      "provider": "Anysphere",
-      "category": "code_assistant",
-      "risk_level": "critical",
+      "service": "Replicate",
+      "provider": "Replicate",
+      "category": "ml_platform",
+      "risk_level": "high",
       "domains": [
-        "cursor.sh",
-        "api2.cursor.sh",
-        "repo42.cursor.sh"
+        "replicate.com",
+        "api.replicate.com"
       ],
-      "description": "KI-Code-Editor – überträgt gesamten Code-Kontext"
+      "description": "Cloud-Plattform zum Ausführen von ML-Modellen",
+      "source": "bulk-import-2026-04"
     },
     {
       "service": "Replit AI",
@@ -210,30 +1440,32 @@
       "description": "KI-gestützte Entwicklungsumgebung – Code wird auf externen Servern ausgeführt"
     },
     {
-      "service": "Whisper / OpenAI Audio",
-      "provider": "OpenAI",
+      "service": "Rev.ai",
+      "provider": "Rev",
       "category": "speech_to_text",
       "risk_level": "high",
       "domains": [
-        "api.openai.com/v1/audio"
+        "rev.ai",
+        "api.rev.ai"
       ],
-      "description": "Sprache-zu-Text – Audiodaten werden an OpenAI übertragen"
+      "description": "Human+KI Transkription",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "ElevenLabs",
-      "provider": "ElevenLabs",
-      "category": "text_to_speech",
-      "risk_level": "medium",
+      "service": "Rows AI",
+      "provider": "Rows",
+      "category": "data_analysis_ai",
+      "risk_level": "high",
       "domains": [
-        "elevenlabs.io",
-        "api.elevenlabs.io"
+        "rows.com"
       ],
-      "description": "KI-Sprachsynthese – Text und Stimmprofile werden übertragen"
+      "description": "KI-Spreadsheet mit Daten-Integrationen",
+      "source": "bulk-import-2026-04"
     },
     {
       "service": "Runway ML",
       "provider": "Runway",
-      "category": "video_generation",
+      "category": "video_ai",
       "risk_level": "medium",
       "domains": [
         "runwayml.com",
@@ -243,51 +1475,149 @@
       "description": "KI-Videogenerierung und -bearbeitung"
     },
     {
-      "service": "Mistral AI",
-      "provider": "Mistral",
-      "category": "llm_chatbot",
-      "risk_level": "high",
+      "service": "Rytr",
+      "provider": "Rytr",
+      "category": "writing_assistant",
+      "risk_level": "medium",
       "domains": [
-        "chat.mistral.ai",
-        "api.mistral.ai",
-        "mistral.ai"
+        "rytr.me"
       ],
-      "description": "Mistral LLM – Chatbot und API-Zugang"
+      "description": "KI-Content-Writer",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "Cohere",
-      "provider": "Cohere",
-      "category": "llm_api",
-      "risk_level": "high",
+      "service": "Salesforce Einstein",
+      "provider": "Salesforce",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
       "domains": [
-        "cohere.com",
-        "api.cohere.ai",
-        "dashboard.cohere.com"
+        "einstein.salesforce.com"
       ],
-      "description": "Enterprise LLM API – Text-Analyse und Generierung"
+      "description": "KI in Salesforce CRM — unter DPA",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "xAI Grok",
-      "provider": "xAI",
-      "category": "llm_chatbot",
+      "service": "Sembly",
+      "provider": "Sembly",
+      "category": "meeting_ai",
       "risk_level": "high",
       "domains": [
-        "grok.x.ai",
-        "api.x.ai"
+        "sembly.ai"
       ],
-      "description": "Grok LLM von xAI – in X (Twitter) integriert"
+      "description": "KI-Meeting-Assistent mit Compliance-Features",
+      "source": "bulk-import-2026-04"
     },
     {
-      "service": "DeepSeek",
-      "provider": "DeepSeek",
-      "category": "llm_chatbot",
-      "risk_level": "critical",
+      "service": "ServiceNow Now Assist",
+      "provider": "ServiceNow",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
       "domains": [
-        "chat.deepseek.com",
-        "api.deepseek.com",
-        "deepseek.com"
+        "servicenow.com/ai"
       ],
-      "description": "Chinesischer LLM-Anbieter – erhöhtes Datentransfer-Risiko (Drittland)"
+      "description": "KI in ServiceNow ITSM-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Simplified",
+      "provider": "Simplified",
+      "category": "content_generation",
+      "risk_level": "medium",
+      "domains": [
+        "simplified.com"
+      ],
+      "description": "KI-Design- und Content-Suite",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Slack AI",
+      "provider": "Slack / Salesforce",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "slack.com/ai"
+      ],
+      "description": "KI in Slack — unter DPA",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "SlidesAI",
+      "provider": "SlidesAI",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "slidesai.io"
+      ],
+      "description": "KI-Slides-Generator für Google Slides",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Sora",
+      "provider": "OpenAI",
+      "category": "video_ai",
+      "risk_level": "high",
+      "domains": [
+        "sora.com",
+        "sora.openai.com"
+      ],
+      "description": "OpenAIs Text-to-Video-Modell",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Sourcegraph Cody",
+      "provider": "Sourcegraph",
+      "category": "code_assistant",
+      "risk_level": "high",
+      "domains": [
+        "sourcegraph.com",
+        "cody.sourcegraph.com"
+      ],
+      "description": "KI-Code-Assistent mit Code-Search",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Speechify",
+      "provider": "Speechify",
+      "category": "text_to_speech",
+      "risk_level": "low",
+      "domains": [
+        "speechify.com"
+      ],
+      "description": "KI-TTS für Reading-Apps",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Stability AI",
+      "provider": "Stability AI",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "domains": [
+        "stability.ai",
+        "api.stability.ai"
+      ],
+      "description": "Stable Diffusion – Open-Source KI-Bildgenerierung"
+    },
+    {
+      "service": "Stable Audio",
+      "provider": "Stability AI",
+      "category": "audio_generation",
+      "risk_level": "low",
+      "domains": [
+        "stableaudio.com"
+      ],
+      "description": "KI-Audio-Generierung von Stability",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Sudowrite",
+      "provider": "Sudowrite",
+      "category": "writing_assistant",
+      "risk_level": "medium",
+      "domains": [
+        "sudowrite.com"
+      ],
+      "description": "KI-Fiction-Schreibassistent",
+      "source": "bulk-import-2026-04"
     },
     {
       "service": "Suno AI",
@@ -301,23 +1631,269 @@
       "description": "KI-Musikgenerierung"
     },
     {
-      "service": "Leonardo AI",
-      "provider": "Leonardo",
-      "category": "image_generation",
+      "service": "Superagent",
+      "provider": "Superagent",
+      "category": "ai_agent",
+      "risk_level": "high",
+      "domains": [
+        "superagent.sh"
+      ],
+      "description": "Open-Source-Framework für KI-Agenten",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Synthesia",
+      "provider": "Synthesia",
+      "category": "video_ai",
       "risk_level": "medium",
       "domains": [
-        "leonardo.ai",
-        "app.leonardo.ai",
-        "api.leonardo.ai"
+        "synthesia.io",
+        "api.synthesia.io"
       ],
-      "description": "KI-Bildgenerierung für kreative Anwendungen"
+      "description": "KI-Avatar-Video für Corporate-Training",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Tabnine",
+      "provider": "Tabnine",
+      "category": "code_assistant",
+      "risk_level": "high",
+      "domains": [
+        "tabnine.com",
+        "api.tabnine.com"
+      ],
+      "description": "KI-Code-Completion mit Enterprise-Selfhosted-Option",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Taskade",
+      "provider": "Taskade",
+      "category": "productivity_ai",
+      "risk_level": "medium",
+      "domains": [
+        "taskade.com"
+      ],
+      "description": "KI-Projekt- und Task-Management",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "tl;dv",
+      "provider": "tl;dv",
+      "category": "meeting_ai",
+      "risk_level": "high",
+      "domains": [
+        "tldv.io",
+        "api.tldv.io"
+      ],
+      "description": "KI-Meeting-Recorder und Zusammenfassung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Together AI",
+      "provider": "Together",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "domains": [
+        "together.ai",
+        "api.together.xyz"
+      ],
+      "description": "Decentralized LLM-Inference und Finetuning",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Tome",
+      "provider": "Tome",
+      "category": "presentation_ai",
+      "risk_level": "medium",
+      "domains": [
+        "tome.app"
+      ],
+      "description": "KI-Präsentationstool mit Multimedia-Integration",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Tongyi Qianwen",
+      "provider": "Alibaba",
+      "category": "llm_chatbot",
+      "risk_level": "critical",
+      "domains": [
+        "tongyi.aliyun.com",
+        "dashscope.aliyuncs.com"
+      ],
+      "description": "Alibabas LLM — Drittland-Transfer-Risiko",
+      "aliases": [
+        "Qwen"
+      ],
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Udio",
+      "provider": "Udio",
+      "category": "audio_generation",
+      "risk_level": "low",
+      "domains": [
+        "udio.com"
+      ],
+      "description": "KI-Musikgenerierung",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "v0.dev",
+      "provider": "Vercel",
+      "category": "code_assistant",
+      "risk_level": "high",
+      "domains": [
+        "v0.dev"
+      ],
+      "description": "KI-Frontend-Code-Generator (React/Tailwind)",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Veo",
+      "provider": "Google DeepMind",
+      "category": "video_ai",
+      "risk_level": "high",
+      "domains": [
+        "veo.google"
+      ],
+      "description": "Googles Text-to-Video-Modell",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Vercel AI SDK",
+      "provider": "Vercel",
+      "category": "llm_api",
+      "risk_level": "high",
+      "domains": [
+        "sdk.vercel.ai"
+      ],
+      "description": "LLM-API-Aggregator für Webapps",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Warp AI",
+      "provider": "Warp",
+      "category": "code_assistant",
+      "risk_level": "high",
+      "domains": [
+        "warp.dev",
+        "app.warp.dev"
+      ],
+      "description": "KI-Terminal mit Command-Suggestions",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Whisper / OpenAI Audio",
+      "provider": "OpenAI",
+      "category": "speech_to_text",
+      "risk_level": "high",
+      "domains": [
+        "api.openai.com/v1/audio"
+      ],
+      "description": "Sprache-zu-Text – Audiodaten werden an OpenAI übertragen"
+    },
+    {
+      "service": "Windsurf",
+      "provider": "Codeium",
+      "category": "code_assistant",
+      "risk_level": "critical",
+      "domains": [
+        "codeium.com/windsurf",
+        "windsurf.ai"
+      ],
+      "description": "KI-IDE von Codeium, Agent-Modus",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Wordtune",
+      "provider": "AI21",
+      "category": "writing_assistant",
+      "risk_level": "medium",
+      "domains": [
+        "wordtune.com",
+        "app.wordtune.com"
+      ],
+      "description": "KI-Umformulierungs-Tool",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Writer.com",
+      "provider": "Writer",
+      "category": "llm_api",
+      "risk_level": "medium",
+      "domains": [
+        "writer.com",
+        "api.writer.com"
+      ],
+      "description": "Enterprise-Generative-AI-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Writesonic",
+      "provider": "Writesonic",
+      "category": "content_generation",
+      "risk_level": "medium",
+      "domains": [
+        "writesonic.com"
+      ],
+      "description": "KI-Content-Plattform",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "xAI Grok",
+      "provider": "xAI",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "domains": [
+        "grok.x.ai",
+        "api.x.ai",
+        "grok.com"
+      ],
+      "description": "Grok LLM von xAI – in X (Twitter) integriert",
+      "aliases": [
+        "Grok"
+      ]
+    },
+    {
+      "service": "Yuanbao",
+      "provider": "Tencent",
+      "category": "llm_chatbot",
+      "risk_level": "critical",
+      "domains": [
+        "yuanbao.tencent.com"
+      ],
+      "description": "Tencents LLM — Drittland-Transfer-Risiko",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Zed AI",
+      "provider": "Zed Industries",
+      "category": "code_assistant",
+      "risk_level": "high",
+      "domains": [
+        "zed.dev"
+      ],
+      "description": "KI-Features im Zed-Editor",
+      "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Zoom AI Companion",
+      "provider": "Zoom",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "domains": [
+        "ai.zoom.us",
+        "zoom.us/ai"
+      ],
+      "description": "KI in Zoom Meetings — unter DPA",
+      "source": "bulk-import-2026-04"
     }
   ],
   "categories": {
     "llm_chatbot": "LLM-basierter Chatbot / Konversations-KI",
     "code_assistant": "KI-Code-Assistent / Entwicklungstool",
     "image_generation": "KI-Bildgenerierung",
-    "video_generation": "KI-Videogenerierung",
+    "video_ai": "KI-Video-Generierung und Avatar-Tools",
     "audio_generation": "KI-Audiogenerierung",
     "speech_to_text": "Sprache-zu-Text",
     "text_to_speech": "Text-zu-Sprache",
@@ -326,7 +1902,12 @@
     "content_generation": "KI-Content-Generierung",
     "productivity_ai": "KI-Produktivitätstool",
     "ml_platform": "ML-Plattform / Model Hub",
-    "llm_api": "LLM API-Dienst"
+    "llm_api": "LLM API-Dienst",
+    "meeting_ai": "Meeting-Assistent / Transkription / Recording",
+    "presentation_ai": "Präsentations-Generierung aus Prompts",
+    "data_analysis_ai": "KI-gestützte Datenanalyse / BI",
+    "enterprise_embedded": "KI-Features in SaaS-Suites (CRM, ITSM, Office, DPA-abgesichert)",
+    "ai_agent": "Autonome KI-Agenten / Auto-Task-Systeme"
   },
   "risk_levels": {
     "critical": "Direkter Code-/Datenabfluss möglich, Drittland-Transfer oder vollständige Datenverarbeitung extern",
