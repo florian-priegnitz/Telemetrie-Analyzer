@@ -15,15 +15,18 @@ import tempfile
 from pathlib import Path
 from typing import Any, Literal
 
+import pandas as pd
 import streamlit as st
 
+from src.analytics.temporal import build_hourly_heatmap
 from src.compliance.engine import ComplianceEngine
 from src.detection.engine import DetectionEngine
 from src.parsers.pihole import parse_pihole_log
 from src.parsers.squid import parse_squid_log
+from src.privacy.k_anonymity import check_k_anonymity
 from src.privacy.pseudonymizer import Pseudonymizer
 from src.reports.context import build_context, context_to_json_dict
-from src.reports.privacy import get_default_salt
+from src.reports.privacy import get_default_salt, pseudonymize_client
 
 
 PipelineState = Literal["empty", "uploaded", "analyzing", "analyzed", "error"]
@@ -126,7 +129,82 @@ def run_pipeline(
     detection = DetectionEngine().analyze(df)
     compliance = ComplianceEngine().analyze(detection)
     ctx = build_context(detection, compliance, salt=salt)
-    return context_to_json_dict(ctx)
+    result = context_to_json_dict(ctx)
+    result["user_patterns"] = _build_user_patterns(df, result["findings"], salt)
+    return result
+
+
+def _build_user_patterns(
+    df: pd.DataFrame,
+    findings_json: list[dict[str, Any]],
+    salt: str,
+) -> dict[str, Any]:
+    """Verhaltens-Auswertung pro Client für die 'Users & Patterns'-Page (E2-4).
+
+    Liefert k-Anonymitäts-Check, Top-Clients-Ranking und eine pseudonymisierte
+    Stunden-Heatmap. DataFrame wird vor Discard konsumiert; alle Client-Keys
+    werden über pseudonymize_client auf `client_<hash>` normalisiert.
+    """
+    k = check_k_anonymity(df, field="client", minimum_k=5)
+
+    heatmap = build_hourly_heatmap(df)
+    heatmap_by_client: dict[str, list[int]] = {}
+    if not heatmap.empty:
+        for raw_client, row in heatmap.iterrows():
+            heatmap_by_client[pseudonymize_client(str(raw_client), salt)] = [
+                int(v) for v in row.tolist()
+            ]
+
+    by_client: dict[str, dict[str, Any]] = {}
+    risk_rank = {"critical": 4, "high": 3, "medium": 2, "low": 1}
+    for f in findings_json:
+        c = f["client_pseudonym"]
+        entry = by_client.setdefault(c, {
+            "client_pseudonym": c,
+            "services": set(),
+            "total_queries": 0,
+            "risk_max": 0,
+            "risk_level_max": "low",
+            "upload_events": 0,
+            "has_document_upload": False,
+        })
+        entry["services"].add(f["service"])
+        entry["total_queries"] += f["total_queries"]
+        if f["risk_score"] > entry["risk_max"]:
+            entry["risk_max"] = f["risk_score"]
+        if risk_rank.get(f["risk_level"], 0) > risk_rank.get(entry["risk_level_max"], 0):
+            entry["risk_level_max"] = f["risk_level"]
+        entry["upload_events"] += f.get("upload_events", 0)
+        entry["has_document_upload"] = entry["has_document_upload"] or f.get("has_document_upload", False)
+
+    top_clients = sorted(
+        (
+            {
+                "client_pseudonym": e["client_pseudonym"],
+                "service_count": len(e["services"]),
+                "services": sorted(e["services"]),
+                "total_queries": e["total_queries"],
+                "risk_max": e["risk_max"],
+                "risk_level_max": e["risk_level_max"],
+                "upload_events": e["upload_events"],
+                "has_document_upload": e["has_document_upload"],
+            }
+            for e in by_client.values()
+        ),
+        key=lambda e: (e["risk_max"], e["total_queries"]),
+        reverse=True,
+    )
+
+    return {
+        "k_anonymity": {
+            "observed_k": k.observed_k,
+            "minimum_k": k.minimum_k,
+            "is_sufficient": k.is_sufficient,
+            "reidentification_risk": k.reidentification_risk,
+        },
+        "top_clients": top_clients,
+        "hourly_heatmap": heatmap_by_client,
+    }
 
 
 def reset_pipeline() -> None:

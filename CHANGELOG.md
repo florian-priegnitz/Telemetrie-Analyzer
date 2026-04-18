@@ -35,10 +35,20 @@ mit Compliance-Mapping auf DORA, EU AI Act, ISO 42001, ISO 27001 und DSGVO.
   IT-Security, Compliance) × zwei Formate (HTML + Markdown) + JSON-Schnittstelle
   (`src/reports/`). DSGVO-Schutzschicht prüft Klartext-Leaks vor dem Ausspielen
   (`src/reports/privacy.py`).
-- **Streamlit-Dashboard** — Interaktive UI mit vier Pages (Übersicht, Findings,
-  Compliance, Einstellungen) und sechs wiederverwendbaren Komponenten
-  (`app.py`, `src/ui/`). Strikte Layer-Trennung: `src/ui/` spricht nur über
-  `src/ui/state.py` mit der Analyse-Pipeline.
+- **Streamlit-Dashboard** — Interaktive UI mit fünf Pages (Übersicht, Findings,
+  Users & Patterns, Compliance, Einstellungen) und sechs wiederverwendbaren
+  Komponenten (`app.py`, `src/ui/`). Strikte Layer-Trennung: `src/ui/` spricht
+  nur über `src/ui/state.py` mit der Analyse-Pipeline.
+- **Behavior Analytics** (Epic E2) — Zeitliche Muster- und Anomalie-Erkennung
+  (`src/analytics/`): Hourly-Heatmap (Client × Stunde), Off-Hours-Detection
+  mit +15 Risk-Boost (Business-Default 06–22 Uhr), Burst-Detection (>50
+  Requests in 5 Minuten via Sliding-Window).
+- **k-Anonymitäts-Guard** — Soft-Check in `src/privacy/k_anonymity.py`
+  (Default Minimum k=5). UI-Banner warnt bei Re-Identifikations-Risiko
+  unterhalb der Schwelle (DSGVO Art. 25/32).
+- **Users & Patterns Page** — Top-10-Client-Ranking nach Risk-Max,
+  pseudonymisierte Stunden-Heatmap mit Off-Hours-Schattierung und
+  Drill-Down pro Client (`src/ui/pages/users_patterns.py`).
 - **Synthetische Testdaten** — Generator mit 5 Szenario-Profilen (clean,
   low-risk, systematic, upload-leak, enterprise-mixed) und reproduzierbarem
   Seed (`src/testdata/generator.py`).
@@ -57,6 +67,6 @@ mit Compliance-Mapping auf DORA, EU AI Act, ISO 42001, ISO 27001 und DSGVO.
 
 ### Tests
 
-- 140 Tests, alle grün.
+- 161 Tests, alle grün (inkl. 18 Analytics-Tests und 3 Users-&-Patterns-UI-Tests).
 
 [0.1.0]: https://github.com/florian-priegnitz/Telemetrie-Analyzer/releases/tag/v0.1.0
