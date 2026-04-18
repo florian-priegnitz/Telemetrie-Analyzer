@@ -29,9 +29,28 @@ pip install -e .
 ### Synthetische Testdaten generieren
 
 ```bash
+# Legacy-Default (gemischter Traffic):
 python -m src.testdata.generator --format both --days 7 --queries-per-day 500
-# erzeugt testdata/pihole_sample.log + testdata/squid_sample.log
+# → testdata/pihole_sample.log + testdata/squid_sample.log
+
+# Szenario-basiert (gezielt für Detection-Schwellen):
+python -m src.testdata.generator --scenario enterprise-mixed --format both
+python -m src.testdata.generator --scenario all --format both
+# → testdata/scenarios/{name}_pihole.log + {name}_squid.log
 ```
+
+**Szenario-Profile** — jedes trifft eine andere Detection-Schwelle
+(`SYSTEMATIC_THRESHOLD=10` Req/Tag, `UPLOAD_THRESHOLD_BYTES=500 KB`):
+
+| Szenario | Zweck | Erwartetes Ergebnis |
+|----------|-------|---------------------|
+| `clean` | Baseline ohne KI-Nutzung | 0 Findings |
+| `low-risk` | Gelegentliche medium-risk Services (DeepL, Grammarly) | Findings, aber `is_systematic=false`, Score ~30–40 |
+| `systematic` | >10 Req/Tag an high/critical Services | `is_systematic=true`, Score 65–85 |
+| `upload-leak` | POST-Spikes >500 KB an Claude/ChatGPT | `has_document_upload=true`, Score ≥90 |
+| `enterprise-mixed` | ~30 Clients, alle Risk-Level gemischt | Diverse Findings für UI/Report-Demo |
+
+Alle Profile sind seed-reproduzierbar (`--seed 42`) und rein synthetisch (RFC1918-IPs).
 
 ### Streamlit-Dashboard starten
 
