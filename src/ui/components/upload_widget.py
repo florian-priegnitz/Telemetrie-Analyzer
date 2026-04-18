@@ -18,6 +18,9 @@ def render_upload_section() -> None:
 
     if uploaded is not None and uploaded.name != st.session_state.get("uploaded_filename"):
         file_bytes = uploaded.read()
+        if not file_bytes:
+            st.error("Die hochgeladene Datei ist leer.")
+            return
         detected = detect_log_format(file_bytes)
         st.session_state.uploaded_bytes = file_bytes
         st.session_state.uploaded_filename = uploaded.name
@@ -42,14 +45,20 @@ def render_upload_section() -> None:
                 st.session_state.detected_format = override
                 st.rerun()
         else:
-            disabled = st.session_state.get("pipeline_state") == "analyzing"
-            if st.button(
-                "🚀 Analyse starten" if st.session_state.pipeline_state != "analyzed"
-                else "🔄 Neu analysieren",
-                disabled=disabled, use_container_width=True,
-            ):
-                trigger_analysis()
-                st.rerun()
+            state = st.session_state.get("pipeline_state")
+            disabled = state == "analyzing"
+            # Nach erfolgreicher Analyse sind die Klartext-Bytes aus DSGVO-Gruenden
+            # geloescht — "Neu analysieren" benoetigt einen erneuten Upload.
+            has_bytes = bool(st.session_state.get("uploaded_bytes"))
+            if state == "analyzed" and not has_bytes:
+                st.info("Analyse abgeschlossen. Fuer eine neue Analyse bitte die Datei erneut hochladen.")
+            elif has_bytes:
+                if st.button(
+                    "🚀 Analyse starten" if state != "analyzed" else "🔄 Neu analysieren",
+                    disabled=disabled, use_container_width=True,
+                ):
+                    trigger_analysis()
+                    st.rerun()
 
         if st.button("🗑 Reset", use_container_width=True):
             reset_pipeline()
