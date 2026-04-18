@@ -7,7 +7,7 @@
 
 KI-gestütztes Analyse-Tool zur Erkennung nicht-autorisierter KI-Nutzung (Shadow AI) in Unternehmensnetzen. Analysiert DNS- und Proxy-Logs, erkennt Muster und erzeugt regulatorisch eingebettete Reports (DORA, EU AI Act, ISO 42001).
 
-**Status:** Phase 1 (MVP) abgeschlossen – Phase 2 (Compliance & Analyse) steht an.
+**Status:** Phase 1 + Phase 2 + Reports + Streamlit-UI komplett (109 Tests grün, v0.1.0 in Vorbereitung).
 
 ## Tech-Stack
 
@@ -92,10 +92,14 @@ telemetrie-analyzer/
 pytest
 
 # Synthetische Testdaten generieren
-python -m src.testdata.generator
+python -m src.testdata.generator --format both --days 7 --queries-per-day 500
 
-# Analyse starten (geplant)
-python -m src.main --input <logfile> --format pihole --output report.html
+# Streamlit-Dashboard starten (interaktive UI)
+streamlit run app.py
+# → http://localhost:8501
+
+# Reports programmatisch generieren (siehe README für Beispiel-Script)
+python -c "from src.reports import ReportGenerator; ..."
 ```
 
 ## Compliance Frameworks
