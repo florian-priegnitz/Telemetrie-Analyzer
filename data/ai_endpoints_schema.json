@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/florian-priegnitz/Telemetrie-Analyzer/schemas/ai_endpoints-v2.json",
+  "title": "AI Endpoint Database",
+  "description": "Schema v2 für die Telemetrie-Analyzer AI-Endpoint-Datenbank. Backward-kompatibel zu v1.",
+  "type": "object",
+  "required": ["version", "endpoints"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver der Datenbank-Version"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO-Datum der letzten Aktualisierung"
+    },
+    "endpoints": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/endpoint"},
+      "minItems": 1
+    },
+    "categories": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "risk_levels": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    }
+  },
+  "$defs": {
+    "endpoint": {
+      "type": "object",
+      "required": ["service", "provider", "category", "risk_level", "domains"],
+      "additionalProperties": false,
+      "properties": {
+        "service": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Eindeutiger Service-Name"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Anbieter/Firma"
+        },
+        "category": {
+          "type": "string",
+          "description": "Kategorie (muss im categories-Block existieren)"
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"]
+        },
+        "domains": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1,
+          "description": "Liste bekannter Hostnames (exakt oder mit Subdomain-Match)"
+        },
+        "description": {
+          "type": "string",
+          "default": ""
+        },
+        "aliases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Alternative Service-Namen für Fuzzy-Matching (v2)"
+        },
+        "ip_ranges": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^([0-9]{1,3}\\.){3}[0-9]{1,3}/[0-9]{1,2}$|^[0-9a-fA-F:]+/[0-9]{1,3}$"
+          },
+          "description": "CIDR-Ranges für ASN/IP-Fallback-Detection (v2, IPv4 oder IPv6)"
+        },
+        "sni_patterns": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "TLS-SNI-Patterns (Wildcards) für Proxy-Logs ohne Domain (v2)"
+        },
+        "detection_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "default": "high",
+          "description": "Verlässlichkeit der Erkennung (v2). low → manueller Review empfohlen"
+        },
+        "last_verified": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO-Datum der letzten manuellen Verifikation (v2)"
+        },
+        "source": {
+          "type": "string",
+          "description": "Herkunft des Eintrags: manual, awesome-ai-tools, cloudflare-radar, ublock-filter etc. (v2)"
+        }
+      }
+    }
+  }
+}
