@@ -1,7 +1,7 @@
 # Backlog — Telemetrie Analyzer
 
-**Stand:** 2026-04-18
-**Status:** Sprint 1+2+4 erledigt. 109 Tests grün. v0.1.0 in Vorbereitung.
+**Stand:** 2026-04-19
+**Status:** Sprint 1+2+4 gemerged + 5 Review-Blocker gefixt. 140 Tests grün. v0.1.0 released.
 
 ---
 
@@ -62,11 +62,13 @@
 
 ## Test-Stand
 
-**109 Tests grün** (Stand 2026-04-18), aufgeteilt in:
+**140 Tests grün** (Stand 2026-04-19), aufgeteilt u.a. in:
 - MVP (Endpoints, Parser, Privacy, Detection, Generator): 37
 - Compliance Engine: 21
 - Claude API Analyzer: 10
-- Squid Parser + Reports + UI: 41 (Summe)
+- Squid Parser + Reports: ~29
+- Streamlit-UI-Smoketests: 6
+- Testdata-Szenarien + weitere: Rest
 
 Ausführung: `pytest tests/ -v` bzw. `wsl -e bash -c "cd /home/flowing1978/projects/telemetrie-analyzer && python3 -m pytest tests/ -v"`
 
@@ -74,5 +76,8 @@ Ausführung: `pytest tests/ -v` bzw. `wsl -e bash -c "cd /home/flowing1978/proje
 
 ## Nächster Schritt
 
-1. **Release v0.1.0** — Sprint 4 (`sprint-4/streamlit-ui`) nach `main` mergen, CHANGELOG anlegen, Tag `v0.1.0` setzen, GitHub Release erstellen.
-2. **Sprint 5 planen** — Priorisierung unter: CI/CD (GitHub Actions), Retention Management (DSGVO), CLI-Reaktivierung. Entscheidung nach Release.
+1. **Sprint 5 planen** — Priorisierung unter:
+   - CI/CD Pipeline (Issue #37, niedrigster Aufwand, höchster Hebel)
+   - Retention Management (Issue #38, DSGVO Art. 5)
+   - CLI-Reaktivierung (Issue #3)
+2. **Follow-up-Issues aus Sprint-4-Review** — E2E-Tests für Pages, Component-Unit-Tests, Chart-Refactoring overview.py → charts.py.
