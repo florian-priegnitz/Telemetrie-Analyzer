@@ -90,7 +90,7 @@ def _bytes_to_temp(file_bytes: bytes, suffix: str = ".log") -> Path:
     return Path(f.name)
 
 
-@st.cache_data(show_spinner="Analysiere Log…")
+@st.cache_data(show_spinner="Analysiere Log…", max_entries=5, ttl=3600)
 def run_pipeline(
     file_bytes: bytes,
     filename: str,
@@ -160,6 +160,8 @@ def trigger_analysis() -> None:
         st.session_state.report_data = run_pipeline(fb, fname, salt, fmt)
         st.session_state.pipeline_state = "analyzed"
         st.session_state.error_message = None
+        # DSGVO Art. 25: Klartext-Bytes nach Pseudonymisierung im Session-State verwerfen.
+        st.session_state.uploaded_bytes = None
     except Exception as exc:
         st.session_state.pipeline_state = "error"
         st.session_state.error_message = f"{type(exc).__name__}: {exc}"

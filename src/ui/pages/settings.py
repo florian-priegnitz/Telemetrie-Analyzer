@@ -10,6 +10,7 @@ import streamlit as st
 
 from src.detection.engine import SYSTEMATIC_THRESHOLD, UPLOAD_THRESHOLD_BYTES
 from src.reports.privacy import PrivacyLeakError, assert_no_plaintext
+from src.ui.state import reset_pipeline
 
 
 def render(report_data: dict[str, Any] | None) -> None:
@@ -26,6 +27,10 @@ def render(report_data: dict[str, Any] | None) -> None:
     )
 
     with st.expander("Salt überschreiben (für reproduzierbare Reports)"):
+        st.warning(
+            "⚠️ Salt-Wechsel invalidiert alle bisher generierten Pseudonyme. "
+            "Vorhandene Analyse-Daten werden verworfen, danach bitte erneut hochladen."
+        )
         new_salt = st.text_input(
             "Neuer Salt (mind. 16 Zeichen empfohlen)",
             value="",
@@ -34,10 +39,21 @@ def render(report_data: dict[str, Any] | None) -> None:
         col1, col2 = st.columns(2)
         if col1.button("Salt setzen", disabled=not new_salt or len(new_salt) < 8):
             st.session_state.report_salt = new_salt
-            st.success("Salt aktualisiert. Bitte Analyse neu starten (Reset → erneuter Upload).")
+            reset_pipeline()
+            st.success("Salt aktualisiert. Analyse-Daten verworfen, bitte Datei erneut hochladen.")
         if col2.button("Zufälligen Salt generieren"):
             st.session_state.report_salt = secrets.token_hex(16)
-            st.success("Neuer zufälliger Salt gesetzt.")
+            reset_pipeline()
+            st.success("Neuer zufälliger Salt gesetzt. Analyse-Daten verworfen.")
+
+    with st.expander("Analyse-Session beenden (alle Daten löschen)"):
+        st.caption(
+            "Löscht hochgeladene Bytes, Pipeline-Cache und Report-Daten aus der "
+            "Browser-Session. DSGVO Art. 5 (1e) Speicherbegrenzung."
+        )
+        if st.button("🗑 Alle Analyse-Daten jetzt löschen", use_container_width=True):
+            reset_pipeline()
+            st.success("Alle Analyse-Daten gelöscht.")
 
     st.markdown("### Detection-Schwellwerte (read-only)")
     st.markdown(
