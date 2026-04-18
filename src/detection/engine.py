@@ -9,6 +9,7 @@ from datetime import datetime
 
 import pandas as pd
 
+from src.analytics.temporal import BUSINESS_HOURS_END, BUSINESS_HOURS_START, off_hours_ratio
 from src.database.ai_endpoints import AIEndpointDatabase, AIEndpoint
 
 
@@ -31,6 +32,7 @@ class Finding:
     upload_events: int = 0
     total_bytes_uploaded: int = 0
     has_document_upload: bool = False
+    off_hours_ratio: float = 0.0  # Anteil Queries außerhalb Business-Hours (E2-2)
 
     @property
     def risk_score(self) -> int:
@@ -55,6 +57,10 @@ class Finding:
         # Document-Upload erhöht Score (Datenabfluss-Risiko)
         if self.has_document_upload:
             score += UPLOAD_RISK_BOOST
+
+        # Off-Hours-Nutzung erhöht Score (Anomalie-Indikator, E2-2)
+        if self.off_hours_ratio > OFF_HOURS_TRIGGER_RATIO:
+            score += OFF_HOURS_RISK_BOOST
 
         return min(score, 100)
 
@@ -81,6 +87,8 @@ class DetectionResult:
 SYSTEMATIC_THRESHOLD = 10  # Requests pro Tag
 UPLOAD_THRESHOLD_BYTES = 500 * 1024  # >500 KB = vermutlich Dokument-Upload (CLAUDE.md)
 UPLOAD_RISK_BOOST = 20  # Additiv zum Base-Score wenn Dokument-Upload erkannt
+OFF_HOURS_TRIGGER_RATIO = 0.3  # ab 30% Off-Hours-Queries gilt Nutzung als anomal (E2-2)
+OFF_HOURS_RISK_BOOST = 15  # Additiv wenn off_hours_ratio > OFF_HOURS_TRIGGER_RATIO
 
 
 class DetectionEngine:
@@ -169,6 +177,7 @@ class DetectionEngine:
                 upload_events=upload_events,
                 total_bytes_uploaded=total_bytes_uploaded,
                 has_document_upload=has_document_upload,
+                off_hours_ratio=round(off_hours_ratio(group), 3),
             ))
 
         # Sortierung: höchster Risk-Score zuerst
