@@ -59,9 +59,9 @@ def render(report_data: dict[str, Any]) -> None:
     if findings:
         for i, f in enumerate(findings, 1):
             st.markdown(
-                f"**{i}. {f['service']}** ({f['provider']}) — "
-                f"{risk_badge(f['risk_level'])} Score **{f['risk_score']}** · "
-                f"{f['queries_per_day']} Queries/Tag durch `{f['client_pseudonym']}`"
+                f"**{i}. {f.get('service', 'Unbekannt')}** ({f.get('provider', '—')}) — "
+                f"{risk_badge(f.get('risk_level', 'low'))} Score **{f.get('risk_score', 0)}** · "
+                f"{f.get('queries_per_day', 0)} Queries/Tag durch `{f.get('client_pseudonym', '—')}`"
                 + (" · 📄 **Dokument-Upload erkannt**" if f.get("has_document_upload") else ""),
                 unsafe_allow_html=True,
             )
