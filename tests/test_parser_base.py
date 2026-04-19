@@ -13,6 +13,7 @@ import pytest
 from src.parsers.base import BaseParser
 from src.parsers.pihole import PiholeParser
 from src.parsers.squid import SquidParser
+from src.parsers.zscaler import ZscalerParser
 from src.privacy.pseudonymizer import Pseudonymizer
 
 
@@ -27,6 +28,11 @@ _SQUID_SAMPLE = (
     "https://api.openai.com/v1/chat - HIER_DIRECT/1.2.3.4 application/json\n"
     "1709971205.456 89 192.168.1.50 TCP_MISS/200 512 GET "
     "https://chat.openai.com/ - HIER_DIRECT/1.2.3.4 text/html\n"
+)
+
+_ZSCALER_SAMPLE = (
+    "23-Jun-2024 08:15:32\talice@acme.corp\t10.0.1.42\thttps://chat.openai.com/\tAllowed\tProductivity\tChatGPT\t200\t412\t2048\tGET\tMozilla/5.0\n"
+    "23-Jun-2024 08:15:40\tbob@acme.corp\t10.0.1.50\thttps://claude.ai/chats\tAllowed\tProductivity\tClaude\t200\t520\t4096\tGET\tMozilla/5.0\n"
 )
 
 
@@ -49,12 +55,20 @@ def squid_path(tmp_path):
     return path
 
 
+@pytest.fixture
+def zscaler_path(tmp_path):
+    path = tmp_path / "zscaler.log"
+    path.write_text(_ZSCALER_SAMPLE, encoding="utf-8")
+    return path
+
+
 @pytest.fixture(
     params=[
         ("pihole", PiholeParser, "pihole_path"),
         ("squid", SquidParser, "squid_path"),
+        ("zscaler", ZscalerParser, "zscaler_path"),
     ],
-    ids=["pihole", "squid"],
+    ids=["pihole", "squid", "zscaler"],
 )
 def parser_and_df(request, pseudonymizer):
     _, parser_cls, path_fixture = request.param
