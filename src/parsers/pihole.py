@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.parsers.base import BaseParser
 from src.privacy.pseudonymizer import Pseudonymizer
 
 # Pattern für Standard Pi-hole syslog
@@ -110,3 +111,19 @@ def parse_pihole_ftl_csv(
     df["source_type"] = "pihole"
 
     return df[["timestamp", "query_type", "domain", "client", "source_file", "source_type"]]
+
+
+class PiholeParser(BaseParser):
+    """BaseParser-konformer Wrapper um `parse_pihole_log`.
+
+    Akzeptiert sowohl Syslog- als auch FTL-CSV-Format (Format-Wahl per Argument).
+    """
+
+    OPTIONAL_COLUMNS = {"query_type", "source_file", "source_type"}
+
+    def parse(self, path: str | Path, format: str = "syslog", year: int | None = None) -> pd.DataFrame:
+        if format == "ftl_csv":
+            df = parse_pihole_ftl_csv(path, self.pseudonymizer)
+        else:
+            df = parse_pihole_log(path, self.pseudonymizer, year=year)
+        return self._finalize(df)
