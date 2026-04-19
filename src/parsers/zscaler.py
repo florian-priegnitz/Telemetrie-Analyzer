@@ -12,6 +12,12 @@ Timestamp-Format: ``%d-%b-%Y %H:%M:%S`` (z.B. ``23-Jun-2022 16:24:59``), UTC.
 Leere Felder sind als ``-`` oder Leerstring zulässig.
 
 Referenz: https://help.zscaler.com/zia/nss-feed-output-format-web-logs
+
+DSGVO-Hinweis (Art. 25 Data Minimization): `url_path` wird bewusst auf das
+**erste Path-Segment** reduziert (z.B. ``/g/g-abc/titel`` → ``/g``). Volle
+Pfade können personenbezogene Inhalte tragen (Chat-Titel, Workspace-Namen,
+User-spezifische Konfigurations-URLs). Query-Strings werden komplett
+verworfen (``urlparse(...).path`` ignoriert ``?key=value``).
 """
 
 from datetime import datetime
@@ -66,6 +72,24 @@ def _parse_int(value: str) -> int | None:
         return None
 
 
+def _truncate_path(path: str | None) -> str | None:
+    """Reduziert Path auf erstes Segment (DSGVO Art. 25).
+
+    Beispiele:
+        ``/g/g-abc/titel`` → ``/g``
+        ``/`` → ``/``
+        ``/api`` → ``/api``
+        ``""`` / None → None
+    """
+    if not path or path == "/":
+        return path or None
+    segments = path.lstrip("/").split("/", 1)
+    first = segments[0]
+    if not first:
+        return "/"
+    return f"/{first}"
+
+
 def _extract_domain_and_path(url: str) -> tuple[str | None, str | None]:
     url = (url or "").strip()
     if not url or url == "-":
@@ -75,8 +99,8 @@ def _extract_domain_and_path(url: str) -> tuple[str | None, str | None]:
         return (host.lower().rstrip(".") or None), None
     parsed = urlparse(url)
     if not parsed.hostname:
-        return None, parsed.path or None
-    return parsed.hostname.lower().rstrip("."), parsed.path or None
+        return None, _truncate_path(parsed.path)
+    return parsed.hostname.lower().rstrip("."), _truncate_path(parsed.path)
 
 
 def parse_zscaler_log(
@@ -99,6 +123,14 @@ def parse_zscaler_log(
     """
     if pseudonymizer is None:
         pseudonymizer = Pseudonymizer()
+
+    required_fields = {"datetime", "clientIP", "url"}
+    missing_fields = required_fields - set(fields)
+    if missing_fields:
+        raise ValueError(
+            f"Zscaler NSS-Feed benötigt mindestens {sorted(required_fields)}, "
+            f"fehlen: {sorted(missing_fields)}"
+        )
 
     source = Path(source)
     records: list[dict] = []
