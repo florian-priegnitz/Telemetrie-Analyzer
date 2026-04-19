@@ -104,3 +104,72 @@ def test_kpi_format_helper():
     assert _format_bytes(1500).endswith("KB")
     assert _format_bytes(1500_000).endswith("MB")
     assert _format_bytes(1500_000_000).endswith("GB")
+
+
+# ---------------------------------------------------------------------------
+# E2-4: Users & Patterns Page
+# ---------------------------------------------------------------------------
+
+def test_user_patterns_present_and_pseudonymized_in_pipeline():
+    """run_pipeline liefert user_patterns mit pseudonymisierten Client-Keys."""
+    from src.ui.state import run_pipeline
+
+    if not SAMPLE_PIHOLE_LOG.exists():
+        pytest.skip("testdata/pihole_sample.log fehlt")
+
+    data = run_pipeline(
+        SAMPLE_PIHOLE_LOG.read_bytes(), "pihole_sample.log",
+        salt="test-salt", log_format="pihole",
+    )
+    up = data.get("user_patterns")
+    assert up is not None, "user_patterns muss von run_pipeline geliefert werden"
+    assert {"k_anonymity", "top_clients", "hourly_heatmap"} <= set(up.keys())
+
+    # Alle Client-Keys in heatmap haben `client_`-Präfix (pseudonymisiert).
+    for client_key in up["hourly_heatmap"]:
+        assert client_key.startswith("client_"), f"unpseudonymized key: {client_key!r}"
+    for entry in up["top_clients"]:
+        assert entry["client_pseudonym"].startswith("client_")
+        # Heatmap-Rows haben genau 24 Stunden-Slots.
+        hm_row = up["hourly_heatmap"].get(entry["client_pseudonym"])
+        if hm_row is not None:
+            assert len(hm_row) == 24
+
+
+def test_user_patterns_k_anonymity_flags_small_dataset():
+    """k_anonymity-Block meldet is_sufficient=False bei < 5 Clients."""
+    import pandas as pd
+    from src.ui.state import _build_user_patterns
+
+    df = pd.DataFrame({
+        "timestamp": pd.to_datetime(["2026-04-19 09:00", "2026-04-19 10:00"]),
+        "client": ["ip_aaaa", "ip_bbbb"],
+        "domain": ["chat.openai.com", "chat.openai.com"],
+    })
+    patterns = _build_user_patterns(df, findings_json=[], salt="test-salt")
+    k = patterns["k_anonymity"]
+    assert k["observed_k"] == 2
+    assert k["is_sufficient"] is False
+    assert k["reidentification_risk"] in {"medium", "high"}
+
+
+def test_users_patterns_page_runs_on_sample_data():
+    """E2-4 Page lädt ohne Exception auf dem Pi-hole-Sample (inkl. Sidebar-Nav)."""
+    from streamlit.testing.v1 import AppTest
+
+    if not SAMPLE_PIHOLE_LOG.exists():
+        pytest.skip("testdata/pihole_sample.log fehlt")
+
+    at = AppTest.from_file(APP_PATH)
+    at.run(timeout=10)
+    # Pipeline durchlaufen: report_data via run_pipeline direkt in Session-State schreiben
+    from src.ui.state import run_pipeline
+    data = run_pipeline(
+        SAMPLE_PIHOLE_LOG.read_bytes(), "pihole_sample.log",
+        salt="test-salt", log_format="pihole",
+    )
+    at.session_state["report_data"] = data
+    at.session_state["pipeline_state"] = "analyzed"
+    # Users & Patterns auswählen
+    at.sidebar.radio[0].set_value("👥 Users & Patterns").run(timeout=10)
+    assert not at.exception, f"Exception auf Users & Patterns Page: {at.exception}"
