@@ -123,13 +123,41 @@ def test_zscaler_parser_contract_via_class(pseudonymizer):
     parser.validate_schema(df, strict=True)
 
 
-def test_default_fields_order_is_stable():
-    # Locks Schema — Änderung muss bewusst erfolgen (Spec-Vertrag)
-    assert DEFAULT_FIELDS == (
+def test_default_fields_cover_nss_standard():
+    # Nur Mengen-Equality — Reihenfolge ist Deployment-spezifisch konfigurierbar
+    assert set(DEFAULT_FIELDS) == {
         "datetime", "user", "clientIP", "url", "action",
         "urlcategory", "app", "respcode", "reqsize", "respsize",
         "method", "useragent",
+    }
+
+
+def test_url_path_truncated_to_first_segment(tmp_path, pseudonymizer):
+    # DSGVO Art. 25: volle Pfade können Chat-Titel / Workspace-Namen leaken
+    content = (
+        "23-Jun-2024 10:00:00\talice\t10.0.1.1\thttps://chat.openai.com/g/g-BhDPQhWuS/cybersecurity-mentor\tAllowed\tProd\tChatGPT\t200\t1\t1\tGET\tx\n"
+        "23-Jun-2024 10:00:01\talice\t10.0.1.1\thttps://notion.so/workspace/AI-Notes\tAllowed\tProd\tNotion\t200\t1\t1\tGET\tx\n"
+        "23-Jun-2024 10:00:02\talice\t10.0.1.1\thttps://platform.openai.com/api-keys?token=secret\tAllowed\tDev\tChatGPT\t200\t1\t1\tGET\tx\n"
+        "23-Jun-2024 10:00:03\talice\t10.0.1.1\thttps://example.com/\tAllowed\tProd\tX\t200\t1\t1\tGET\tx\n"
+        "23-Jun-2024 10:00:04\talice\t10.0.1.1\thttps://example.com\tAllowed\tProd\tX\t200\t1\t1\tGET\tx\n"
     )
+    path = tmp_path / "paths.log"
+    path.write_text(content, encoding="utf-8")
+    df = parse_zscaler_log(path, pseudonymizer=pseudonymizer)
+    assert df.iloc[0]["url_path"] == "/g"
+    assert df.iloc[1]["url_path"] == "/workspace"
+    assert df.iloc[2]["url_path"] == "/api-keys"  # Query-String verworfen
+    assert df.iloc[3]["url_path"] == "/"
+    assert df.iloc[4]["url_path"] is None or df.iloc[4]["url_path"] == ""
+
+
+def test_fields_validation_rejects_missing_required():
+    with pytest.raises(ValueError, match="benötigt mindestens"):
+        parse_zscaler_log(
+            FIXTURE,
+            pseudonymizer=Pseudonymizer(key=_PSEUDO_KEY),
+            fields=("datetime", "user", "url", "action"),  # clientIP fehlt
+        )
 
 
 def test_empty_file_returns_empty_df(tmp_path, pseudonymizer):
