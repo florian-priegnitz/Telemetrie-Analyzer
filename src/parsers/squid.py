@@ -22,6 +22,7 @@ from urllib.parse import urlparse
 
 import pandas as pd
 
+from src.parsers.base import BaseParser
 from src.privacy.pseudonymizer import Pseudonymizer
 
 # Squid native: 10 whitespace-separated felder, time ist epoch.ms
@@ -216,3 +217,22 @@ def _parse_line(
         }
 
     return None
+
+
+class SquidParser(BaseParser):
+    """BaseParser-konformer Wrapper um `parse_squid_log`."""
+
+    OPTIONAL_COLUMNS = {
+        "bytes_uploaded",
+        "bytes_downloaded",
+        "method",
+        "status_code",
+        "url_path",
+        "query_type",
+        "source_file",
+        "source_type",
+    }
+
+    def parse(self, path: str | Path, format: str = "auto") -> pd.DataFrame:
+        df = parse_squid_log(path, self.pseudonymizer, format=format)
+        return self._finalize(df)
