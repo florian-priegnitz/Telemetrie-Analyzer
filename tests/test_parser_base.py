@@ -14,6 +14,7 @@ from src.parsers.base import BaseParser
 from src.parsers.paloalto import PanOSUrlParser
 from src.parsers.pihole import PiholeParser
 from src.parsers.squid import SquidParser
+from src.parsers.umbrella import UmbrellaDNSParser
 from src.parsers.zscaler import ZscalerParser
 from src.privacy.pseudonymizer import Pseudonymizer
 
@@ -40,6 +41,13 @@ _ZSCALER_SAMPLE = (
 _PALOALTO_SAMPLE = (
     "1,2024/06/23 08:15:32,SERIAL,THREAT,url,0,2024/06/23 08:15:32,10.0.1.42,203.0.113.1,0.0.0.0,0.0.0.0,allow-ai,alice@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,1,1,54321,443,0,0,0x00,ssl,alert,chat.openai.com/,,Computers-and-Internet,informational,c2s,1,0x00,DE,US,,,,,Mozilla/5.0 Chrome/124\n"
     "1,2024/06/23 08:15:40,SERIAL,THREAT,url,0,2024/06/23 08:15:40,10.0.1.50,203.0.113.2,0.0.0.0,0.0.0.0,allow-ai,bob@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,2,1,41233,443,0,0,0x00,ssl,alert,claude.ai/chats,,Computers-and-Internet,informational,c2s,2,0x00,DE,US,,,,,Mozilla/5.0 Firefox/125\n"
+)
+
+# Umbrella Mini-Sample: Header + 2 valide v10-Zeilen (alle Felder gequotet)
+_UMBRELLA_SAMPLE = (
+    '"timestamp","most_granular_identity","identities","internal_ip","external_ip","action","query_type","response_code","domain","categories","most_granular_identity_type","identity_types","blocked_categories","rule_id","destination_countries","organization_id"\n'
+    '"2024-06-23 08:15:32","alice@acme.corp","alice@acme.corp,HQ","10.0.1.42","203.0.113.1","Allowed","1 (A)","NOERROR","chat.openai.com.","Generative AI","AD User","AD User,Network","","101","US","9999"\n'
+    '"2024-06-23 08:15:40","bob@acme.corp","bob@acme.corp,HQ","10.0.1.50","203.0.113.1","Allowed","1 (A)","NOERROR","claude.ai.","Generative AI","AD User","AD User,Network","","101","US","9999"\n'
 )
 
 
@@ -76,14 +84,22 @@ def paloalto_path(tmp_path):
     return path
 
 
+@pytest.fixture
+def umbrella_path(tmp_path):
+    path = tmp_path / "umbrella.csv"
+    path.write_text(_UMBRELLA_SAMPLE, encoding="utf-8")
+    return path
+
+
 @pytest.fixture(
     params=[
         ("pihole", PiholeParser, "pihole_path"),
         ("squid", SquidParser, "squid_path"),
         ("zscaler", ZscalerParser, "zscaler_path"),
         ("paloalto", PanOSUrlParser, "paloalto_path"),
+        ("umbrella", UmbrellaDNSParser, "umbrella_path"),
     ],
-    ids=["pihole", "squid", "zscaler", "paloalto"],
+    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella"],
 )
 def parser_and_df(request, pseudonymizer):
     _, parser_cls, path_fixture = request.param
