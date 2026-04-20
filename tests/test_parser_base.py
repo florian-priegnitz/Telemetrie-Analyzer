@@ -12,6 +12,7 @@ import pytest
 
 from src.parsers.aws_vpc_flow import VPCFlowLogsParser
 from src.parsers.base import BaseParser
+from src.parsers.cloudflare_gateway import CloudflareGatewayParser
 from src.parsers.entra_id import EntraIDSignInParser
 from src.parsers.fortinet import FortiGateWebfilterParser
 from src.parsers.paloalto import PanOSUrlParser
@@ -44,6 +45,12 @@ _ZSCALER_SAMPLE = (
 _PALOALTO_SAMPLE = (
     "1,2024/06/23 08:15:32,SERIAL,THREAT,url,0,2024/06/23 08:15:32,10.0.1.42,203.0.113.1,0.0.0.0,0.0.0.0,allow-ai,alice@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,1,1,54321,443,0,0,0x00,ssl,alert,chat.openai.com/,,Computers-and-Internet,informational,c2s,1,0x00,DE,US,,,,,Mozilla/5.0 Chrome/124\n"
     "1,2024/06/23 08:15:40,SERIAL,THREAT,url,0,2024/06/23 08:15:40,10.0.1.50,203.0.113.2,0.0.0.0,0.0.0.0,allow-ai,bob@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,2,1,41233,443,0,0,0x00,ssl,alert,claude.ai/chats,,Computers-and-Internet,informational,c2s,2,0x00,DE,US,,,,,Mozilla/5.0 Firefox/125\n"
+)
+
+# Cloudflare Gateway Mini-Sample: 1 DNS + 1 HTTP NDJSON-Event
+_CLOUDFLARE_SAMPLE = (
+    '{"Datetime":"2024-06-23T08:15:32Z","Email":"alice@acme.com","SrcIP":"10.0.1.42","QueryName":"chat.openai.com","QueryType":"A","QueryCategoryNames":["Generative AI"],"ResolverDecision":"allowed"}\n'
+    '{"Datetime":"2024-06-23T08:15:40Z","Email":"bob@acme.com","SrcIP":"10.0.1.50","URL":"https://claude.ai/chats","HTTPMethod":"GET","HTTPStatusCode":200,"UploadBytes":512,"DownloadBytes":4096,"CategoryNames":["Generative AI"],"Action":"allow","UserAgent":"Mozilla/5.0"}\n'
 )
 
 # Entra ID Sign-In Mini-Sample: 2 JSONL-Events
@@ -143,6 +150,13 @@ def entra_path(tmp_path):
     return path
 
 
+@pytest.fixture
+def cloudflare_path(tmp_path):
+    path = tmp_path / "cloudflare.jsonl"
+    path.write_text(_CLOUDFLARE_SAMPLE, encoding="utf-8")
+    return path
+
+
 @pytest.fixture(
     params=[
         ("pihole", PiholeParser, "pihole_path"),
@@ -153,8 +167,9 @@ def entra_path(tmp_path):
         ("fortinet", FortiGateWebfilterParser, "fortinet_path"),
         ("aws_vpc", VPCFlowLogsParser, "aws_vpc_path"),
         ("entra_id", EntraIDSignInParser, "entra_path"),
+        ("cloudflare", CloudflareGatewayParser, "cloudflare_path"),
     ],
-    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet", "aws_vpc", "entra_id"],
+    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet", "aws_vpc", "entra_id", "cloudflare"],
 )
 def parser_and_df(request, pseudonymizer):
     _, parser_cls, path_fixture = request.param
