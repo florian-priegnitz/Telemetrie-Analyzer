@@ -203,3 +203,39 @@ def test_parser_contract_via_class(pseudonymizer):
     df = parser.parse(FIXTURE)
     assert df["timestamp"].is_monotonic_increasing
     parser.validate_schema(df, strict=True)
+
+
+def test_query_string_stripped_from_url_path(tmp_path, pseudonymizer):
+    # DSGVO: Query-Strings können Prompts/PII enthalten
+    content = json.dumps({
+        "_insertion_epoch_timestamp": 1719131732,
+        "user": "a@x.com",
+        "src_ip": "10.0.1.1",
+        "hostname": "perplexity.ai",
+        "app": "Perplexity AI",
+        "uri_path": "/search?q=sensitive-prompt-content",
+    }) + "\n"
+    f = tmp_path / "query.jsonl"
+    f.write_text(content, encoding="utf-8")
+    df = parse_netskope_log(f, pseudonymizer=pseudonymizer)
+    assert len(df) == 1
+    # Query weg, nur erstes Segment
+    assert df.iloc[0]["url_path"] == "/search"
+    assert "sensitive" not in (df.iloc[0]["url_path"] or "")
+
+
+def test_millisecond_epoch_detected(tmp_path, pseudonymizer):
+    # Netskope v2 API kann 13-stellige ms-Epochs liefern
+    content = json.dumps({
+        "_insertion_epoch_timestamp": 1719131732000,  # ms statt s
+        "user": "a@x.com",
+        "src_ip": "10.0.1.1",
+        "hostname": "chat.openai.com",
+        "app": "OpenAI ChatGPT",
+    }) + "\n"
+    f = tmp_path / "ms.jsonl"
+    f.write_text(content, encoding="utf-8")
+    df = parse_netskope_log(f, pseudonymizer=pseudonymizer)
+    assert len(df) == 1
+    # Muss als 2024-06-23 interpretiert werden, nicht Jahr 56460
+    assert df.iloc[0]["timestamp"].year == 2024
