@@ -11,6 +11,7 @@ import pandas as pd
 import pytest
 
 from src.parsers.base import BaseParser
+from src.parsers.paloalto import PanOSUrlParser
 from src.parsers.pihole import PiholeParser
 from src.parsers.squid import SquidParser
 from src.parsers.zscaler import ZscalerParser
@@ -33,6 +34,12 @@ _SQUID_SAMPLE = (
 _ZSCALER_SAMPLE = (
     "23-Jun-2024 08:15:32\talice@acme.corp\t10.0.1.42\thttps://chat.openai.com/\tAllowed\tProductivity\tChatGPT\t200\t412\t2048\tGET\tMozilla/5.0\n"
     "23-Jun-2024 08:15:40\tbob@acme.corp\t10.0.1.50\thttps://claude.ai/chats\tAllowed\tProductivity\tClaude\t200\t520\t4096\tGET\tMozilla/5.0\n"
+)
+
+# PAN-OS Mini-Sample: 2 valide url-Zeilen (45 Felder, Positionen laut DEFAULT_FIELDS)
+_PALOALTO_SAMPLE = (
+    "1,2024/06/23 08:15:32,SERIAL,THREAT,url,0,2024/06/23 08:15:32,10.0.1.42,203.0.113.1,0.0.0.0,0.0.0.0,allow-ai,alice@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,1,1,54321,443,0,0,0x00,ssl,alert,chat.openai.com/,,Computers-and-Internet,informational,c2s,1,0x00,DE,US,,,,,Mozilla/5.0 Chrome/124\n"
+    "1,2024/06/23 08:15:40,SERIAL,THREAT,url,0,2024/06/23 08:15:40,10.0.1.50,203.0.113.2,0.0.0.0,0.0.0.0,allow-ai,bob@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,2,1,41233,443,0,0,0x00,ssl,alert,claude.ai/chats,,Computers-and-Internet,informational,c2s,2,0x00,DE,US,,,,,Mozilla/5.0 Firefox/125\n"
 )
 
 
@@ -62,13 +69,21 @@ def zscaler_path(tmp_path):
     return path
 
 
+@pytest.fixture
+def paloalto_path(tmp_path):
+    path = tmp_path / "paloalto.log"
+    path.write_text(_PALOALTO_SAMPLE, encoding="utf-8")
+    return path
+
+
 @pytest.fixture(
     params=[
         ("pihole", PiholeParser, "pihole_path"),
         ("squid", SquidParser, "squid_path"),
         ("zscaler", ZscalerParser, "zscaler_path"),
+        ("paloalto", PanOSUrlParser, "paloalto_path"),
     ],
-    ids=["pihole", "squid", "zscaler"],
+    ids=["pihole", "squid", "zscaler", "paloalto"],
 )
 def parser_and_df(request, pseudonymizer):
     _, parser_cls, path_fixture = request.param
