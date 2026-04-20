@@ -10,6 +10,7 @@ import re
 import pandas as pd
 import pytest
 
+from src.parsers.aws_vpc_flow import VPCFlowLogsParser
 from src.parsers.base import BaseParser
 from src.parsers.fortinet import FortiGateWebfilterParser
 from src.parsers.paloalto import PanOSUrlParser
@@ -42,6 +43,14 @@ _ZSCALER_SAMPLE = (
 _PALOALTO_SAMPLE = (
     "1,2024/06/23 08:15:32,SERIAL,THREAT,url,0,2024/06/23 08:15:32,10.0.1.42,203.0.113.1,0.0.0.0,0.0.0.0,allow-ai,alice@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,1,1,54321,443,0,0,0x00,ssl,alert,chat.openai.com/,,Computers-and-Internet,informational,c2s,1,0x00,DE,US,,,,,Mozilla/5.0 Chrome/124\n"
     "1,2024/06/23 08:15:40,SERIAL,THREAT,url,0,2024/06/23 08:15:40,10.0.1.50,203.0.113.2,0.0.0.0,0.0.0.0,allow-ai,bob@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,2,1,41233,443,0,0,0x00,ssl,alert,claude.ai/chats,,Computers-and-Internet,informational,c2s,2,0x00,DE,US,,,,,Mozilla/5.0 Firefox/125\n"
+)
+
+# AWS VPC Flow Logs Mini-Sample: 2 valide v2-Zeilen (whitespace-separated, kein Header)
+_AWS_VPC_SAMPLE = (
+    "2 123456789010 eni-abc123def 10.0.1.42 52.85.132.1 51234 443 6 5 1024 "
+    "1719131732 1719131792 ACCEPT OK\n"
+    "2 123456789010 eni-abc123def 10.0.1.50 99.83.157.10 52100 443 6 8 2048 "
+    "1719131802 1719131862 ACCEPT OK\n"
 )
 
 # Fortinet Mini-Sample: 2 valide webfilter-Zeilen (key=value)
@@ -113,6 +122,13 @@ def fortinet_path(tmp_path):
     return path
 
 
+@pytest.fixture
+def aws_vpc_path(tmp_path):
+    path = tmp_path / "aws_vpc.log"
+    path.write_text(_AWS_VPC_SAMPLE, encoding="utf-8")
+    return path
+
+
 @pytest.fixture(
     params=[
         ("pihole", PiholeParser, "pihole_path"),
@@ -121,8 +137,9 @@ def fortinet_path(tmp_path):
         ("paloalto", PanOSUrlParser, "paloalto_path"),
         ("umbrella", UmbrellaDNSParser, "umbrella_path"),
         ("fortinet", FortiGateWebfilterParser, "fortinet_path"),
+        ("aws_vpc", VPCFlowLogsParser, "aws_vpc_path"),
     ],
-    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet"],
+    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet", "aws_vpc"],
 )
 def parser_and_df(request, pseudonymizer):
     _, parser_cls, path_fixture = request.param
