@@ -189,9 +189,25 @@ def _build_record(
         "bytes_uploaded": None,  # Sign-In-Logs führen keine Bytes
         "bytes_downloaded": None,
         "urlcategory": None,
-        "useragent": (event.get("UserAgent") or None),
+        "useragent": _extract_useragent(event.get("DeviceDetail")),
         "app": event.get("AppId") or None,
     }
+
+
+def _extract_useragent(device_detail) -> str | None:
+    """Baut einen User-Agent-Proxy aus DeviceDetail.
+
+    Azure Sign-In hat kein Top-Level-UA-Feld; das Nächste ist
+    ``DeviceDetail.browser`` + ``operatingSystem``, was für Audit-Zwecke
+    ausreicht (z.B. ``Chrome on Windows``).
+    """
+    if not isinstance(device_detail, dict):
+        return None
+    browser = (device_detail.get("browser") or "").strip()
+    os_name = (device_detail.get("operatingSystem") or "").strip()
+    if browser and os_name:
+        return f"{browser} on {os_name}"
+    return browser or os_name or None
 
 
 class EntraIDSignInParser(BaseParser):
