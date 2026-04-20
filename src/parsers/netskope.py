@@ -73,6 +73,10 @@ def _parse_timestamp(event: dict) -> datetime | None:
     """Netskope liefert Unix-Epoch (Sekunden) in mehreren Feldern.
 
     Präferenz: ``_insertion_epoch_timestamp`` > ``timestamp`` > ``event_time``.
+
+    Heuristik: manche Netskope v2 REST-Endpoints liefern Millisekunden-Epochs
+    (13-stellig). Werte > 10^10 (nach Nov 2286 in Sekunden) werden als ms
+    interpretiert und durch 1000 geteilt.
     """
     for key in ("_insertion_epoch_timestamp", "timestamp", "event_time"):
         value = event.get(key)
@@ -82,6 +86,8 @@ def _parse_timestamp(event: dict) -> datetime | None:
             epoch = int(value)
         except (ValueError, TypeError):
             continue
+        if epoch > 10_000_000_000:
+            epoch //= 1000  # ms → s
         try:
             return datetime.fromtimestamp(epoch, tz=timezone.utc).replace(tzinfo=None)
         except (ValueError, OSError, OverflowError):
@@ -99,6 +105,14 @@ def _parse_int(value) -> int | None:
 
 
 def _truncate_path(path: str | None) -> str | None:
+    """DSGVO Art. 25: Path auf erstes Segment + Query verwerfen.
+
+    Query-Strings können Prompts/PII enthalten (``/search?q=...``).
+    Sie werden explizit abgeschnitten, bevor das erste Segment extrahiert wird.
+    """
+    if not path:
+        return None
+    path = path.split("?", 1)[0].split("#", 1)[0]
     if not path or path == "/":
         return path or None
     segments = path.lstrip("/").split("/", 1)
