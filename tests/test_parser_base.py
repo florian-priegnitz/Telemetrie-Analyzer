@@ -11,6 +11,7 @@ import pandas as pd
 import pytest
 
 from src.parsers.base import BaseParser
+from src.parsers.fortinet import FortiGateWebfilterParser
 from src.parsers.paloalto import PanOSUrlParser
 from src.parsers.pihole import PiholeParser
 from src.parsers.squid import SquidParser
@@ -41,6 +42,20 @@ _ZSCALER_SAMPLE = (
 _PALOALTO_SAMPLE = (
     "1,2024/06/23 08:15:32,SERIAL,THREAT,url,0,2024/06/23 08:15:32,10.0.1.42,203.0.113.1,0.0.0.0,0.0.0.0,allow-ai,alice@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,1,1,54321,443,0,0,0x00,ssl,alert,chat.openai.com/,,Computers-and-Internet,informational,c2s,1,0x00,DE,US,,,,,Mozilla/5.0 Chrome/124\n"
     "1,2024/06/23 08:15:40,SERIAL,THREAT,url,0,2024/06/23 08:15:40,10.0.1.50,203.0.113.2,0.0.0.0,0.0.0.0,allow-ai,bob@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,2,1,41233,443,0,0,0x00,ssl,alert,claude.ai/chats,,Computers-and-Internet,informational,c2s,2,0x00,DE,US,,,,,Mozilla/5.0 Firefox/125\n"
+)
+
+# Fortinet Mini-Sample: 2 valide webfilter-Zeilen (key=value)
+_FORTINET_SAMPLE = (
+    'date=2024-06-23 time=08:15:32 logid="0316013056" type="utm" subtype="webfilter" '
+    'eventtype="ftgd_allow" level="notice" vd="root" policyid=1 user="alice@acme.corp" '
+    'srcip=10.0.1.42 srcport=54321 dstip=203.0.113.50 dstport=443 service="HTTPS" '
+    'hostname="chat.openai.com" action="passthrough" url="/" sentbyte=412 rcvdbyte=2048 '
+    'method="domain" catdesc="Business Services"\n'
+    'date=2024-06-23 time=08:15:40 logid="0316013056" type="utm" subtype="webfilter" '
+    'eventtype="ftgd_allow" level="notice" vd="root" policyid=1 user="bob@acme.corp" '
+    'srcip=10.0.1.50 srcport=54322 dstip=203.0.113.51 dstport=443 service="HTTPS" '
+    'hostname="claude.ai" action="passthrough" url="/chats" sentbyte=520 rcvdbyte=4096 '
+    'method="get" catdesc="Business Services"\n'
 )
 
 # Umbrella Mini-Sample: Header + 2 valide v10-Zeilen (alle Felder gequotet)
@@ -91,6 +106,13 @@ def umbrella_path(tmp_path):
     return path
 
 
+@pytest.fixture
+def fortinet_path(tmp_path):
+    path = tmp_path / "fortinet.log"
+    path.write_text(_FORTINET_SAMPLE, encoding="utf-8")
+    return path
+
+
 @pytest.fixture(
     params=[
         ("pihole", PiholeParser, "pihole_path"),
@@ -98,8 +120,9 @@ def umbrella_path(tmp_path):
         ("zscaler", ZscalerParser, "zscaler_path"),
         ("paloalto", PanOSUrlParser, "paloalto_path"),
         ("umbrella", UmbrellaDNSParser, "umbrella_path"),
+        ("fortinet", FortiGateWebfilterParser, "fortinet_path"),
     ],
-    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella"],
+    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet"],
 )
 def parser_and_df(request, pseudonymizer):
     _, parser_cls, path_fixture = request.param
