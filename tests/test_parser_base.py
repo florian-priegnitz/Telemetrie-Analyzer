@@ -12,6 +12,7 @@ import pytest
 
 from src.parsers.aws_vpc_flow import VPCFlowLogsParser
 from src.parsers.base import BaseParser
+from src.parsers.entra_id import EntraIDSignInParser
 from src.parsers.fortinet import FortiGateWebfilterParser
 from src.parsers.paloalto import PanOSUrlParser
 from src.parsers.pihole import PiholeParser
@@ -43,6 +44,12 @@ _ZSCALER_SAMPLE = (
 _PALOALTO_SAMPLE = (
     "1,2024/06/23 08:15:32,SERIAL,THREAT,url,0,2024/06/23 08:15:32,10.0.1.42,203.0.113.1,0.0.0.0,0.0.0.0,allow-ai,alice@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,1,1,54321,443,0,0,0x00,ssl,alert,chat.openai.com/,,Computers-and-Internet,informational,c2s,1,0x00,DE,US,,,,,Mozilla/5.0 Chrome/124\n"
     "1,2024/06/23 08:15:40,SERIAL,THREAT,url,0,2024/06/23 08:15:40,10.0.1.50,203.0.113.2,0.0.0.0,0.0.0.0,allow-ai,bob@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,2,1,41233,443,0,0,0x00,ssl,alert,claude.ai/chats,,Computers-and-Internet,informational,c2s,2,0x00,DE,US,,,,,Mozilla/5.0 Firefox/125\n"
+)
+
+# Entra ID Sign-In Mini-Sample: 2 JSONL-Events
+_ENTRA_SAMPLE = (
+    '{"TimeGenerated":"2024-06-23T08:15:32.000Z","UserPrincipalName":"alice@acme.onmicrosoft.com","UserId":"u1","AppDisplayName":"Microsoft 365 Copilot","AppId":"app1","IPAddress":"203.0.113.42","Status":{"errorCode":0},"ConditionalAccessStatus":"success","AuthenticationProtocol":"oAuth2"}\n'
+    '{"TimeGenerated":"2024-06-23T08:16:02.100Z","UserPrincipalName":"bob@acme.onmicrosoft.com","UserId":"u2","AppDisplayName":"ChatGPT Enterprise","AppId":"app2","IPAddress":"203.0.113.50","Status":{"errorCode":0},"ConditionalAccessStatus":"success","AuthenticationProtocol":"oAuth2"}\n'
 )
 
 # AWS VPC Flow Logs Mini-Sample: 2 valide v2-Zeilen (whitespace-separated, kein Header)
@@ -129,6 +136,13 @@ def aws_vpc_path(tmp_path):
     return path
 
 
+@pytest.fixture
+def entra_path(tmp_path):
+    path = tmp_path / "entra.jsonl"
+    path.write_text(_ENTRA_SAMPLE, encoding="utf-8")
+    return path
+
+
 @pytest.fixture(
     params=[
         ("pihole", PiholeParser, "pihole_path"),
@@ -138,8 +152,9 @@ def aws_vpc_path(tmp_path):
         ("umbrella", UmbrellaDNSParser, "umbrella_path"),
         ("fortinet", FortiGateWebfilterParser, "fortinet_path"),
         ("aws_vpc", VPCFlowLogsParser, "aws_vpc_path"),
+        ("entra_id", EntraIDSignInParser, "entra_path"),
     ],
-    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet", "aws_vpc"],
+    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet", "aws_vpc", "entra_id"],
 )
 def parser_and_df(request, pseudonymizer):
     _, parser_cls, path_fixture = request.param
