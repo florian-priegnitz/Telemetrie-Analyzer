@@ -36,6 +36,8 @@ from src.privacy.pseudonymizer import Pseudonymizer
 
 # Matcht key=value mit optional gequoteten Werten.
 # Gruppen: 1=key, 2=quoted_value, 3=bare_value (genau eine nicht-leer).
+# NOTE: FortiGate escapet innere Quotes NICHT (senden 0x94 oder verwerfen).
+# Dieser Regex unterstützt daher auch keinen `\"`-Escape innerhalb quoted values.
 _KV_PATTERN = re.compile(r'(\w+)=(?:"([^"]*)"|(\S+))')
 
 # Syslog-Prefix <PRI>... bis zum ersten "date=..." Schlüssel.
@@ -88,6 +90,31 @@ def _parse_int(value: str | None) -> int | None:
         return None
 
 
+def _parse_timestamp(kv: dict[str, str]) -> datetime | None:
+    """Extrahiert Timestamp aus date+time oder Fallback eventtime (Unix-Nanos).
+
+    FortiGate-Logs haben typischerweise ``date=YYYY-MM-DD time=HH:MM:SS``.
+    Manche Deployments (JSON-Export, neuere FortiOS-Versionen) liefern
+    allerdings nur ``eventtime`` (19-stellige Unix-Nanosekunden).
+    """
+    date = kv.get("date")
+    time = kv.get("time")
+    if date and time:
+        try:
+            return datetime.strptime(f"{date} {time}", _TIMESTAMP_FMT)
+        except ValueError:
+            pass
+
+    eventtime = kv.get("eventtime")
+    if eventtime and eventtime.isdigit():
+        try:
+            return datetime.utcfromtimestamp(int(eventtime) / 1_000_000_000)
+        except (ValueError, OSError, OverflowError):
+            return None
+
+    return None
+
+
 def parse_fortinet_log(
     source: Path | str,
     pseudonymizer: Pseudonymizer | None = None,
@@ -135,17 +162,13 @@ def _build_record(
     source_name: str,
     pseudonymizer: Pseudonymizer,
 ) -> dict | None:
-    # Subtype-Filter
-    if kv.get("subtype") != "webfilter":
+    # type+subtype-Filter (beide müssen passen — andere type-Werte können
+    # zufällig subtype=webfilter haben, sollen aber nicht ins DataFrame)
+    if kv.get("type") != "utm" or kv.get("subtype") != "webfilter":
         return None
 
-    date = kv.get("date")
-    time = kv.get("time")
-    if not date or not time:
-        return None
-    try:
-        ts = datetime.strptime(f"{date} {time}", _TIMESTAMP_FMT)
-    except ValueError:
+    ts = _parse_timestamp(kv)
+    if ts is None:
         return None
 
     srcip = kv.get("srcip")

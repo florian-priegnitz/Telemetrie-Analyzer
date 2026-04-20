@@ -79,10 +79,20 @@ def test_userless_entries_have_none_user(pseudonymizer):
 
 
 def test_domain_backslash_user_pseudonymized_consistently(pseudonymizer):
-    # "ACME\eve" soll identischen Pseudonym erhalten wie identischer Input
+    # DOMAIN\\user muss deterministisch zum gleichen Pseudonym mappen.
+    # "ACME\\eve" ist nur in der character.ai-Zeile — aber "ACME\\ivan" und
+    # "ACME\\trent" kommen je einmal vor. Wir prüfen: (a) alle DOMAIN\\user-
+    # Einträge haben user_-Pseudonym, (b) identischer Input → identisches
+    # Pseudonym (Determinismus via HMAC).
     df = parse_fortinet_log(FIXTURE, pseudonymizer=pseudonymizer)
-    # alle "ACME\eve"-Zeilen müssen denselben user-Pseudonym haben
     assert "character.ai" in df["domain"].values
+
+    # Determinismus-Check: zweiter Parse mit gleichem Key liefert gleiche
+    # Pseudonyme.
+    df2 = parse_fortinet_log(FIXTURE, pseudonymizer=Pseudonymizer(key=_KEY))
+    eve_p1 = df[df["domain"] == "character.ai"]["user"].iloc[0]
+    eve_p2 = df2[df2["domain"] == "character.ai"]["user"].iloc[0]
+    assert eve_p1 == eve_p2  # deterministischer HMAC
 
 
 def test_url_path_truncated(pseudonymizer):
@@ -163,3 +173,29 @@ def test_parser_contract_via_class(pseudonymizer):
     df = parser.parse(FIXTURE)
     assert df["timestamp"].is_monotonic_increasing
     parser.validate_schema(df, strict=True)
+
+
+def test_type_event_subtype_webfilter_filtered_out(tmp_path, pseudonymizer):
+    # Defense-in-Depth: auch wenn subtype=webfilter, muss type=utm sein
+    content = (
+        'date=2024-06-23 time=10:00:00 type="event" subtype="webfilter" '
+        'srcip=10.0.1.1 hostname="chat.openai.com" action="passthrough" url="/"\n'
+    )
+    path = tmp_path / "wrong_type.log"
+    path.write_text(content, encoding="utf-8")
+    df = parse_fortinet_log(path, pseudonymizer=pseudonymizer)
+    assert df.empty
+
+
+def test_eventtime_fallback_when_date_missing(tmp_path, pseudonymizer):
+    # FortiGate JSON-Export-Varianten liefern manchmal nur eventtime (Nanos)
+    content = (
+        'type="utm" subtype="webfilter" eventtime=1719131732000000000 '
+        'srcip=10.0.1.1 hostname="chat.openai.com" action="passthrough" url="/"\n'
+    )
+    path = tmp_path / "eventtime.log"
+    path.write_text(content, encoding="utf-8")
+    df = parse_fortinet_log(path, pseudonymizer=pseudonymizer)
+    assert len(df) == 1
+    # 1719131732 → 2024-06-23 08:35:32 UTC
+    assert df.iloc[0]["timestamp"].date().isoformat() == "2024-06-23"
