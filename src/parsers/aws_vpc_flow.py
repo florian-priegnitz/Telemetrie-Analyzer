@@ -26,10 +26,15 @@ Mapping auf unser Common-Schema:
 nicht Domains. Für AWS-native AI-Workloads (Bedrock, SageMaker, Comprehend,
 Rekognition, Polly, Textract, Lex, Translate) liefert das v5-Custom-Feld
 ``pkt-dst-aws-service`` jedoch den Service-Namen direkt → dieser wird als
-``domain`` genutzt und macht AWS-AI-Traffic sichtbar. Für externe AI-Dienste
-über NAT/Internet-Gateway bleibt nur die public Dest-IP — hier kann zusätzlich
-eine IP-→-Service-Mapping-DB (z.B. über ASN-Lookup, #15) in der Detection-
-Engine angedockt werden.
+``domain`` genutzt und macht AWS-AI-Traffic sichtbar.
+
+**BEKANNTE LIMITATION** — externe AI-Dienste über NAT/Internet-Gateway:
+``domain`` enthält die public Dest-IP als String. Die aktuelle
+``DetectionEngine`` nutzt ``lookup_subdomain`` (Hostname-Matching) und matcht
+daher KEINE IP-Adressen. Für Shadow-AI-Detection auf externen Services braucht
+es einen IP→Service-Mapping-Schritt (ASN-Lookup / CIDR-Mapping, siehe #15
+E1-7). Bis dahin sind externe AI-Flows im v2-Output sichtbar, werden aber nicht
+automatisch als „AI" klassifiziert. Follow-up-Issue tracked diesen Gap.
 
 **Skip-Regeln:** ``log-status`` in ``{NODATA, SKIPDATA, "-"}`` wird übersprungen
 (kein Flow-Record). Zeilen ohne ``srcaddr``/``dstaddr`` werden verworfen.
@@ -42,7 +47,7 @@ sondern nur nach Service-Mapping-Auflösung).
 Referenz: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -196,7 +201,7 @@ def _build_record(
     if not start_raw or not start_raw.isdigit():
         return None
     try:
-        ts = datetime.utcfromtimestamp(int(start_raw))
+        ts = datetime.fromtimestamp(int(start_raw), tz=timezone.utc).replace(tzinfo=None)
     except (ValueError, OSError, OverflowError):
         return None
 
@@ -226,7 +231,7 @@ def _build_record(
         "bytes_downloaded": None,  # VPC-Flow misst nur Summe pro Richtung
         "urlcategory": None,
         "useragent": None,
-        "app": pkt_src_service,
+        "app": pkt_src_service.lower() if pkt_src_service else None,
     }
 
 
