@@ -200,3 +200,48 @@ def test_user_identity_types_frozenset():
     assert "AD User" in USER_IDENTITY_TYPES
     assert "User" in USER_IDENTITY_TYPES
     assert "Network" not in USER_IDENTITY_TYPES
+
+
+def test_utf8_bom_header_is_handled(tmp_path, pseudonymizer):
+    # Windows/PowerShell S3-Exporte können einen BOM enthalten → Header-Detect
+    # muss trotzdem greifen.
+    f = tmp_path / "bom.csv"
+    content = (
+        '\ufeff"timestamp","most_granular_identity","identities","internal_ip",'
+        '"external_ip","action","query_type","response_code","domain","categories",'
+        '"most_granular_identity_type","identity_types","blocked_categories",'
+        '"rule_id","destination_countries","organization_id"\n'
+        '"2024-06-23 09:00:00","alice","alice","10.0.1.1","203.0.113.1",'
+        '"Allowed","1 (A)","NOERROR","chat.openai.com.","Generative AI",'
+        '"AD User","AD User,Network","","101","US","9999"\n'
+    )
+    f.write_text(content, encoding="utf-8")
+    df = parse_umbrella_log(f, pseudonymizer=pseudonymizer)
+    assert len(df) == 1
+    assert df.iloc[0]["domain"] == "chat.openai.com"
+
+
+def test_blocked_by_dns_action_variant(tmp_path, pseudonymizer):
+    # Umbrella produziert auch "Blocked by DNS", "Blocked by SWG", "Monitored".
+    # Parser reicht action 1:1 durch; Detection-Seite sollte str.startswith("Blocked")
+    # verwenden, nicht == "Blocked".
+    f = tmp_path / "variants.csv"
+    content = (
+        '"timestamp","most_granular_identity","identities","internal_ip",'
+        '"external_ip","action","query_type","response_code","domain","categories",'
+        '"most_granular_identity_type","identity_types","blocked_categories",'
+        '"rule_id","destination_countries","organization_id"\n'
+        '"2024-06-23 09:00:00","alice","alice","10.0.1.1","203.0.113.1",'
+        '"Blocked by DNS","1 (A)","NXDOMAIN","character.ai.","Generative AI",'
+        '"AD User","AD User,Network","","101","US","9999"\n'
+        '"2024-06-23 09:00:01","bob","bob","10.0.1.2","203.0.113.1",'
+        '"Monitored","1 (A)","NOERROR","chat.openai.com.","Generative AI",'
+        '"AD User","AD User,Network","","101","US","9999"\n'
+    )
+    f.write_text(content, encoding="utf-8")
+    df = parse_umbrella_log(f, pseudonymizer=pseudonymizer)
+    assert len(df) == 2
+    assert df.iloc[0]["action"] == "Blocked by DNS"
+    assert df.iloc[1]["action"] == "Monitored"
+    # Detection-Konvention:
+    assert df["action"].str.startswith("Blocked").sum() == 1

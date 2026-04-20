@@ -119,7 +119,8 @@ def parse_umbrella_log(
     source = Path(source)
     records: list[dict] = []
 
-    with open(source, encoding="utf-8", errors="replace", newline="") as f:
+    # utf-8-sig streift optionalen BOM (S3-Export via Windows/PowerShell kann BOM enthalten)
+    with open(source, encoding="utf-8-sig", errors="replace", newline="") as f:
         reader = csv.reader(f)
         try:
             first_row = next(reader)
