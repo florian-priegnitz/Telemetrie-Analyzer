@@ -15,6 +15,7 @@ from src.parsers.base import BaseParser
 from src.parsers.cloudflare_gateway import CloudflareGatewayParser
 from src.parsers.entra_id import EntraIDSignInParser
 from src.parsers.fortinet import FortiGateWebfilterParser
+from src.parsers.netskope import NetskopeCASBParser
 from src.parsers.paloalto import PanOSUrlParser
 from src.parsers.pihole import PiholeParser
 from src.parsers.squid import SquidParser
@@ -45,6 +46,12 @@ _ZSCALER_SAMPLE = (
 _PALOALTO_SAMPLE = (
     "1,2024/06/23 08:15:32,SERIAL,THREAT,url,0,2024/06/23 08:15:32,10.0.1.42,203.0.113.1,0.0.0.0,0.0.0.0,allow-ai,alice@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,1,1,54321,443,0,0,0x00,ssl,alert,chat.openai.com/,,Computers-and-Internet,informational,c2s,1,0x00,DE,US,,,,,Mozilla/5.0 Chrome/124\n"
     "1,2024/06/23 08:15:40,SERIAL,THREAT,url,0,2024/06/23 08:15:40,10.0.1.50,203.0.113.2,0.0.0.0,0.0.0.0,allow-ai,bob@acme.corp,,web-browsing,vsys1,trust,untrust,eth1/1,eth1/2,0,,2,1,41233,443,0,0,0x00,ssl,alert,claude.ai/chats,,Computers-and-Internet,informational,c2s,2,0x00,DE,US,,,,,Mozilla/5.0 Firefox/125\n"
+)
+
+# Netskope CASB Mini-Sample: 2 JSON-NDJSON application events
+_NETSKOPE_SAMPLE = (
+    '{"_insertion_epoch_timestamp":1719131732,"user":"alice@acme.com","src_ip":"10.0.1.42","hostname":"chat.openai.com","app":"OpenAI ChatGPT","appcategory":"Artificial Intelligence","activity":"Prompt","action":"allow","method":"POST","uri_path":"/backend-api/conversation","bytes_uploaded":2048,"bytes_downloaded":10240}\n'
+    '{"_insertion_epoch_timestamp":1719131800,"user":"bob@acme.com","src_ip":"10.0.1.50","hostname":"claude.ai","app":"Anthropic Claude","appcategory":"Artificial Intelligence","activity":"Login","action":"allow","method":"GET","uri_path":"/chats","bytes_uploaded":512,"bytes_downloaded":4096}\n'
 )
 
 # Cloudflare Gateway Mini-Sample: 1 DNS + 1 HTTP NDJSON-Event
@@ -157,6 +164,13 @@ def cloudflare_path(tmp_path):
     return path
 
 
+@pytest.fixture
+def netskope_path(tmp_path):
+    path = tmp_path / "netskope.jsonl"
+    path.write_text(_NETSKOPE_SAMPLE, encoding="utf-8")
+    return path
+
+
 @pytest.fixture(
     params=[
         ("pihole", PiholeParser, "pihole_path"),
@@ -168,8 +182,9 @@ def cloudflare_path(tmp_path):
         ("aws_vpc", VPCFlowLogsParser, "aws_vpc_path"),
         ("entra_id", EntraIDSignInParser, "entra_path"),
         ("cloudflare", CloudflareGatewayParser, "cloudflare_path"),
+        ("netskope", NetskopeCASBParser, "netskope_path"),
     ],
-    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet", "aws_vpc", "entra_id", "cloudflare"],
+    ids=["pihole", "squid", "zscaler", "paloalto", "umbrella", "fortinet", "aws_vpc", "entra_id", "cloudflare", "netskope"],
 )
 def parser_and_df(request, pseudonymizer):
     _, parser_cls, path_fixture = request.param
