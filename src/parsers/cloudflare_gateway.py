@@ -178,11 +178,14 @@ def _build_record(
     if not src_ip:
         return None
 
-    is_http = "URL" in event or "HTTPMethod" in event or "HTTPStatusCode" in event
-
-    if is_http:
+    # Detection-Priorität: QueryName → DNS (autoritativstes DNS-Feld),
+    # sonst URL/HTTPMethod → HTTP. Schützt gegen Schema-Drift, wenn ein DNS-
+    # Event versehentlich HTTPStatusCode enthält.
+    if "QueryName" in event:
+        return _build_dns_record(event, ts, src_ip, source_name, pseudonymizer)
+    if "URL" in event or "HTTPMethod" in event:
         return _build_http_record(event, ts, src_ip, source_name, pseudonymizer)
-    return _build_dns_record(event, ts, src_ip, source_name, pseudonymizer)
+    return None
 
 
 def _build_dns_record(

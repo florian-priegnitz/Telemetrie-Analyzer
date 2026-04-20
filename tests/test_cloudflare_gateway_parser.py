@@ -206,3 +206,37 @@ def test_domain_lowercased(pseudonymizer):
     for domain in df["domain"].dropna():
         assert domain == domain.lower()
         assert not domain.endswith(".")
+
+
+def test_matched_category_names_fallback(tmp_path, pseudonymizer):
+    # MatchedCategoryNames wird genutzt wenn QueryCategoryNames fehlt
+    content = json.dumps({
+        "Datetime": "2024-06-23T10:00:00Z",
+        "SrcIP": "10.0.1.1",
+        "QueryName": "chat.openai.com",
+        "QueryType": "A",
+        "ResolverDecision": "allowed",
+        "MatchedCategoryNames": ["Generative AI"],  # statt QueryCategoryNames
+    }) + "\n"
+    f = tmp_path / "matched.jsonl"
+    f.write_text(content, encoding="utf-8")
+    df = parse_cloudflare_gateway_log(f, pseudonymizer=pseudonymizer)
+    assert len(df) == 1
+    assert df.iloc[0]["urlcategory"] == "Generative AI"
+
+
+def test_dns_beats_http_when_both_indicators_present(tmp_path, pseudonymizer):
+    # Schema-Drift-Schutz: QueryName hat Vorrang vor HTTPStatusCode
+    content = json.dumps({
+        "Datetime": "2024-06-23T10:00:00Z",
+        "SrcIP": "10.0.1.1",
+        "QueryName": "chat.openai.com",
+        "QueryType": "A",
+        "ResolverDecision": "allowed",
+        "HTTPStatusCode": 200,  # Noise-Feld
+    }) + "\n"
+    f = tmp_path / "mixed.jsonl"
+    f.write_text(content, encoding="utf-8")
+    df = parse_cloudflare_gateway_log(f, pseudonymizer=pseudonymizer)
+    assert len(df) == 1
+    assert df.iloc[0]["source_type"] == "cloudflare_gateway_dns"
