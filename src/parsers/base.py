@@ -18,6 +18,24 @@ import pandas as pd
 from src.privacy.pseudonymizer import Pseudonymizer
 
 
+def coerce_timestamp_ns(df: pd.DataFrame) -> pd.DataFrame:
+    """Erzwingt ``datetime64[ns]`` für die ``timestamp``-Spalte.
+
+    pandas ≥ 2.2 kann je nach Input-Quelle ``datetime64[us]`` liefern
+    (z.B. aus ISO-Strings mit Microsekunden, oder aus numpy-Defaults).
+    Unser BaseParser-Contract verlangt strikt ``[ns]`` — dieser Helper
+    wird am Ende jeder ``parse_*_log()``-Funktion gerufen UND im
+    ``_finalize()``-Hook der Klassen, sodass beide Aufrufpfade (direkte
+    Funktion + Klassen-parse()) den dtype-Vertrag erfüllen.
+    """
+    if df.empty or "timestamp" not in df.columns:
+        return df
+    if str(df["timestamp"].dtype) != "datetime64[ns]":
+        df = df.copy()
+        df["timestamp"] = df["timestamp"].astype("datetime64[ns]")
+    return df
+
+
 class BaseParser(ABC):
     """Abstrakte Basisklasse für Log-Parser mit gemeinsamem DataFrame-Schema."""
 
@@ -72,8 +90,13 @@ class BaseParser(ABC):
                 raise ValueError(f"Unerwartete Spalten: {sorted(extra)}")
 
     def _finalize(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Sortiert nach timestamp und validiert. Hilfsmethode für Subclasses."""
+        """Sortiert nach timestamp, coerce auf [ns], validiert.
+
+        Der `.astype("datetime64[ns]")`-Coerce fängt pandas-≥2.2-Fälle ab,
+        in denen der Timestamp als `[us]` aus Parse-Operationen kommt.
+        """
         if not df.empty and "timestamp" in df.columns:
             df = df.sort_values("timestamp").reset_index(drop=True)
+            df = coerce_timestamp_ns(df)
         self.validate_schema(df)
         return df
