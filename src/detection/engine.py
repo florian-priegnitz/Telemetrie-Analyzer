@@ -115,9 +115,12 @@ class DetectionEngine:
                 unique_ai_services=0,
             )
 
-        # AI-Domains matchen
+        # AI-Domains matchen — Multi-Fallback:
+        # 1. Subdomain-Match gegen `domains` (Default-Pfad)
+        # 2. Alias-Match (Entra AppDisplayName o.ä. — #52)
+        # 3. IP-Range-Match (AWS VPC Flow mit dstaddr=IP — #50)
         df = df.copy()
-        df["ai_match"] = df["domain"].apply(self._db.lookup_subdomain)
+        df["ai_match"] = df["domain"].apply(self._match_endpoint)
 
         ai_df = df[df["ai_match"].notna()]
         findings = self._build_findings(ai_df)
@@ -132,6 +135,27 @@ class DetectionEngine:
             unique_clients=df["client"].nunique(),
             unique_ai_services=len({f.service for f in findings}),
         )
+
+    def _match_endpoint(self, value: str | None) -> AIEndpoint | None:
+        """Multi-Fallback-Lookup für heterogene ``domain``-Werte.
+
+        Reihenfolge: Subdomain → Alias → IP-Range. Der erste Treffer gewinnt.
+        Leere / None-Werte liefern None zurück.
+        """
+        if not value or not isinstance(value, str):
+            return None
+        text = value.strip()
+        if not text:
+            return None
+        if result := self._db.lookup_subdomain(text):
+            return result
+        if result := self._db.lookup_alias(text):
+            return result
+        # IP-Range-Fallback (#50): nur wenn value wie eine IP aussieht
+        if text.replace(".", "").replace(":", "").isalnum() and any(c.isdigit() for c in text):
+            if result := self._db.lookup_ip(text):
+                return result
+        return None
 
     def _build_findings(self, ai_df: pd.DataFrame) -> list[Finding]:
         """Gruppiert AI-Queries nach Client+Service und erzeugt Findings."""

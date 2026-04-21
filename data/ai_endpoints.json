@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
+  "version": "2.2.0",
   "last_updated": "2026-04-21",
   "endpoints": [
     {
@@ -110,7 +110,10 @@
       ],
       "description": "Claude AI Chatbot und API",
       "aliases": [
-        "Claude"
+        "Anthropic",
+        "Anthropic Claude",
+        "Claude",
+        "Claude.ai"
       ]
     },
     {
@@ -424,7 +427,11 @@
         "api2.cursor.sh",
         "repo42.cursor.sh"
       ],
-      "description": "KI-Code-Editor — überträgt gesamten Code-Kontext"
+      "description": "KI-Code-Editor — überträgt gesamten Code-Kontext",
+      "aliases": [
+        "Cursor",
+        "Cursor AI"
+      ]
     },
     {
       "service": "D-ID",
@@ -531,7 +538,11 @@
         "api.deepseek.com",
         "deepseek.com"
       ],
-      "description": "Chinesischer LLM-Anbieter — erhöhtes Datentransfer-Risiko (Drittland)"
+      "description": "Chinesischer LLM-Anbieter — erhöhtes Datentransfer-Risiko (Drittland)",
+      "aliases": [
+        "DeepSeek",
+        "DeepSeek Chat"
+      ]
     },
     {
       "service": "Descript",
@@ -700,7 +711,13 @@
       ],
       "description": "KI-Code-Assistent — überträgt Code-Kontext an externe Server",
       "aliases": [
-        "Copilot"
+        "Copilot",
+        "Copilot for GitHub",
+        "GitHub Copilot"
+      ],
+      "ip_ranges": [
+        "140.82.112.0/20",
+        "143.55.64.0/20"
       ]
     },
     {
@@ -717,7 +734,8 @@
       "description": "Google Gemini (ehem. Bard) – LLM-Chatbot und API",
       "aliases": [
         "Bard",
-        "Gemini"
+        "Gemini",
+        "Google Gemini"
       ]
     },
     {
@@ -815,7 +833,10 @@
         "app.hirevue.com"
       ],
       "description": "KI-gestütztes Video-Interview-Screening",
-      "source": "endpoint-refresh-2026-04"
+      "source": "endpoint-refresh-2026-04",
+      "aliases": [
+        "HireVue"
+      ]
     },
     {
       "service": "HubSpot AI",
@@ -838,7 +859,10 @@
         "api-inference.huggingface.co",
         "cdn-lfs.huggingface.co"
       ],
-      "description": "ML-Modell-Plattform – Modell-Downloads und Inference API"
+      "description": "ML-Modell-Plattform – Modell-Downloads und Inference API",
+      "ip_ranges": [
+        "18.169.0.0/16"
+      ]
     },
     {
       "service": "HuggingChat",
@@ -886,7 +910,11 @@
         "api.intercom.io"
       ],
       "description": "KI-Customer-Support-Agent (Fin)",
-      "source": "endpoint-refresh-2026-04"
+      "source": "endpoint-refresh-2026-04",
+      "aliases": [
+        "Fin AI Agent",
+        "Intercom Fin"
+      ]
     },
     {
       "service": "InVideo AI",
@@ -1163,7 +1191,13 @@
         "www.bing.com/chat",
         "edgeservices.bing.com"
       ],
-      "description": "Microsoft Copilot (Bing Chat) – in Edge/Windows integriert"
+      "description": "Microsoft Copilot (Bing Chat) – in Edge/Windows integriert",
+      "aliases": [
+        "Copilot",
+        "M365 Copilot",
+        "Microsoft 365 Copilot",
+        "Microsoft Copilot"
+      ]
     },
     {
       "service": "Midjourney",
@@ -1175,7 +1209,10 @@
         "midjourney.com",
         "cdn.midjourney.com"
       ],
-      "description": "KI-Bildgenerierung – Prompts können sensible Informationen enthalten"
+      "description": "KI-Bildgenerierung – Prompts können sensible Informationen enthalten",
+      "aliases": [
+        "Midjourney"
+      ]
     },
     {
       "service": "MiniMax Hailuo",
@@ -1333,11 +1370,17 @@
       "description": "ChatGPT und OpenAI API – LLM-basierter Chatbot und API-Zugang",
       "aliases": [
         "ChatGPT",
+        "ChatGPT Enterprise",
         "GPT",
-        "GPT-4"
+        "GPT-4",
+        "OpenAI",
+        "OpenAI ChatGPT"
       ],
       "sni_patterns": [
         "*.openai.com"
+      ],
+      "ip_ranges": [
+        "13.107.246.0/24"
       ]
     },
     {
@@ -1397,7 +1440,8 @@
       ],
       "description": "KI-gestützte Suchmaschine mit LLM-Antworten",
       "aliases": [
-        "Perplexity"
+        "Perplexity",
+        "Perplexity AI"
       ]
     },
     {
@@ -2056,7 +2100,8 @@
       ],
       "description": "Grok LLM von xAI – in X (Twitter) integriert",
       "aliases": [
-        "Grok"
+        "Grok",
+        "xAI Grok"
       ]
     },
     {

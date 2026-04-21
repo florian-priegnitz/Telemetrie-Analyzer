@@ -24,8 +24,9 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from src.compliance.engine import ComplianceEngine
 from src.database.ai_endpoints import AIEndpointDatabase
