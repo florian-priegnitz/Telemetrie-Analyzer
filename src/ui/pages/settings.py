@@ -9,6 +9,7 @@ from typing import Any
 import streamlit as st
 
 from src.detection.engine import SYSTEMATIC_THRESHOLD, UPLOAD_THRESHOLD_BYTES
+from src.privacy.retention import load_policy
 from src.reports.privacy import PrivacyLeakError, assert_no_plaintext
 from src.ui.state import reset_pipeline
 
@@ -54,6 +55,33 @@ def render(report_data: dict[str, Any] | None) -> None:
         if st.button("🗑 Alle Analyse-Daten jetzt löschen", use_container_width=True):
             reset_pipeline()
             st.success("Alle Analyse-Daten gelöscht.")
+
+    st.markdown("### Retention (DSGVO Art. 5 (1e) — Speicherbegrenzung)")
+    policy = load_policy()
+    if policy.enabled:
+        st.success(
+            f"Aktiv: Default **{policy.default_days} Tage**. Einträge außerhalb des "
+            f"Retention-Horizonts werden vor der Detection verworfen."
+        )
+    else:
+        st.warning("Retention ist **deaktiviert**. Bitte `config/retention.yaml` prüfen.")
+
+    per_type = " · ".join(
+        f"`{k}`: **{v}d**" for k, v in sorted(policy.policies.items())
+    ) or "—"
+    st.caption(f"Per-Log-Typ-Overrides: {per_type}")
+
+    if report_data and "retention" in report_data:
+        ret = report_data["retention"]
+        st.markdown(
+            f"**Letzte Analyse:** {ret['rows_before']} Einträge geparst, "
+            f"{ret['rows_dropped']} durch Retention verworfen "
+            f"(Log-Typ `{ret['log_type']}`, Fenster {ret['days']} Tage)."
+        )
+    st.caption(
+        "Override via ENV `RETENTION_DAYS` / `RETENTION_CONFIG`. Der Analyzer "
+        "persistiert keine Rohdaten — Retention wirkt rein in-memory."
+    )
 
     st.markdown("### Detection-Schwellwerte (read-only)")
     st.markdown(
