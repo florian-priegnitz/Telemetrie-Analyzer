@@ -9,7 +9,7 @@ from __future__ import annotations
 import streamlit as st
 
 from src.ui.components.upload_widget import render_upload_section
-from src.ui.pages import compliance, findings, overview, settings, users_patterns
+from src.ui.pages import compliance, findings, formats, overview, settings, users_patterns
 from src.ui.state import init_session_state
 
 
@@ -18,8 +18,13 @@ _PAGE_FUNCS = {
     "🔍 Findings": findings.render,
     "👥 Users & Patterns": users_patterns.render,
     "📋 Compliance": compliance.render,
+    "📚 Formate": formats.render,
     "⚙️ Einstellungen": settings.render,
 }
+
+# Pages, die unabhaengig vom Pipeline-State erreichbar sind (zeigen eigene Inhalte
+# ohne Analyse-Ergebnisse). Alle anderen Pages verlangen zuerst eine Analyse.
+_STATE_INDEPENDENT_PAGES = {"📚 Formate", "⚙️ Einstellungen"}
 
 
 def main() -> None:
@@ -67,14 +72,14 @@ def main() -> None:
         st.error(f"Fehler bei der Analyse: {st.session_state.get('error_message', 'unbekannt')}")
         return
 
-    if state in ("empty", "uploaded") and page != "⚙️ Einstellungen":
+    if state in ("empty", "uploaded") and page not in _STATE_INDEPENDENT_PAGES:
         st.info(
             "👈 Bitte zuerst eine Log-Datei hochladen und 'Analyse starten' klicken. "
-            "Sample-Logs liegen in `testdata/`: `pihole_sample.log`, `squid_sample.log` (falls generiert)."
+            "Siehe **📚 Formate** für alle unterstützten Dateitypen inkl. Sample-Downloads."
         )
         return
 
-    if page == "⚙️ Einstellungen":
+    if page in _STATE_INDEPENDENT_PAGES:
         _PAGE_FUNCS[page](st.session_state.get("report_data"))
     else:
         report_data = st.session_state.get("report_data")
