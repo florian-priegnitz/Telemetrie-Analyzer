@@ -58,6 +58,9 @@ dev = [
     "bandit>=1.7",
 ]
 
+[project.scripts]
+telemetrie-analyzer = "src.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/florian-priegnitz/Telemetrie-Analyzer"
 Repository = "https://github.com/florian-priegnitz/Telemetrie-Analyzer"
