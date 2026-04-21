@@ -25,6 +25,7 @@ from src.parsers.pihole import parse_pihole_log
 from src.parsers.squid import parse_squid_log
 from src.privacy.k_anonymity import check_k_anonymity
 from src.privacy.pseudonymizer import Pseudonymizer
+from src.privacy.retention import apply_retention, load_policy, summarize
 from src.reports.context import build_context, context_to_json_dict
 from src.reports.privacy import get_default_salt, pseudonymize_client
 
@@ -126,11 +127,22 @@ def run_pipeline(
     if df.empty:
         raise ValueError(f"Keine parsbaren Einträge in {filename!r} gefunden.")
 
+    policy = load_policy()
+    df_trimmed = apply_retention(df, policy, log_type=log_format)
+    retention_report = summarize(df, df_trimmed, policy, log_type=log_format)
+    if df_trimmed.empty:
+        raise ValueError(
+            f"Nach Retention-Trim ({retention_report['days']} Tage) sind keine Einträge "
+            f"mehr in {filename!r} vorhanden. Log-Horizont älter als Retention."
+        )
+    df = df_trimmed
+
     detection = DetectionEngine().analyze(df)
     compliance = ComplianceEngine().analyze(detection)
     ctx = build_context(detection, compliance, salt=salt)
     result = context_to_json_dict(ctx)
     result["user_patterns"] = _build_user_patterns(df, result["findings"], salt)
+    result["retention"] = retention_report
     return result
 
 
