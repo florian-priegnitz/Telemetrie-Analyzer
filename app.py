@@ -73,10 +73,33 @@ def main() -> None:
         return
 
     if state in ("empty", "uploaded") and page not in _STATE_INDEPENDENT_PAGES:
-        st.info(
-            "👈 Bitte zuerst eine Log-Datei hochladen und 'Analyse starten' klicken. "
-            "Siehe **📚 Formate** für alle unterstützten Dateitypen inkl. Sample-Downloads."
+        from src.ui.components.upload_widget import render_scenario_buttons
+
+        st.markdown("## 👋 Willkommen beim Telemetrie Analyzer")
+        st.markdown(
+            "Shadow-AI-Detection für 12 Telemetrie-Log-Formate, mit Compliance-Mapping auf "
+            "**DORA · EU AI Act · ISO 42001 · ISO 27001 · DSGVO**."
         )
+
+        col_left, col_right = st.columns([3, 2])
+        with col_left:
+            st.markdown("### 🎬 Direkt mit einem Demo starten")
+            st.caption(
+                "Kein Log zur Hand? Ein Klick lädt eines der synthetischen Samples "
+                "(RFC 1918 IPs, keine PII) in die Pipeline — dann links **🚀 Analyse starten**."
+            )
+            render_scenario_buttons(key_prefix="welcome")
+
+        with col_right:
+            st.markdown("### 📖 Oder eigenes Log hochladen")
+            st.markdown(
+                "- Upload-Widget in der Sidebar (12 Formate, Auto-Detect)\n"
+                "- `.log` / `.csv` / `.json` / `.jsonl` / `.ndjson`\n"
+                "- Bei unbekanntem Format: manueller Dropdown\n"
+                "- Rohdaten werden **nur in-memory** verarbeitet, "
+                "Pseudonymisierung läuft schon im Parser\n\n"
+                "Siehe Page **📚 Formate** für Feld-Mapping pro Tool und Testdata-Downloads."
+            )
         return
 
     if page in _STATE_INDEPENDENT_PAGES:

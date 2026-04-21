@@ -4,6 +4,9 @@ Nach dem UI-Formats-Parity-Refactor (Sprint 7) unterstützt das Widget alle
 12 Parser aus ``SUPPORTED_PARSERS``. Labels und Override-Dropdown werden
 aus ``PARSER_LABELS`` (Single Source of Truth in ``src/parsers/detection.py``)
 erzeugt.
+
+Demo-Scenario-Buttons (W3-A) erlauben Ein-Klick-Start ohne File-Upload —
+die Scenario-Registry lebt in ``src/ui/scenarios.py``.
 """
 
 from __future__ import annotations
@@ -11,7 +14,14 @@ from __future__ import annotations
 import streamlit as st
 
 from src.parsers.detection import PARSER_LABELS, SUPPORTED_PARSERS
-from src.ui.state import UNKNOWN_FORMAT, detect_log_format, reset_pipeline, trigger_analysis
+from src.ui.scenarios import available_scenarios
+from src.ui.state import (
+    UNKNOWN_FORMAT,
+    detect_log_format,
+    load_scenario,
+    reset_pipeline,
+    trigger_analysis,
+)
 
 _UPLOAD_LABEL = "Log-Datei (12 Formate — Auto-Detect)"
 _UPLOAD_HELP = (
@@ -19,6 +29,41 @@ _UPLOAD_HELP = (
     "AWS VPC Flow · Entra ID · Cloudflare Gateway · Netskope · "
     "Sysmon · Elastic ECS — Details siehe Page **📚 Formate**."
 )
+
+
+def render_scenario_buttons(
+    container=None,
+    heading: str | None = None,
+    key_prefix: str = "default",
+) -> None:
+    """Rendert Ein-Klick-Demo-Buttons für alle verfügbaren Scenarios.
+
+    Args:
+        container: Optionaler Streamlit-Container (z.B. Sidebar-Expander
+            oder Main-Panel). Default: aktueller Kontext.
+        heading: Optionaler Markdown-Überschriften-Text. Default: None.
+        key_prefix: Eindeutiger Präfix für Widget-Keys — zwingend, wenn
+            die Buttons an mehreren Stellen gerendert werden (Sidebar-
+            Expander + Empty-State-Onboarding). Streamlit erlaubt keine
+            Duplicate-Keys im selben Render-Pass.
+    """
+    target = container if container is not None else st
+    scenarios = available_scenarios()
+    if not scenarios:
+        target.info("Keine Demo-Scenarios verfügbar — `testdata/` fehlt.")
+        return
+    if heading:
+        target.markdown(heading)
+    target.caption(f"🎬 **{len(scenarios)} Demo-Scenarios** — Klick lädt "
+                   "die Datei, dann 🚀 Analyse starten.")
+    for scenario in scenarios:
+        if target.button(scenario.label,
+                         key=f"scenario_btn_{key_prefix}_{scenario.key}",
+                         use_container_width=True,
+                         help=f"{scenario.description} · {scenario.size_kb:.1f} KB · "
+                              f"Erwartet: {scenario.expected_highlights}"):
+            load_scenario(scenario.key)
+            st.rerun()
 
 
 def render_upload_section() -> None:
@@ -47,6 +92,9 @@ def render_upload_section() -> None:
     fname = st.session_state.get("uploaded_filename")
     fmt = st.session_state.get("detected_format")
     if not (fname and fmt):
+        # Kein Upload vorhanden → Ein-Klick-Demo anbieten
+        with st.expander("🎬 Demo-Scenario statt eigenem Upload", expanded=False):
+            render_scenario_buttons(key_prefix="sidebar")
         return
 
     if fmt == UNKNOWN_FORMAT:
