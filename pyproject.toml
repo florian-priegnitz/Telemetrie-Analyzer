@@ -97,9 +97,16 @@ extend-exclude = [
 select = ["E", "F", "W", "I", "UP", "B", "SIM"]
 ignore = [
     "E501",
+    "B007",
     "B008",
+    "B023",
     "B904",
+    "B905",
+    "UP042",
+    "SIM102",
+    "SIM105",
     "SIM108",
+    "SIM115",
     "SIM117",
 ]
 

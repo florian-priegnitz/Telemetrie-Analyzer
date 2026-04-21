@@ -23,7 +23,6 @@ from src.parsers.umbrella import UmbrellaDNSParser
 from src.parsers.zscaler import ZscalerParser
 from src.privacy.pseudonymizer import Pseudonymizer
 
-
 _PIHOLE_SAMPLE = (
     "Mar  9 08:15:32 dnsmasq[1234]: query[A] chat.openai.com from 192.168.1.42\n"
     "Mar  9 08:15:33 dnsmasq[1234]: query[AAAA] chat.openai.com from 192.168.1.42\n"

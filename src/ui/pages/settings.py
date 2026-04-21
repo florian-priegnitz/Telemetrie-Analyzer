@@ -20,7 +20,6 @@ def render(report_data: dict[str, Any] | None) -> None:
     st.markdown("### Pseudonymisierung")
     st.success("Pseudonymisierung ist **immer aktiv** (HMAC-SHA256, DSGVO Art. 25).")
 
-    current_salt = st.session_state.get("report_salt", "")
     fingerprint = report_data.get("report_meta", {}).get("salt_fingerprint", "—") if report_data else "—"
     st.markdown(
         f"**Aktiver Salt-Fingerprint:** `{fingerprint}` "

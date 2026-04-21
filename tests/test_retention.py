@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
-import pytest
 
 from src.privacy.retention import (
     DEFAULT_DAYS,
@@ -15,7 +14,6 @@ from src.privacy.retention import (
     load_policy,
     summarize,
 )
-
 
 NOW = datetime(2026, 4, 21, 12, 0, 0)
 

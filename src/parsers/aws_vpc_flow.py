@@ -47,7 +47,7 @@ sondern nur nach Service-Mapping-Auflösung).
 Referenz: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -201,7 +201,7 @@ def _build_record(
     if not start_raw or not start_raw.isdigit():
         return None
     try:
-        ts = datetime.fromtimestamp(int(start_raw), tz=timezone.utc).replace(tzinfo=None)
+        ts = datetime.fromtimestamp(int(start_raw), tz=UTC).replace(tzinfo=None)
     except (ValueError, OSError, OverflowError):
         return None
 

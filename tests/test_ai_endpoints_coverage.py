@@ -12,7 +12,6 @@ import pytest
 
 from src.database.ai_endpoints import AIEndpointDatabase
 
-
 DB_PATH = Path(__file__).parent.parent / "data" / "ai_endpoints.json"
 
 

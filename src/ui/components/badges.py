@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-
 _RISK_COLORS = {
     "critical": ("#B60205", "#FFFFFF", "🔴"),
     "high": ("#D93F0B", "#FFFFFF", "🟠"),

@@ -29,7 +29,6 @@ from src.privacy.retention import apply_retention, load_policy, summarize
 from src.reports.context import build_context, context_to_json_dict
 from src.reports.privacy import get_default_salt, pseudonymize_client
 
-
 PipelineState = Literal["empty", "uploaded", "analyzing", "analyzed", "error"]
 LogFormat = Literal["pihole", "squid", "unknown"]
 

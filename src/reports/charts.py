@@ -7,11 +7,9 @@ um Report-Größe klein zu halten.
 
 from __future__ import annotations
 
-import plotly.express as px
 import plotly.graph_objects as go
 
 from src.reports.context import ReportContext
-
 
 _PLOTLY_KW = dict(include_plotlyjs="cdn", full_html=False)
 _OFFLINE_KW = dict(include_plotlyjs="inline", full_html=False)
@@ -23,7 +21,7 @@ def _kw(offline: bool) -> dict:
     return _OFFLINE_KW if offline else _PLOTLY_KW
 
 
-def _empty_fallback(message: str, as_figure: bool) -> "str | go.Figure":
+def _empty_fallback(message: str, as_figure: bool) -> str | go.Figure:
     """Liefert Fallback je nach Output-Modus."""
     if as_figure:
         fig = go.Figure()
@@ -35,7 +33,7 @@ def _empty_fallback(message: str, as_figure: bool) -> "str | go.Figure":
 
 def render_framework_scores_bar(
     ctx: ReportContext, offline: bool = False, as_figure: bool = False,
-) -> "str | go.Figure":
+) -> str | go.Figure:
     """Bar-Chart: Compliance-Score pro Framework (Executive)."""
     if not ctx.framework_scores:
         return _empty_fallback("Keine Framework-Scores verfügbar.", as_figure)
@@ -61,7 +59,7 @@ def render_framework_scores_bar(
 
 def render_risk_distribution_donut(
     ctx: ReportContext, offline: bool = False, as_figure: bool = False,
-) -> "str | go.Figure":
+) -> str | go.Figure:
     """Donut-Chart: Verteilung der Findings nach Risk-Level (IT-Security)."""
     if not ctx.findings:
         return _empty_fallback("Keine Findings.", as_figure)
@@ -84,7 +82,7 @@ def render_risk_distribution_donut(
 
 def render_top_clients_bar(
     ctx: ReportContext, top_n: int = 10, offline: bool = False, as_figure: bool = False,
-) -> "str | go.Figure":
+) -> str | go.Figure:
     """Horizontaler Bar-Chart: Top-N pseudonymisierte Clients nach Anzahl Findings."""
     if not ctx.findings:
         return _empty_fallback("Keine Findings.", as_figure)
@@ -112,7 +110,7 @@ def render_top_clients_bar(
 
 def render_severity_stacked_bar(
     ctx: ReportContext, offline: bool = False, as_figure: bool = False,
-) -> "str | go.Figure":
+) -> str | go.Figure:
     """Stacked-Bar: Severity-Verteilung pro Framework (Compliance)."""
     if not ctx.framework_scores:
         return _empty_fallback("Keine Framework-Scores verfügbar.", as_figure)
@@ -147,7 +145,7 @@ def build_all_charts(ctx: ReportContext, offline: bool = False) -> dict[str, str
     }
 
 
-def build_all_figures(ctx: ReportContext) -> dict[str, "go.Figure"]:
+def build_all_figures(ctx: ReportContext) -> dict[str, go.Figure]:
     """Rendert alle Charts als plotly Figure-Objekte (für Streamlit st.plotly_chart)."""
     return {
         "framework_scores_bar": render_framework_scores_bar(ctx, as_figure=True),

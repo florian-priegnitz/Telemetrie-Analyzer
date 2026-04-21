@@ -6,11 +6,6 @@ from typing import Any
 
 import streamlit as st
 
-from src.reports.charts import (
-    render_framework_scores_bar,
-    render_risk_distribution_donut,
-)
-from src.reports.context import build_context
 from src.ui.components.badges import risk_badge
 from src.ui.components.kpi_row import render_kpi_row
 from src.ui.components.traffic_light import render_compliance_traffic_light

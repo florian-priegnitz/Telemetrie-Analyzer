@@ -10,7 +10,6 @@ import streamlit as st
 
 from src.ui.components.framework_card import render_framework_card
 
-
 _RISK_COLORS = {"critical": "#B60205", "high": "#D93F0B", "medium": "#FBCA04", "low": "#0E8A16"}
 
 
