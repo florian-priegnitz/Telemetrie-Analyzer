@@ -21,27 +21,37 @@ def render(report_data: dict[str, Any]) -> None:
         st.success("Keine Findings — keine Shadow AI im Analysezeitraum.")
         return
 
-    # Sidebar-Filter
+    # Sidebar-Filter. Keys sind absichtlich NICHT in init_session_state
+    # vorbelegt, damit Streamlit den `default` beim ersten Render nutzt.
     with st.sidebar:
         st.markdown("### Filter")
         selected_risk = st.multiselect(
             "Risk-Level",
             options=_RISK_LEVELS,
-            default=st.session_state.get("filter_risk_levels") or _RISK_LEVELS,
+            default=_RISK_LEVELS,
             key="filter_risk_levels",
+            help="Leere Auswahl = alle anzeigen.",
         )
         selected_fw = st.multiselect(
             "Framework (mind. 1 Mapping)",
             options=_FRAMEWORKS,
-            default=st.session_state.get("filter_frameworks") or _FRAMEWORKS,
+            default=_FRAMEWORKS,
             key="filter_frameworks",
+            help="Leere Auswahl = alle anzeigen.",
         )
         service_filter = st.text_input("Service enthält…", key="filter_service")
 
+    # Defensive Filter-Semantik: leere Multiselect-Auswahl = kein Filter (alle zeigen).
+    risk_filter_active = bool(selected_risk)
+    fw_filter_active = bool(selected_fw)
+
     filtered = [
         f for f in findings
-        if f.get("risk_level") in selected_risk
-        and any(m.get("framework") in selected_fw for m in f.get("compliance_mappings", []))
+        if (not risk_filter_active or f.get("risk_level") in selected_risk)
+        and (not fw_filter_active or any(
+            m.get("framework") in selected_fw
+            for m in f.get("compliance_mappings", [])
+        ))
         and (not service_filter or service_filter.lower() in f.get("service", "").lower())
     ]
 
