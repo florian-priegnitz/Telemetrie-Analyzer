@@ -22,7 +22,7 @@ from urllib.parse import urlparse
 
 import pandas as pd
 
-from src.parsers.base import BaseParser
+from src.parsers.base import BaseParser, coerce_timestamp_ns
 from src.privacy.pseudonymizer import Pseudonymizer
 
 # Squid native: 10 whitespace-separated felder, time ist epoch.ms
@@ -146,6 +146,7 @@ def parse_squid_log(
     df["bytes_uploaded"] = df["bytes_uploaded"].astype("Int64")
     df["bytes_downloaded"] = df["bytes_downloaded"].astype("Int64")
     df["status_code"] = df["status_code"].astype("Int16")
+    df = coerce_timestamp_ns(df)
     return df[_COLUMNS]
 
 
