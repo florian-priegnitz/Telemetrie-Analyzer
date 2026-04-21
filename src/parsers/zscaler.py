@@ -26,7 +26,7 @@ from urllib.parse import urlparse
 
 import pandas as pd
 
-from src.parsers.base import BaseParser
+from src.parsers.base import BaseParser, coerce_timestamp_ns
 from src.privacy.pseudonymizer import Pseudonymizer
 
 DEFAULT_FIELDS: tuple[str, ...] = (
@@ -193,6 +193,9 @@ def parse_zscaler_log(
     df["bytes_uploaded"] = df["bytes_uploaded"].astype("Int64")
     df["bytes_downloaded"] = df["bytes_downloaded"].astype("Int64")
     df["status_code"] = df["status_code"].astype("Int16")
+    # DSGVO/pandas: NaN in url_path explizit zu None normalisieren (Tests erwarten None/"")
+    df["url_path"] = df["url_path"].astype(object).where(df["url_path"].notna(), None)
+    df = coerce_timestamp_ns(df)
     return df[_COLUMNS]
 
 

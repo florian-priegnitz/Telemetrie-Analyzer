@@ -31,6 +31,7 @@ from typing import Any
 from src.compliance.engine import ComplianceEngine
 from src.database.ai_endpoints import AIEndpointDatabase
 from src.detection.engine import DetectionEngine
+from src.parsers.detection import detect_format
 from src.privacy.pseudonymizer import Pseudonymizer
 from src.privacy.retention import apply_retention, load_policy, summarize
 from src.reports import ReportGenerator
@@ -71,50 +72,25 @@ def _register_parsers() -> None:
 
 
 def _auto_detect_parser(path: Path) -> str:
-    """Heuristik, um Parser anhand der ersten Zeilen zu erkennen.
+    """Heuristik-Wrapper um ``detect_format()`` aus ``src/parsers/detection.py``.
 
-    Nicht perfekt — bei Ambiguität bitte `--parser` setzen.
+    Signatur bleibt erhalten für Rückwärts-Kompatibilität der Tests —
+    die eigentliche Heuristik lebt jetzt im Shared-Modul (Single Source
+    of Truth für CLI und UI). Bei unbekanntem Format wird analog zur
+    alten Signatur eine ``ValueError`` geraist.
     """
-    sample = path.read_bytes()[:4096].decode("utf-8", errors="replace")
-    head_lines = [line.strip() for line in sample.splitlines() if line.strip()][:5]
-    if not head_lines:
+    sample_bytes = path.read_bytes()
+    if not sample_bytes.strip():
         raise ValueError("Datei ist leer oder enthält nur Whitespace.")
-
-    first = head_lines[0]
-    if first.startswith("{"):
-        lower = first.lower()
-        if '"appdisplayname"' in lower or '"signinactivity"' in lower or '"userprincipalname"' in lower:
-            return "entra_id"
-        if '"activity"' in lower and ('"netskope"' in lower or '"appcategory"' in lower):
-            return "netskope"
-        if '"@timestamp"' in lower and ('"ecs"' in lower or '"event"' in lower):
-            return "elastic_ecs"
-        if '"queryname"' in lower:
-            return "sysmon"
-        if '"cloudflare"' in lower or '"ray_id"' in lower:
-            return "cloudflare_gateway"
-        return "elastic_ecs"
-
-    if "dnsmasq[" in first and "query[" in first:
-        return "pihole"
-    if first.count("/") >= 3 and first.startswith(("1", "2")) and first[0:4].replace(".", "").isdigit():
-        return "squid"
-    if "date=" in first and "type=utm" in first.lower():
-        return "fortinet"
-    if first.startswith("2 ") or first.startswith("3 ") or "srcaddr" in head_lines[0].lower():
-        return "aws_vpc_flow"
-    if "," in first:
-        lower = first.lower()
-        if "policyname" in lower or "appclass" in lower:
-            return "zscaler"
-        if "category" in lower and "action" in lower:
-            return "umbrella"
-        if "subtype" in lower and "threat/content-type" in lower:
-            return "paloalto"
-    raise ValueError(
-        "Parser konnte nicht automatisch erkannt werden. "
-        f"Bitte --parser explizit setzen. Erste Zeile: {first[:120]!r}"
-    )
+    result = detect_format(sample_bytes)
+    if result is None:
+        first = sample_bytes[:200].decode("utf-8", errors="replace").splitlines()
+        first_line = first[0] if first else ""
+        raise ValueError(
+            "Parser konnte nicht automatisch erkannt werden. "
+            f"Bitte --parser explizit setzen. Erste Zeile: {first_line[:120]!r}"
+        )
+    return result
 
 
 def _analyze(args: argparse.Namespace) -> int:

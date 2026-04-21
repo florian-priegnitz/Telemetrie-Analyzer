@@ -50,7 +50,7 @@ from urllib.parse import urlparse
 
 import pandas as pd
 
-from src.parsers.base import BaseParser
+from src.parsers.base import BaseParser, coerce_timestamp_ns
 from src.privacy.pseudonymizer import Pseudonymizer
 
 _COLUMNS = [
@@ -255,6 +255,7 @@ def parse_elastic_ecs_log(
     df["bytes_uploaded"] = df["bytes_uploaded"].astype("Int64")
     df["bytes_downloaded"] = df["bytes_downloaded"].astype("Int64")
     df = df.sort_values("timestamp").reset_index(drop=True)
+    df = coerce_timestamp_ns(df)
     return df[_COLUMNS]
 
 

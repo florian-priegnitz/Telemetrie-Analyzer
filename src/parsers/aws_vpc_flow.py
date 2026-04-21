@@ -52,7 +52,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.parsers.base import BaseParser
+from src.parsers.base import BaseParser, coerce_timestamp_ns
 from src.privacy.pseudonymizer import Pseudonymizer
 
 # v2 Default-Feldreihenfolge (14 Positionen)
@@ -160,6 +160,7 @@ def parse_aws_vpc_flow_log(
     df["bytes_uploaded"] = df["bytes_uploaded"].astype("Int64")
     df["bytes_downloaded"] = df["bytes_downloaded"].astype("Int64")
     df["status_code"] = df["status_code"].astype("Int16")
+    df = coerce_timestamp_ns(df)
     return df[_COLUMNS]
 
 

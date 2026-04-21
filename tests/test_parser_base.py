@@ -238,9 +238,12 @@ def test_validate_schema_strict_rejects_extra():
     parser = PiholeParser()
     df = pd.DataFrame(
         {
+            # pandas ≥2.2 liefert pd.to_datetime gelegentlich als [us], der
+            # BaseParser-Contract verlangt aber [ns]. Explizite Coerce hier,
+            # damit wir den strict-Extra-Column-Check isoliert testen können.
             "timestamp": pd.to_datetime(
                 ["2026-01-01 10:00:00", "2026-01-01 10:05:00"]
-            ),
+            ).astype("datetime64[ns]"),
             "client": ["ip_abc12345", "ip_abc12345"],
             "domain": ["example.com", "example.com"],
             "rogue_column": ["x", "y"],
@@ -257,7 +260,7 @@ def test_validate_schema_rejects_unsorted():
         {
             "timestamp": pd.to_datetime(
                 ["2026-01-01 10:05:00", "2026-01-01 10:00:00"]
-            ),
+            ).astype("datetime64[ns]"),
             "client": ["ip_abc", "ip_abc"],
             "domain": ["example.com", "example.com"],
         }
