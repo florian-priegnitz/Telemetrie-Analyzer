@@ -1,7 +1,7 @@
 # Backlog — Telemetrie Analyzer
 
-**Stand:** 2026-04-19
-**Status:** Sprint 1+2+4+6 implementiert + 5 Review-Blocker gefixt. 161 Tests grün. v0.1.0 release-bereit.
+**Stand:** 2026-04-21
+**Status:** v1.0.0 release-bereit. Sprint 7 abgeschlossen (8 Enterprise-Parser + CI/CD + Retention + Docs + Docker + Endpoint-DB v2.1). **359 Tests grün**. Details siehe [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
