@@ -19,7 +19,6 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-
 DEFAULT_CONFIG_PATH = (
     Path(__file__).resolve().parent.parent.parent / "config" / "retention.yaml"
 )

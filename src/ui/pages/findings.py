@@ -9,7 +9,6 @@ import streamlit as st
 
 from src.ui.components.finding_row import render_finding_expander
 
-
 _RISK_LEVELS = ["critical", "high", "medium", "low"]
 _FRAMEWORKS = ["DORA", "EU_AI_ACT", "ISO_42001", "ISO_27001", "DSGVO"]
 

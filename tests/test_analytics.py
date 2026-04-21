@@ -5,9 +5,8 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 
 import pandas as pd
-import pytest
 
-from src.analytics.bursts import BURST_THRESHOLD, detect_bursts
+from src.analytics.bursts import detect_bursts
 from src.analytics.temporal import (
     BUSINESS_HOURS_END,
     BUSINESS_HOURS_START,
@@ -203,7 +202,7 @@ class TestKAnonymity:
 # ===========================================================================
 def test_off_hours_boosts_finding_score():
     """Finding mit hohem off_hours_ratio bekommt OFF_HOURS_RISK_BOOST (+15)."""
-    from src.detection.engine import Finding, OFF_HOURS_RISK_BOOST
+    from src.detection.engine import OFF_HOURS_RISK_BOOST, Finding
 
     base = datetime(2026, 4, 1, 10, 0, 0)
     with_off = Finding(

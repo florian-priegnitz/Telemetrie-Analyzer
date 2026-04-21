@@ -139,6 +139,7 @@ def test_user_patterns_present_and_pseudonymized_in_pipeline():
 def test_user_patterns_k_anonymity_flags_small_dataset():
     """k_anonymity-Block meldet is_sufficient=False bei < 5 Clients."""
     import pandas as pd
+
     from src.ui.state import _build_user_patterns
 
     df = pd.DataFrame({

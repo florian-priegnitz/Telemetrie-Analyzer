@@ -43,7 +43,7 @@ Referenz: https://docs.netskope.com/en/rest-api-v2-overview-312207/
 """
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -89,7 +89,7 @@ def _parse_timestamp(event: dict) -> datetime | None:
         if epoch > 10_000_000_000:
             epoch //= 1000  # ms → s
         try:
-            return datetime.fromtimestamp(epoch, tz=timezone.utc).replace(tzinfo=None)
+            return datetime.fromtimestamp(epoch, tz=UTC).replace(tzinfo=None)
         except (ValueError, OSError, OverflowError):
             continue
     return None

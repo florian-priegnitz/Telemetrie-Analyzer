@@ -4,17 +4,15 @@ from datetime import datetime
 
 import pytest
 
+from src.compliance.engine import ComplianceEngine
 from src.compliance.models import (
     AssessmentStatus,
     ComplianceMapping,
-    ComplianceResult,
     ComplianceScore,
     Framework,
     Severity,
 )
-from src.compliance.engine import ComplianceEngine
 from src.detection.engine import DetectionResult, Finding
-
 
 # ---------------------------------------------------------------------------
 # Helpers

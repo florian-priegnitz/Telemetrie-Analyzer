@@ -16,7 +16,7 @@ Beispiel-Konfiguration siehe `config/squid_logformat.conf`.
 """
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -162,7 +162,7 @@ def _parse_line(
         m = _NATIVE_PATTERN.match(line)
         if not m:
             return None
-        ts = datetime.fromtimestamp(float(m.group("time")), tz=timezone.utc).replace(tzinfo=None)
+        ts = datetime.fromtimestamp(float(m.group("time")), tz=UTC).replace(tzinfo=None)
         url = m.group("url")
         domain = _extract_domain(url)
         if not domain:
@@ -193,7 +193,7 @@ def _parse_line(
             return None
         try:
             ts = datetime.strptime(m.group("date"), _COMMON_DATE_FMT)
-            ts = ts.astimezone(timezone.utc).replace(tzinfo=None)
+            ts = ts.astimezone(UTC).replace(tzinfo=None)
         except ValueError:
             return None
         url = m.group("url")

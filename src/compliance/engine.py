@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 from src.compliance.models import (
     AssessmentStatus,
@@ -15,7 +14,6 @@ from src.compliance.models import (
     Severity,
 )
 from src.detection.engine import DetectionResult, Finding
-
 
 # ---------------------------------------------------------------------------
 # Rule definitions

@@ -5,14 +5,14 @@ from __future__ import annotations
 import json
 import re
 import tempfile
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
 from src.compliance.engine import ComplianceEngine
-from src.detection.engine import DetectionEngine, DetectionResult, Finding
+from src.compliance.models import ComplianceResult
+from src.detection.engine import DetectionEngine, DetectionResult
 from src.reports import ReportGenerator
 from src.reports.privacy import (
     PrivacyLeakError,
@@ -20,11 +20,10 @@ from src.reports.privacy import (
     pseudonymize_client,
 )
 
-
 _FIXED_SALT = "test-salt-do-not-use-in-prod"
 
 
-def _make_sample_results() -> tuple[DetectionResult, "ComplianceResult"]:
+def _make_sample_results() -> tuple[DetectionResult, ComplianceResult]:
     """Baut realistische Sample-Results via Engine-Pipeline (vermeidet handgemachte Fixtures)."""
     df = pd.DataFrame([
         {"timestamp": "2026-04-10 09:00:00", "domain": "chat.openai.com",
@@ -47,7 +46,7 @@ def _make_sample_results() -> tuple[DetectionResult, "ComplianceResult"]:
     return detection, compliance
 
 
-def _make_empty_results() -> tuple[DetectionResult, "ComplianceResult"]:
+def _make_empty_results() -> tuple[DetectionResult, ComplianceResult]:
     detection = DetectionEngine().analyze(pd.DataFrame())
     compliance = ComplianceEngine().analyze(detection)
     return detection, compliance
