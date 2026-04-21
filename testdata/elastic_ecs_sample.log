@@ -1,0 +1,9 @@
+{"@timestamp": "2026-04-18T09:00:00.000Z", "event": {"category": ["network", "dns"], "type": ["info"], "action": "lookup"}, "dns": {"question": {"name": "chat.openai.com", "type": "A"}}, "source": {"ip": "10.0.1.50"}, "user": {"name": "alice"}, "host": {"name": "wks-1"}}
+{"@timestamp": "2026-04-18T09:05:00.000Z", "event": {"category": "web", "action": "http-request"}, "http": {"request": {"method": "POST", "body": {"bytes": 2048000}}, "response": {"status_code": 200}}, "url": {"domain": "api.anthropic.com", "path": "/v1/messages", "full": "https://api.anthropic.com/v1/messages?foo=bar"}, "source": {"ip": "10.0.1.51"}, "user": {"name": "bob"}, "user_agent": {"original": "anthropic-sdk-python/0.40"}, "destination": {"as": {"organization": {"name": "CLOUDFLARENET"}}}}
+{"@timestamp": "2026-04-18T09:10:00.000Z", "event": {"category": ["authentication"]}, "user": {"name": "alice"}, "source": {"ip": "10.0.1.50"}}
+{"@timestamp": "2026-04-18T09:15:00.000Z", "event": {"category": ["dns"]}, "dns": {"question": {"name": "claude.ai"}}, "source": {"ip": "10.0.1.52"}}
+{"@timestamp": "2026-04-18T09:20:00.000Z", "event.category": "network", "dns.question.name": "gemini.google.com", "source.ip": "10.0.1.53", "user.email": "carol@corp"}
+{"@timestamp": "2026-04-18T09:25:00.000Z", "event": {"category": "web"}, "url": {"domain": "PERPLEXITY.AI.", "path": "/search", "full": "https://perplexity.ai/search?q=hello"}, "source": {"ip": "10.0.1.54"}, "http": {"request": {"method": "GET"}, "response": {"status_code": 200, "body": {"bytes": 12345}}}}
+{"@timestamp": "invalid", "event": {"category": "dns"}, "dns": {"question": {"name": "skip.me"}}, "source": {"ip": "10.0.1.99"}}
+{"@timestamp": "2026-04-18T09:30:00.000Z", "event": {"category": "process"}, "process": {"name": "explorer.exe"}}
+{"@timestamp": "2026-04-18T09:35:00.000Z", "event": {"category": "network"}, "dns": {"question": {"name": "midjourney.com"}}, "source": {"ip": "10.0.1.55"}, "user": {"name": "alice"}}
