@@ -140,3 +140,31 @@ def test_ip_ranges_are_valid_cidr(db: AIEndpointDatabase):
                 ipaddress.ip_network(cidr, strict=False)
             except ValueError as exc:
                 pytest.fail(f"{ep.service}: ungültiges CIDR {cidr!r} — {exc}")
+
+
+# ---------------------------------------------------------------------------
+# v2.1 Refresh (2026-04): neue Kategorien HR/Browser-Ext/Customer-Support
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize("category,min_count", [
+    ("hr_recruiting_ai", 5),
+    ("browser_extension_ai", 5),
+    ("customer_support_ai", 5),
+])
+def test_v21_new_categories_populated(db: AIEndpointDatabase, category, min_count):
+    """v2.1-Refresh: neue Kategorien haben mindestens je min_count Services."""
+    counts = Counter(ep.category for ep in db.endpoints)
+    assert counts[category] >= min_count, (
+        f"Kategorie {category} hat nur {counts[category]} Services, Minimum {min_count}"
+    )
+
+
+@pytest.mark.parametrize("service_name", [
+    "HireVue",
+    "Merlin AI",
+    "Intercom Fin",
+])
+def test_v21_refresh_keystone_entries(db: AIEndpointDatabase, service_name):
+    """v2.1-Refresh: Keystone-Einträge pro neuer Kategorie vorhanden."""
+    assert any(e.service == service_name for e in db.endpoints), (
+        f"{service_name} fehlt — refresh_endpoints.py lief nicht"
+    )

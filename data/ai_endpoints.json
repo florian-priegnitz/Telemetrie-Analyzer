@@ -1,7 +1,19 @@
 {
-  "version": "2.0.0",
-  "last_updated": "2026-04-18",
+  "version": "2.1.0",
+  "last_updated": "2026-04-21",
   "endpoints": [
+    {
+      "service": "Ada",
+      "provider": "Ada Support",
+      "category": "customer_support_ai",
+      "risk_level": "medium",
+      "domains": [
+        "ada.cx",
+        "ada.support"
+      ],
+      "description": "KI-Chatbot für Customer-Service",
+      "source": "endpoint-refresh-2026-04"
+    },
     {
       "service": "Adept AI",
       "provider": "Adept",
@@ -380,6 +392,18 @@
       "source": "bulk-import-2026-04"
     },
     {
+      "service": "Cresta",
+      "provider": "Cresta",
+      "category": "customer_support_ai",
+      "risk_level": "high",
+      "domains": [
+        "cresta.com",
+        "app.cresta.com"
+      ],
+      "description": "Real-Time-Agent-Assist für Call-Center",
+      "source": "endpoint-refresh-2026-04"
+    },
+    {
       "service": "Crew AI",
       "provider": "Crew AI",
       "category": "ai_agent",
@@ -436,6 +460,18 @@
       ],
       "description": "Enterprise AutoML-Plattform",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Decagon",
+      "provider": "Decagon",
+      "category": "customer_support_ai",
+      "risk_level": "high",
+      "domains": [
+        "decagon.ai",
+        "app.decagon.ai"
+      ],
+      "description": "Enterprise-AI-Agent für Customer-Support",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "Decktopus",
@@ -546,6 +582,18 @@
       "source": "bulk-import-2026-04"
     },
     {
+      "service": "Eightfold AI",
+      "provider": "Eightfold",
+      "category": "hr_recruiting_ai",
+      "risk_level": "high",
+      "domains": [
+        "eightfold.ai",
+        "app.eightfold.ai"
+      ],
+      "description": "Talent-Intelligence-Plattform mit KI-Matching",
+      "source": "endpoint-refresh-2026-04"
+    },
+    {
       "service": "ElevenLabs",
       "provider": "ElevenLabs",
       "category": "text_to_speech",
@@ -615,6 +663,18 @@
       ],
       "description": "State-of-the-Art Bildgenerierung",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Forethought",
+      "provider": "Forethought",
+      "category": "customer_support_ai",
+      "risk_level": "high",
+      "domains": [
+        "forethought.ai",
+        "app.forethought.ai"
+      ],
+      "description": "Autonomer Ticket-Resolution-Agent",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "Gamma",
@@ -721,6 +781,18 @@
       "source": "bulk-import-2026-04"
     },
     {
+      "service": "HARPA AI",
+      "provider": "HARPA",
+      "category": "browser_extension_ai",
+      "risk_level": "high",
+      "domains": [
+        "harpa.ai",
+        "api.harpa.ai"
+      ],
+      "description": "KI-Extension mit Web-Automation und GPT-Zugriff",
+      "source": "endpoint-refresh-2026-04"
+    },
+    {
       "service": "HeyGen",
       "provider": "HeyGen",
       "category": "video_ai",
@@ -732,6 +804,18 @@
       ],
       "description": "KI-Avatar-Video mit Voice-Cloning",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "HireVue",
+      "provider": "HireVue",
+      "category": "hr_recruiting_ai",
+      "risk_level": "high",
+      "domains": [
+        "hirevue.com",
+        "app.hirevue.com"
+      ],
+      "description": "KI-gestütztes Video-Interview-Screening",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "HubSpot AI",
@@ -769,6 +853,18 @@
       "source": "bulk-import-2026-04"
     },
     {
+      "service": "Humanly",
+      "provider": "Humanly",
+      "category": "hr_recruiting_ai",
+      "risk_level": "medium",
+      "domains": [
+        "humanly.io",
+        "app.humanly.io"
+      ],
+      "description": "KI-Chatbot für Candidate-Screening",
+      "source": "endpoint-refresh-2026-04"
+    },
+    {
       "service": "Ideogram",
       "provider": "Ideogram",
       "category": "image_generation",
@@ -778,6 +874,19 @@
       ],
       "description": "KI-Bildgenerierung mit starkem Text-Rendering",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Intercom Fin",
+      "provider": "Intercom",
+      "category": "customer_support_ai",
+      "risk_level": "high",
+      "domains": [
+        "fin.ai",
+        "intercom.io",
+        "api.intercom.io"
+      ],
+      "description": "KI-Customer-Support-Agent (Fin)",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "InVideo AI",
@@ -985,6 +1094,18 @@
       "source": "bulk-import-2026-04"
     },
     {
+      "service": "MaxAI.me",
+      "provider": "MaxAI",
+      "category": "browser_extension_ai",
+      "risk_level": "medium",
+      "domains": [
+        "maxai.me",
+        "api.maxai.me"
+      ],
+      "description": "One-Click-AI-Browser-Extension",
+      "source": "endpoint-refresh-2026-04"
+    },
+    {
       "service": "MeetGeek",
       "provider": "MeetGeek",
       "category": "meeting_ai",
@@ -1006,6 +1127,18 @@
       ],
       "description": "KI-Notiz-Tool mit Knowledge-Graph",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Merlin AI",
+      "provider": "Merlin",
+      "category": "browser_extension_ai",
+      "risk_level": "high",
+      "domains": [
+        "getmerlin.in",
+        "api.getmerlin.in"
+      ],
+      "description": "KI-Browser-Extension (GPT-Zugriff, Page-Summary)",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "Microsoft 365 Copilot",
@@ -1092,6 +1225,18 @@
       ],
       "description": "Serverless-Compute für ML-Workloads",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Monica AI",
+      "provider": "Monica",
+      "category": "browser_extension_ai",
+      "risk_level": "high",
+      "domains": [
+        "monica.im",
+        "api.monica.im"
+      ],
+      "description": "AI-Assistant-Extension (Chat, Translate, Write)",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "Mubert",
@@ -1227,6 +1372,18 @@
       ],
       "description": "Meeting-Transkription und Notizen",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Paradox (Olivia)",
+      "provider": "Paradox",
+      "category": "hr_recruiting_ai",
+      "risk_level": "medium",
+      "domains": [
+        "paradox.ai",
+        "app.paradox.ai"
+      ],
+      "description": "Conversational-Recruiting-Assistent",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "Perplexity AI",
@@ -1497,6 +1654,30 @@
       "source": "bulk-import-2026-04"
     },
     {
+      "service": "Sana AI",
+      "provider": "Sana Labs",
+      "category": "hr_recruiting_ai",
+      "risk_level": "medium",
+      "domains": [
+        "sana.ai",
+        "app.sana.ai"
+      ],
+      "description": "Learning & Knowledge-Assistant mit KI-Retrieval",
+      "source": "endpoint-refresh-2026-04"
+    },
+    {
+      "service": "SeekOut",
+      "provider": "SeekOut",
+      "category": "hr_recruiting_ai",
+      "risk_level": "medium",
+      "domains": [
+        "seekout.com",
+        "app.seekout.com"
+      ],
+      "description": "KI-gestütztes Talent-Sourcing",
+      "source": "endpoint-refresh-2026-04"
+    },
+    {
       "service": "Sembly",
       "provider": "Sembly",
       "category": "meeting_ai",
@@ -1517,6 +1698,18 @@
       ],
       "description": "KI in ServiceNow ITSM-Plattform",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "Sider AI",
+      "provider": "Sider",
+      "category": "browser_extension_ai",
+      "risk_level": "medium",
+      "domains": [
+        "sider.ai",
+        "api.sider.ai"
+      ],
+      "description": "ChatGPT-Sidebar-Extension",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "Simplified",
@@ -1675,6 +1868,18 @@
       ],
       "description": "KI-Projekt- und Task-Management",
       "source": "bulk-import-2026-04"
+    },
+    {
+      "service": "TinaMind",
+      "provider": "TinaMind",
+      "category": "browser_extension_ai",
+      "risk_level": "medium",
+      "domains": [
+        "tinamind.com",
+        "api.tinamind.com"
+      ],
+      "description": "ChatGPT-Extension mit YouTube-Summary",
+      "source": "endpoint-refresh-2026-04"
     },
     {
       "service": "tl;dv",
@@ -1877,6 +2082,18 @@
       "source": "bulk-import-2026-04"
     },
     {
+      "service": "Zendesk AI",
+      "provider": "Zendesk",
+      "category": "customer_support_ai",
+      "risk_level": "high",
+      "domains": [
+        "zendesk.com",
+        "zdassets.com"
+      ],
+      "description": "Zendesk Advanced AI (Agent-Copilot, Auto-Reply)",
+      "source": "endpoint-refresh-2026-04"
+    },
+    {
       "service": "Zoom AI Companion",
       "provider": "Zoom",
       "category": "enterprise_embedded",
@@ -1907,7 +2124,10 @@
     "presentation_ai": "Präsentations-Generierung aus Prompts",
     "data_analysis_ai": "KI-gestützte Datenanalyse / BI",
     "enterprise_embedded": "KI-Features in SaaS-Suites (CRM, ITSM, Office, DPA-abgesichert)",
-    "ai_agent": "Autonome KI-Agenten / Auto-Task-Systeme"
+    "ai_agent": "Autonome KI-Agenten / Auto-Task-Systeme",
+    "hr_recruiting_ai": "KI-gestützte HR- und Recruiting-Tools (Interview, Screening, Sourcing)",
+    "browser_extension_ai": "KI-Browser-Extensions (Seitenbar-Chatbot, Page-Summary)",
+    "customer_support_ai": "KI-gestützte Customer-Support-Plattformen (Ticket-Auto-Resolve, Chatbot)"
   },
   "risk_levels": {
     "critical": "Direkter Code-/Datenabfluss möglich, Drittland-Transfer oder vollständige Datenverarbeitung extern",
