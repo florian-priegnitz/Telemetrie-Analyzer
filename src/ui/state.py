@@ -6,12 +6,16 @@ importieren ausschliesslich aus diesem Modul (+ Components untereinander).
 Caching: Wir cachen das JSON-Dict (nicht den ReportContext), weil ReportContext
 Datetime + Dataclass-Listen enthält, die für Streamlits Hash-Funktion problematisch
 sind. Aus dem Dict baut die UI bei Bedarf die Anzeige-Strukturen.
+
+Parser-Dispatch: ``_PARSER_DISPATCH`` ist das UI-Gegenstück zu ``_PARSERS`` in
+``src/cli.py``. Beide delegieren Format-Erkennung an ``src/parsers/detection.py``
+(Single Source of Truth).
 """
 
 from __future__ import annotations
 
-import re
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Literal
 
@@ -21,8 +25,7 @@ import streamlit as st
 from src.analytics.temporal import build_hourly_heatmap
 from src.compliance.engine import ComplianceEngine
 from src.detection.engine import DetectionEngine
-from src.parsers.pihole import parse_pihole_log
-from src.parsers.squid import parse_squid_log
+from src.parsers.detection import detect_format
 from src.privacy.k_anonymity import check_k_anonymity
 from src.privacy.pseudonymizer import Pseudonymizer
 from src.privacy.retention import apply_retention, load_policy, summarize
@@ -30,12 +33,8 @@ from src.reports.context import build_context, context_to_json_dict
 from src.reports.privacy import get_default_salt, pseudonymize_client
 
 PipelineState = Literal["empty", "uploaded", "analyzing", "analyzed", "error"]
-LogFormat = Literal["pihole", "squid", "unknown"]
-
-_PIHOLE_PATTERN = re.compile(
-    r"^\w{3}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}\s+dnsmasq\[\d+\]:\s+query\["
-)
-_SQUID_NATIVE_PATTERN = re.compile(r"^\d+\.\d+\s+\d+\s+\S+\s+\S+/\d+\s+\d+\s+")
+LogFormat = str  # Ein Key aus SUPPORTED_PARSERS oder "unknown"
+UNKNOWN_FORMAT = "unknown"
 
 
 def init_session_state() -> None:
@@ -47,42 +46,99 @@ def init_session_state() -> None:
         "detected_format": None,
         "report_data": None,  # JSON-Dict (siehe Modul-Docstring)
         "report_salt": get_default_salt(),
-        "filter_risk_levels": [],
-        "filter_frameworks": [],
+        # Filter-Keys werden NICHT vor-initialisiert: ein st.multiselect mit
+        # key=<...> liest zuerst aus st.session_state[key]. Wenn dort bereits
+        # eine leere Liste steht, ignoriert Streamlit den `default`-Parameter
+        # und zeigt eine leere Auswahl — Filter wäre sofort "zeig nichts".
         "error_message": None,
     }
     for key, value in defaults.items():
         st.session_state.setdefault(key, value)
 
 
-def detect_log_format(content: bytes | str) -> LogFormat:
-    """Heuristische Format-Erkennung anhand der ersten 20 nicht-leeren Zeilen.
+def load_scenario(scenario_key: str) -> None:
+    """Lädt ein Demo-Scenario in den Session-State, als wäre es hochgeladen.
 
-    Mehrheits-Voting gegen die beiden Regex-Muster.
+    Wird von ``upload_widget.render_scenario_buttons()`` und dem Empty-State-
+    Onboarding aufgerufen. Setzt `uploaded_bytes`, `uploaded_filename`,
+    `detected_format`, `pipeline_state="uploaded"` — danach rendert die UI
+    den „Analyse starten"-Button wie bei einem echten Upload.
     """
-    if isinstance(content, bytes):
-        text = content.decode("utf-8", errors="replace")
-    else:
-        text = content
+    from src.ui.scenarios import get_scenario
 
-    pihole_hits = 0
-    squid_hits = 0
-    sample = 0
-    for line in text.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        sample += 1
-        if _PIHOLE_PATTERN.match(line):
-            pihole_hits += 1
-        elif _SQUID_NATIVE_PATTERN.match(line):
-            squid_hits += 1
-        if sample >= 20:
-            break
+    scenario = get_scenario(scenario_key)
+    if scenario is None or not scenario.exists:
+        st.session_state.pipeline_state = "error"
+        st.session_state.error_message = f"Scenario {scenario_key!r} nicht verfügbar."
+        return
 
-    if pihole_hits == 0 and squid_hits == 0:
-        return "unknown"
-    return "pihole" if pihole_hits >= squid_hits else "squid"
+    st.session_state.uploaded_bytes = scenario.file_path.read_bytes()
+    st.session_state.uploaded_filename = scenario.file_path.name
+    st.session_state.detected_format = scenario.parser
+    st.session_state.pipeline_state = "uploaded"
+    st.session_state.report_data = None
+    st.session_state.error_message = None
+
+
+def detect_log_format(content: bytes | str) -> LogFormat:
+    """Thin-Wrapper um ``src.parsers.detection.detect_format()``.
+
+    Akzeptiert bytes oder str (UI liefert bytes vom Upload-Widget).
+    Liefert immer einen String — entweder einen Key aus ``SUPPORTED_PARSERS``
+    oder ``"unknown"`` — nie None.
+    """
+    sample_bytes = content if isinstance(content, bytes) else content.encode("utf-8", errors="replace")
+    return detect_format(sample_bytes) or UNKNOWN_FORMAT
+
+
+def _build_parser_dispatch() -> dict[str, Callable[..., pd.DataFrame]]:
+    """Lazy-initialisierte Parser-Registry (analog zu ``src/cli.py::_PARSERS``).
+
+    Wird beim ersten ``run_pipeline()``-Aufruf populiert, um Import-Zeit
+    klein zu halten (Streamlit-Cold-Start).
+    """
+    from src.parsers.aws_vpc_flow import parse_aws_vpc_flow_log
+    from src.parsers.cloudflare_gateway import parse_cloudflare_gateway_log
+    from src.parsers.elastic_ecs import parse_elastic_ecs_log
+    from src.parsers.entra_id import parse_entra_signin_log
+    from src.parsers.fortinet import parse_fortinet_log
+    from src.parsers.netskope import parse_netskope_log
+    from src.parsers.paloalto import parse_paloalto_log
+    from src.parsers.pihole import parse_pihole_log
+    from src.parsers.squid import parse_squid_log
+    from src.parsers.sysmon import parse_sysmon_log
+    from src.parsers.umbrella import parse_umbrella_log
+    from src.parsers.zscaler import parse_zscaler_log
+
+    return {
+        "pihole": parse_pihole_log,
+        "squid": parse_squid_log,
+        "zscaler": parse_zscaler_log,
+        "paloalto": parse_paloalto_log,
+        "umbrella": parse_umbrella_log,
+        "fortinet": parse_fortinet_log,
+        "aws_vpc_flow": parse_aws_vpc_flow_log,
+        "entra_id": parse_entra_signin_log,
+        "cloudflare_gateway": parse_cloudflare_gateway_log,
+        "netskope": parse_netskope_log,
+        "sysmon": parse_sysmon_log,
+        "elastic_ecs": parse_elastic_ecs_log,
+    }
+
+
+_PARSER_DISPATCH: dict[str, Callable[..., pd.DataFrame]] | None = None
+
+
+def _get_parser(log_format: str) -> Callable[..., pd.DataFrame]:
+    global _PARSER_DISPATCH
+    if _PARSER_DISPATCH is None:
+        _PARSER_DISPATCH = _build_parser_dispatch()
+    if log_format not in _PARSER_DISPATCH:
+        supported = ", ".join(sorted(_PARSER_DISPATCH))
+        raise ValueError(
+            f"Unbekannter Parser {log_format!r}. Verfügbar: {supported}"
+        )
+    return _PARSER_DISPATCH[log_format]
 
 
 def _bytes_to_temp(file_bytes: bytes, suffix: str = ".log") -> Path:
@@ -110,16 +166,17 @@ def run_pipeline(
     Raises:
         ValueError bei unbekanntem Format oder leerem Result.
     """
-    if log_format == "unknown":
-        raise ValueError("Log-Format konnte nicht erkannt werden.")
+    if log_format == UNKNOWN_FORMAT:
+        raise ValueError(
+            "Log-Format konnte nicht erkannt werden. Bitte Format manuell "
+            "über das Upload-Widget wählen oder siehe '📚 Formate'-Page."
+        )
 
+    parse_fn = _get_parser(log_format)
     pseudo = Pseudonymizer(key=salt.encode("utf-8"))
     tmp_path = _bytes_to_temp(file_bytes)
     try:
-        if log_format == "pihole":
-            df = parse_pihole_log(tmp_path, pseudonymizer=pseudo)
-        else:
-            df = parse_squid_log(tmp_path, pseudonymizer=pseudo)
+        df = parse_fn(tmp_path, pseudonymizer=pseudo)
     finally:
         tmp_path.unlink(missing_ok=True)
 
@@ -142,6 +199,21 @@ def run_pipeline(
     result = context_to_json_dict(ctx)
     result["user_patterns"] = _build_user_patterns(df, result["findings"], salt)
     result["retention"] = retention_report
+
+    # Pre-rendern aller Report-Varianten, während DetectionResult noch
+    # in-scope ist. Wird später vom UI-Export-Button in der Overview-
+    # Page direkt als Download ausgegeben. Overhead: ~50-200 KB je nach
+    # Finding-Zahl. Erspart Pipeline-Rerun (Bytes sind nach DSGVO weg).
+    from src.reports import ReportGenerator
+    try:
+        gen = ReportGenerator(detection, compliance, salt=salt)
+        result["_exports"] = {
+            "html": gen.render(audience="all", format="html"),
+            "markdown": gen.render(audience="all", format="markdown"),
+        }
+    except Exception as exc:  # Export-Fehler darf die Analyse nicht brechen
+        result["_exports"] = {"error": f"{type(exc).__name__}: {exc}"}
+
     return result
 
 
@@ -218,6 +290,69 @@ def _build_user_patterns(
     }
 
 
+def _rebuild_report_artifacts(
+    report_data: dict[str, Any],
+    audience: str,
+    format: str,
+) -> str:
+    """Rendert HTML/Markdown-Report aus dem Session-State-Dict.
+
+    Der Streamlit-Cache hält nur das serialisierte ``report_data``,
+    nicht die DetectionResult/ComplianceResult-Dataclasses. Für den
+    Export rendern wir die Jinja2-Templates direkt auf einem
+    SimpleNamespace-Context, der dem Dict Attribut-Zugriff gibt.
+
+    Anschließend wird ``assert_no_plaintext()`` ausgeführt — die
+    DSGVO-Invariante bleibt auch beim UI-Export erhalten.
+    """
+    from pathlib import Path
+
+    from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+    from src.reports.privacy import assert_no_plaintext
+
+    _TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "reports" / "templates"
+    _TEMPLATE_NAMES = {
+        ("executive", "html"): "executive.html.j2",
+        ("it_sec", "html"): "it_security.html.j2",
+        ("compliance", "html"): "compliance.html.j2",
+        ("executive", "markdown"): "executive.md.j2",
+        ("it_sec", "markdown"): "it_security.md.j2",
+        ("compliance", "markdown"): "compliance.md.j2",
+    }
+
+    if (audience, format) not in _TEMPLATE_NAMES:
+        raise ValueError(f"Keine Template-Kombination für ({audience}, {format})")
+
+    ctx = _dict_to_namespace(report_data)
+    env = Environment(
+        loader=FileSystemLoader(_TEMPLATE_DIR),
+        autoescape=select_autoescape(["html", "html.j2", "xml"]),
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+    template = env.get_template(_TEMPLATE_NAMES[(audience, format)])
+    rendered = template.render(ctx=ctx)
+    assert_no_plaintext(rendered)
+    return rendered
+
+
+def _dict_to_namespace(obj):
+    """Rekursive dict→SimpleNamespace-Konvertierung.
+
+    Erlaubt Jinja2-Templates den Zugriff via ``ctx.summary.total_queries``
+    statt ``ctx['summary']['total_queries']``. Listen bleiben Listen,
+    deren Einträge werden mitkonvertiert.
+    """
+    from types import SimpleNamespace
+
+    if isinstance(obj, dict):
+        return SimpleNamespace(**{k: _dict_to_namespace(v) for k, v in obj.items()})
+    if isinstance(obj, list):
+        return [_dict_to_namespace(x) for x in obj]
+    return obj
+
+
 def reset_pipeline() -> None:
     """Setzt den Pipeline-State auf empty zurück. Behält Salt-Konfiguration."""
     keys = [
@@ -227,8 +362,10 @@ def reset_pipeline() -> None:
     for k in keys:
         st.session_state[k] = None
     st.session_state.pipeline_state = "empty"
-    st.session_state.filter_risk_levels = []
-    st.session_state.filter_frameworks = []
+    # Filter-Keys entfernen (nicht auf [] setzen) — sonst ignoriert Streamlit
+    # beim nächsten Render den multiselect-Default und zeigt leere Auswahl.
+    for filter_key in ("filter_risk_levels", "filter_frameworks"):
+        st.session_state.pop(filter_key, None)
     run_pipeline.clear()
 
 

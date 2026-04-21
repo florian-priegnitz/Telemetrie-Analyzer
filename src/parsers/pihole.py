@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.parsers.base import BaseParser
+from src.parsers.base import BaseParser, coerce_timestamp_ns
 from src.privacy.pseudonymizer import Pseudonymizer
 
 # Pattern für Standard Pi-hole syslog
@@ -81,6 +81,7 @@ def parse_pihole_log(
     df = pd.DataFrame(records)
     if not df.empty:
         df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df = coerce_timestamp_ns(df)
     return df
 
 
@@ -109,6 +110,7 @@ def parse_pihole_ftl_csv(
     df["query_type"] = df.get("type", "A")
     df["source_file"] = source.name
     df["source_type"] = "pihole"
+    df = coerce_timestamp_ns(df)
 
     return df[["timestamp", "query_type", "domain", "client", "source_file", "source_type"]]
 

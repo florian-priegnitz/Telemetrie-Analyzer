@@ -12,6 +12,20 @@ from src.ui.components.framework_card import render_framework_card
 
 _RISK_COLORS = {"critical": "#B60205", "high": "#D93F0B", "medium": "#FBCA04", "low": "#0E8A16"}
 
+# Assessment-Status → Emoji-Badge (kurz + scanbar in Tabellen)
+_STATUS_BADGES = {
+    "non_compliant": "❌ non-compliant",
+    "partially_compliant": "⚠️ partially",
+    "needs_review": "🔍 needs review",
+    "compliant": "✅ compliant",
+}
+
+
+def _format_status(raw: str | None) -> str:
+    if not raw:
+        return "—"
+    return _STATUS_BADGES.get(raw, raw)
+
 
 def render(report_data: dict[str, Any]) -> None:
     st.title("📋 Compliance")
@@ -22,6 +36,21 @@ def render(report_data: dict[str, Any]) -> None:
     if not framework_scores:
         st.info("Keine Compliance-Scores verfügbar — bitte zuerst Analyse durchführen.")
         return
+
+    # Cross-Framework-Summary über allen Tabs
+    summary = report_data.get("summary", {})
+    overall_percent = summary.get("overall_compliance_percent", 0)
+    total_findings = len(findings)
+    st.markdown(
+        f"**Übergreifender Compliance-Score:** {overall_percent:.1f}% · "
+        f"**{total_findings}** Findings betreffen insgesamt "
+        f"{sum(len(f.get('compliance_mappings', [])) for f in findings)} Kontroll-Verletzungen "
+        f"über {len(framework_scores)} Frameworks."
+    )
+    st.caption(
+        "Jeder Tab zeigt einen Score zwischen 0 und 100%. Ein Finding kann mehrere "
+        "Kontrollen in mehreren Frameworks gleichzeitig verletzen."
+    )
 
     # Stable Order (analog Compliance-Modell)
     order = ["DORA", "EU_AI_ACT", "ISO_42001", "ISO_27001", "DSGVO"]
@@ -60,11 +89,12 @@ def render(report_data: dict[str, Any]) -> None:
                         "Control-Name": m.get("control_name"),
                         "Service": f.get("service"),
                         "Severity": m.get("severity"),
-                        "Status": m.get("assessment_status"),
+                        "Status": _format_status(m.get("assessment_status")),
                         "Begründung": m.get("rationale"),
                     })
             if rows:
-                st.markdown("**Detaillierte Mappings für dieses Framework:**")
+                st.markdown(f"**{len(rows)} Kontroll-Verletzungen für "
+                            f"{fv['framework_label']}:**")
                 st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
             else:
                 st.success(f"Keine Verletzungen für {fv['framework_label']}.")

@@ -15,6 +15,50 @@ docker compose up --build
 
 → UI unter **http://localhost:8501** · Walkthrough: [docs/QUICKSTART.md](docs/QUICKSTART.md) · Alternativen (venv, headless): [INSTALLATION.md](INSTALLATION.md)
 
+## UI-Tour
+
+Der Analyzer bietet 6 Pages im Streamlit-Dashboard. **Ein-Klick-Demo**: einer der 12 Scenario-Buttons auf der Willkommensseite lädt ein synthetisches Sample und startet die Pipeline.
+
+```
+┌─────────────────────────────────┐   ┌──────────────────────────────────────────┐
+│ 🛡️ Telemetrie Analyzer           │   │ 👋 Willkommen beim Telemetrie Analyzer   │
+│ Shadow AI Detection · DORA · …  │   │                                          │
+│                                 │   │ 🎬 Direkt mit einem Demo starten         │
+│ 📁 Log-Upload                   │   │                                          │
+│   [Browse files]                │   │ [🔥 Pi-hole (größtes Sample)        ]   │
+│   Pi-hole · Squid · Zscaler ·   │   │ [Squid Proxy (~1700 Events)         ]   │
+│   PAN-OS · Umbrella · FortiGate │   │ [Netskope CASB — angereichert (100) ]   │
+│   AWS VPC · Entra · Cloudflare  │   │ [Windows Sysmon — angereichert (80) ]   │
+│   · Netskope · Sysmon · ECS     │   │ [Elastic ECS — angereichert (80)    ]   │
+│                                 │   │ … (12 Scenarios total)                   │
+│ ▾ 🎬 Demo-Scenario              │   │                                          │
+│                                 │   │ 📖 Oder eigenes Log hochladen            │
+│ Navigation                      │   │ • Upload links, 12 Formate Auto-Detect   │
+│   ○ 📊 Übersicht                │   │ • .log / .csv / .json / .jsonl / .ndjson │
+│   ○ 🔍 Findings                 │   │ • Pseudonymisierung schon im Parser      │
+│   ○ 👥 Users & Patterns          │   │                                          │
+│   ○ 📋 Compliance                │   │ Siehe 📚 Formate für Feld-Mapping        │
+│   ○ 📚 Formate                   │   └──────────────────────────────────────────┘
+│   ○ ⚙️ Einstellungen             │
+│                                 │
+│ Status: ✅ Analyse fertig        │
+│ Pseudonym: ✓ AKTIV · Salt-FP    │
+└─────────────────────────────────┘
+```
+
+### Die 6 Pages
+
+| Page | Zweck |
+|------|-------|
+| **📊 Übersicht** | KPI-Row, Compliance-Ampel über 5 Frameworks, Score-Bar pro Framework, Top-3-Risiken. Enthält den **📥 Report-Export-Button** (HTML/Markdown/JSON pro Zielgruppe) |
+| **🔍 Findings** | Filterbare Tabelle aller Findings mit Drill-Down-Expandern (Domains, Compliance-Mappings, Upload-Events) |
+| **👥 Users & Patterns** | Top-10-Client-Ranking, pseudonymisierte Stunden-Heatmap (24×N) mit Off-Hours-Schattierung, k-Anonymitäts-Banner |
+| **📋 Compliance** | 5 Tabs (DORA / EU AI Act / ISO 42001 / ISO 27001 / DSGVO) mit Score-Cards und Mapping-Tabellen pro Artikel/Control |
+| **📚 Formate** | Systematische Vorstellung der 12 Log-Formate — Quelle, Beispiel-Zeile, Feld-Mapping Input→Common-Schema, Sample-Downloads |
+| **⚙️ Einstellungen** | Salt-Override (triggert Hard-Reset), Retention-Policy-Anzeige, Privacy-Self-Check, Detection-Schwellwerte |
+
+Screenshots werden via [Playwright](scripts/capture_screenshots.py) generiert — siehe [docs/screenshots/README.md](docs/screenshots/README.md).
+
 ## Features
 
 - **10 Parser für DNS- und Proxy-Logs** — Pi-hole, Squid, Zscaler, Palo Alto, Cisco Umbrella, Fortinet, AWS VPC Flow, Azure Entra ID, Cloudflare Gateway, Netskope CASB

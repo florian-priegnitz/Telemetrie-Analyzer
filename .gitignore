@@ -7,6 +7,7 @@ build/
 .env
 *.log
 !testdata/*.log
+!testdata/demo/*.log
 .claude/
 .mcp.json
 *:Zone.Identifier

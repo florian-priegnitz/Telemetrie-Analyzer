@@ -4,7 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    # Keine branches:-Filter — jeder PR (auch stacked PRs mit non-main base)
+    # bekommt CI-Feedback. Ohne das bleiben Sprint-Zwischen-PRs ohne grünen
+    # Check-Beleg vor dem Merge in main.
 
 permissions:
   contents: read
