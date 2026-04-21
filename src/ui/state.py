@@ -56,6 +56,30 @@ def init_session_state() -> None:
         st.session_state.setdefault(key, value)
 
 
+def load_scenario(scenario_key: str) -> None:
+    """Lädt ein Demo-Scenario in den Session-State, als wäre es hochgeladen.
+
+    Wird von ``upload_widget.render_scenario_buttons()`` und dem Empty-State-
+    Onboarding aufgerufen. Setzt `uploaded_bytes`, `uploaded_filename`,
+    `detected_format`, `pipeline_state="uploaded"` — danach rendert die UI
+    den „Analyse starten"-Button wie bei einem echten Upload.
+    """
+    from src.ui.scenarios import get_scenario
+
+    scenario = get_scenario(scenario_key)
+    if scenario is None or not scenario.exists:
+        st.session_state.pipeline_state = "error"
+        st.session_state.error_message = f"Scenario {scenario_key!r} nicht verfügbar."
+        return
+
+    st.session_state.uploaded_bytes = scenario.file_path.read_bytes()
+    st.session_state.uploaded_filename = scenario.file_path.name
+    st.session_state.detected_format = scenario.parser
+    st.session_state.pipeline_state = "uploaded"
+    st.session_state.report_data = None
+    st.session_state.error_message = None
+
+
 def detect_log_format(content: bytes | str) -> LogFormat:
     """Thin-Wrapper um ``src.parsers.detection.detect_format()``.
 
@@ -175,6 +199,21 @@ def run_pipeline(
     result = context_to_json_dict(ctx)
     result["user_patterns"] = _build_user_patterns(df, result["findings"], salt)
     result["retention"] = retention_report
+
+    # Pre-rendern aller Report-Varianten, während DetectionResult noch
+    # in-scope ist. Wird später vom UI-Export-Button in der Overview-
+    # Page direkt als Download ausgegeben. Overhead: ~50-200 KB je nach
+    # Finding-Zahl. Erspart Pipeline-Rerun (Bytes sind nach DSGVO weg).
+    from src.reports import ReportGenerator
+    try:
+        gen = ReportGenerator(detection, compliance, salt=salt)
+        result["_exports"] = {
+            "html": gen.render(audience="all", format="html"),
+            "markdown": gen.render(audience="all", format="markdown"),
+        }
+    except Exception as exc:  # Export-Fehler darf die Analyse nicht brechen
+        result["_exports"] = {"error": f"{type(exc).__name__}: {exc}"}
+
     return result
 
 
@@ -249,6 +288,69 @@ def _build_user_patterns(
         "top_clients": top_clients,
         "hourly_heatmap": heatmap_by_client,
     }
+
+
+def _rebuild_report_artifacts(
+    report_data: dict[str, Any],
+    audience: str,
+    format: str,
+) -> str:
+    """Rendert HTML/Markdown-Report aus dem Session-State-Dict.
+
+    Der Streamlit-Cache hält nur das serialisierte ``report_data``,
+    nicht die DetectionResult/ComplianceResult-Dataclasses. Für den
+    Export rendern wir die Jinja2-Templates direkt auf einem
+    SimpleNamespace-Context, der dem Dict Attribut-Zugriff gibt.
+
+    Anschließend wird ``assert_no_plaintext()`` ausgeführt — die
+    DSGVO-Invariante bleibt auch beim UI-Export erhalten.
+    """
+    from pathlib import Path
+
+    from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+    from src.reports.privacy import assert_no_plaintext
+
+    _TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "reports" / "templates"
+    _TEMPLATE_NAMES = {
+        ("executive", "html"): "executive.html.j2",
+        ("it_sec", "html"): "it_security.html.j2",
+        ("compliance", "html"): "compliance.html.j2",
+        ("executive", "markdown"): "executive.md.j2",
+        ("it_sec", "markdown"): "it_security.md.j2",
+        ("compliance", "markdown"): "compliance.md.j2",
+    }
+
+    if (audience, format) not in _TEMPLATE_NAMES:
+        raise ValueError(f"Keine Template-Kombination für ({audience}, {format})")
+
+    ctx = _dict_to_namespace(report_data)
+    env = Environment(
+        loader=FileSystemLoader(_TEMPLATE_DIR),
+        autoescape=select_autoescape(["html", "html.j2", "xml"]),
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+    template = env.get_template(_TEMPLATE_NAMES[(audience, format)])
+    rendered = template.render(ctx=ctx)
+    assert_no_plaintext(rendered)
+    return rendered
+
+
+def _dict_to_namespace(obj):
+    """Rekursive dict→SimpleNamespace-Konvertierung.
+
+    Erlaubt Jinja2-Templates den Zugriff via ``ctx.summary.total_queries``
+    statt ``ctx['summary']['total_queries']``. Listen bleiben Listen,
+    deren Einträge werden mitkonvertiert.
+    """
+    from types import SimpleNamespace
+
+    if isinstance(obj, dict):
+        return SimpleNamespace(**{k: _dict_to_namespace(v) for k, v in obj.items()})
+    if isinstance(obj, list):
+        return [_dict_to_namespace(x) for x in obj]
+    return obj
 
 
 def reset_pipeline() -> None:

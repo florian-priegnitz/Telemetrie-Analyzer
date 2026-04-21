@@ -56,6 +56,16 @@ docker-run: ## Startet Docker-Container auf :8501
 testdata: ## Generiert synthetische Testdaten (enterprise-mixed Szenario)
 	. $(ACTIVATE) && python -m src.testdata.generator --scenario enterprise-mixed --format both --seed 42
 
+enrich-samples: ## Erzeugt angereicherte Demo-Samples in testdata/demo/
+	. $(ACTIVATE) && python scripts/enrich_samples.py
+
+refresh-testdata-dates: ## Verschiebt Zeitstempel in Samples auf Retention-Fenster
+	. $(ACTIVATE) && python scripts/refresh_testdata_dates.py
+
+screenshots: ## README-Screenshots via Playwright (setzt laufende Streamlit-Instanz voraus)
+	. $(ACTIVATE) && pip install -q playwright && playwright install chromium
+	. $(ACTIVATE) && python scripts/capture_screenshots.py
+
 refresh-endpoints: ## Monthly-Refresh der AI-Endpoint-DB (dry-run)
 	. $(ACTIVATE) && python scripts/refresh_endpoints.py --dry-run
 
