@@ -6,12 +6,16 @@ importieren ausschliesslich aus diesem Modul (+ Components untereinander).
 Caching: Wir cachen das JSON-Dict (nicht den ReportContext), weil ReportContext
 Datetime + Dataclass-Listen enthält, die für Streamlits Hash-Funktion problematisch
 sind. Aus dem Dict baut die UI bei Bedarf die Anzeige-Strukturen.
+
+Parser-Dispatch: ``_PARSER_DISPATCH`` ist das UI-Gegenstück zu ``_PARSERS`` in
+``src/cli.py``. Beide delegieren Format-Erkennung an ``src/parsers/detection.py``
+(Single Source of Truth).
 """
 
 from __future__ import annotations
 
-import re
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Literal
 
@@ -21,8 +25,7 @@ import streamlit as st
 from src.analytics.temporal import build_hourly_heatmap
 from src.compliance.engine import ComplianceEngine
 from src.detection.engine import DetectionEngine
-from src.parsers.pihole import parse_pihole_log
-from src.parsers.squid import parse_squid_log
+from src.parsers.detection import detect_format
 from src.privacy.k_anonymity import check_k_anonymity
 from src.privacy.pseudonymizer import Pseudonymizer
 from src.privacy.retention import apply_retention, load_policy, summarize
@@ -30,12 +33,8 @@ from src.reports.context import build_context, context_to_json_dict
 from src.reports.privacy import get_default_salt, pseudonymize_client
 
 PipelineState = Literal["empty", "uploaded", "analyzing", "analyzed", "error"]
-LogFormat = Literal["pihole", "squid", "unknown"]
-
-_PIHOLE_PATTERN = re.compile(
-    r"^\w{3}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}\s+dnsmasq\[\d+\]:\s+query\["
-)
-_SQUID_NATIVE_PATTERN = re.compile(r"^\d+\.\d+\s+\d+\s+\S+\s+\S+/\d+\s+\d+\s+")
+LogFormat = str  # Ein Key aus SUPPORTED_PARSERS oder "unknown"
+UNKNOWN_FORMAT = "unknown"
 
 
 def init_session_state() -> None:
@@ -56,33 +55,64 @@ def init_session_state() -> None:
 
 
 def detect_log_format(content: bytes | str) -> LogFormat:
-    """Heuristische Format-Erkennung anhand der ersten 20 nicht-leeren Zeilen.
+    """Thin-Wrapper um ``src.parsers.detection.detect_format()``.
 
-    Mehrheits-Voting gegen die beiden Regex-Muster.
+    Akzeptiert bytes oder str (UI liefert bytes vom Upload-Widget).
+    Liefert immer einen String — entweder einen Key aus ``SUPPORTED_PARSERS``
+    oder ``"unknown"`` — nie None.
     """
-    if isinstance(content, bytes):
-        text = content.decode("utf-8", errors="replace")
-    else:
-        text = content
+    sample_bytes = content if isinstance(content, bytes) else content.encode("utf-8", errors="replace")
+    return detect_format(sample_bytes) or UNKNOWN_FORMAT
 
-    pihole_hits = 0
-    squid_hits = 0
-    sample = 0
-    for line in text.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        sample += 1
-        if _PIHOLE_PATTERN.match(line):
-            pihole_hits += 1
-        elif _SQUID_NATIVE_PATTERN.match(line):
-            squid_hits += 1
-        if sample >= 20:
-            break
 
-    if pihole_hits == 0 and squid_hits == 0:
-        return "unknown"
-    return "pihole" if pihole_hits >= squid_hits else "squid"
+def _build_parser_dispatch() -> dict[str, Callable[..., pd.DataFrame]]:
+    """Lazy-initialisierte Parser-Registry (analog zu ``src/cli.py::_PARSERS``).
+
+    Wird beim ersten ``run_pipeline()``-Aufruf populiert, um Import-Zeit
+    klein zu halten (Streamlit-Cold-Start).
+    """
+    from src.parsers.aws_vpc_flow import parse_aws_vpc_flow_log
+    from src.parsers.cloudflare_gateway import parse_cloudflare_gateway_log
+    from src.parsers.elastic_ecs import parse_elastic_ecs_log
+    from src.parsers.entra_id import parse_entra_signin_log
+    from src.parsers.fortinet import parse_fortinet_log
+    from src.parsers.netskope import parse_netskope_log
+    from src.parsers.paloalto import parse_paloalto_log
+    from src.parsers.pihole import parse_pihole_log
+    from src.parsers.squid import parse_squid_log
+    from src.parsers.sysmon import parse_sysmon_log
+    from src.parsers.umbrella import parse_umbrella_log
+    from src.parsers.zscaler import parse_zscaler_log
+
+    return {
+        "pihole": parse_pihole_log,
+        "squid": parse_squid_log,
+        "zscaler": parse_zscaler_log,
+        "paloalto": parse_paloalto_log,
+        "umbrella": parse_umbrella_log,
+        "fortinet": parse_fortinet_log,
+        "aws_vpc_flow": parse_aws_vpc_flow_log,
+        "entra_id": parse_entra_signin_log,
+        "cloudflare_gateway": parse_cloudflare_gateway_log,
+        "netskope": parse_netskope_log,
+        "sysmon": parse_sysmon_log,
+        "elastic_ecs": parse_elastic_ecs_log,
+    }
+
+
+_PARSER_DISPATCH: dict[str, Callable[..., pd.DataFrame]] | None = None
+
+
+def _get_parser(log_format: str) -> Callable[..., pd.DataFrame]:
+    global _PARSER_DISPATCH
+    if _PARSER_DISPATCH is None:
+        _PARSER_DISPATCH = _build_parser_dispatch()
+    if log_format not in _PARSER_DISPATCH:
+        supported = ", ".join(sorted(_PARSER_DISPATCH))
+        raise ValueError(
+            f"Unbekannter Parser {log_format!r}. Verfügbar: {supported}"
+        )
+    return _PARSER_DISPATCH[log_format]
 
 
 def _bytes_to_temp(file_bytes: bytes, suffix: str = ".log") -> Path:
@@ -110,16 +140,17 @@ def run_pipeline(
     Raises:
         ValueError bei unbekanntem Format oder leerem Result.
     """
-    if log_format == "unknown":
-        raise ValueError("Log-Format konnte nicht erkannt werden.")
+    if log_format == UNKNOWN_FORMAT:
+        raise ValueError(
+            "Log-Format konnte nicht erkannt werden. Bitte Format manuell "
+            "über das Upload-Widget wählen oder siehe '📚 Formate'-Page."
+        )
 
+    parse_fn = _get_parser(log_format)
     pseudo = Pseudonymizer(key=salt.encode("utf-8"))
     tmp_path = _bytes_to_temp(file_bytes)
     try:
-        if log_format == "pihole":
-            df = parse_pihole_log(tmp_path, pseudonymizer=pseudo)
-        else:
-            df = parse_squid_log(tmp_path, pseudonymizer=pseudo)
+        df = parse_fn(tmp_path, pseudonymizer=pseudo)
     finally:
         tmp_path.unlink(missing_ok=True)
 
