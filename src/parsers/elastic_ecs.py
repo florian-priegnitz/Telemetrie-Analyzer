@@ -98,9 +98,7 @@ def _is_relevant_event(event: dict) -> bool:
 
     if _get(event, "dns.question.name"):
         return True
-    if _get(event, "url.domain"):
-        return True
-    return False
+    return bool(_get(event, "url.domain"))
 
 
 def _parse_timestamp(event: dict) -> datetime | None:
