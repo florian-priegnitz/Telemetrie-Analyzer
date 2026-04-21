@@ -1,0 +1,50 @@
+name: Endpoint-DB Refresh
+
+on:
+  schedule:
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    name: Check for new AI endpoints
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run refresh script (dry-run)
+        run: python scripts/refresh_endpoints.py --dry-run
+
+      - name: Validate schema
+        run: python -m src.database.ai_endpoints --validate
+
+      - name: Create PR if changes
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(data): monthly endpoint-db refresh"
+          title: "[auto] Endpoint-DB monthly refresh"
+          body: |
+            Automatisch erzeugter PR durch `endpoint-db-update.yml`.
+
+            Bitte prüfen:
+            - Neue Einträge sinnvoll kategorisiert
+            - Risk-Level konsistent mit bestehenden Einträgen
+            - Schema-Validator grün
+          branch: auto/endpoint-db-refresh
+          delete-branch: true
