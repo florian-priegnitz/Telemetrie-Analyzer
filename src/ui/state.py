@@ -46,8 +46,10 @@ def init_session_state() -> None:
         "detected_format": None,
         "report_data": None,  # JSON-Dict (siehe Modul-Docstring)
         "report_salt": get_default_salt(),
-        "filter_risk_levels": [],
-        "filter_frameworks": [],
+        # Filter-Keys werden NICHT vor-initialisiert: ein st.multiselect mit
+        # key=<...> liest zuerst aus st.session_state[key]. Wenn dort bereits
+        # eine leere Liste steht, ignoriert Streamlit den `default`-Parameter
+        # und zeigt eine leere Auswahl — Filter wäre sofort "zeig nichts".
         "error_message": None,
     }
     for key, value in defaults.items():
@@ -258,8 +260,10 @@ def reset_pipeline() -> None:
     for k in keys:
         st.session_state[k] = None
     st.session_state.pipeline_state = "empty"
-    st.session_state.filter_risk_levels = []
-    st.session_state.filter_frameworks = []
+    # Filter-Keys entfernen (nicht auf [] setzen) — sonst ignoriert Streamlit
+    # beim nächsten Render den multiselect-Default und zeigt leere Auswahl.
+    for filter_key in ("filter_risk_levels", "filter_frameworks"):
+        st.session_state.pop(filter_key, None)
     run_pipeline.clear()
 
 
