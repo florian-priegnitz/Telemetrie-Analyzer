@@ -5,6 +5,25 @@ Alle nennenswerten Änderungen am Telemetrie Analyzer werden in dieser Datei dok
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.3.0] — 2026-04-22
+
+Minor-Release mit dem Abschluss des Epic E2 Behavior Analytics: Service-Co-Occurrence-Graphen erkennen Tool-Kombinationen wie *ChatGPT + Cursor + Claude* als zusammengehörige Nutzungsmuster — risikorelevanter als die Einzelservices. Backlog auf **1 offenes Issue** reduziert (#22 bleibt DSFA-blockiert).
+
+### Hinzugefügt
+
+- **Session-Korrelation (#23)** — Neues Modul `src/analytics/sessions.py` mit `build_session_graph(df, window_minutes=30) → networkx.Graph` als Kern-API. Two-Pointer-Sliding-Window-Pattern (O(N·E)) analog zu `bursts.py`. Output: gewichtete Service-Co-Occurrence-Kanten + Per-User-Top-5-Paare (pseudonymisiert).
+- **Streamlit-Page 🔗 Sessions** (`src/ui/pages/sessions.py`) — Plotly-Netzwerk-Visualisierung mit `networkx.spring_layout(seed=42)` für deterministische Layouts, Top-20-Paare-Tabelle, Per-Client-Drilldown. Bei `privacy_redacted=True` wird der Drilldown unterdrückt, der globale Graph (Service-zentriert) bleibt sichtbar.
+- **`networkx>=3.0` als Dependency** — keine Transitive, <50 KB reine Python.
+
+### Privacy-Invariante
+
+Graph-Nodes tragen ausschließlich Service-Namen — **keine Client-Keys**. Per-User-Top-N-Keys werden mit `pseudonymize_client()` maskiert (analog zu `_build_user_patterns`). Dedizierter Test `test_no_plaintext_client_in_graph_nodes` verifiziert die Invariante gegen Regressionen.
+
+### Interna
+
+- **Test-Suite** 580 → **597** (+17: 16 Unit + 1 End-to-End-Pipeline).
+- **Epic E2 abgeschlossen** — Behavior Analytics ist damit komplett (E2-1 Heatmap, E2-2 Off-Hours, E2-3 Bursts, E2-4 Users-&-Patterns, E2-6 Sessions; E2-5 Squid %un bleibt deferred mit DSFA-Pflicht).
+
 ## [1.2.0] — 2026-04-22
 
 Minor-Release mit zwei neuen Detection-Erweiterungen: ASN-Provider-Fallback für unbekannte IPs und formale Versionierung der AI-Endpoint-Datenbank mit Audit-Disclaimer in Reports. Backlog auf **2 offene Issues** reduziert (beide deferred mit DSFA-Bedarf).
