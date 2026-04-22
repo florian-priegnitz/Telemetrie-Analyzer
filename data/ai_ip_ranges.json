@@ -1,0 +1,65 @@
+{
+  "$schema": "./ai_ip_ranges_schema.json",
+  "version": "1.0.0",
+  "updated": "2026-04-22",
+  "description": "Provider-Level-CIDR-Blöcke für ASN-Fallback-Detection (E1-7, Issue #15). Matches haben niedrige Konfidenz (false-positive-anfällig — CDN-Shared-IPs, Multi-Tenant-Cloud). Kuratierter Demo-Satz; produktive Deployments sollten authoritative Provider-Listen via scripts/refresh_endpoints.py aktualisieren.",
+  "notes": [
+    "CIDRs sind in CIDR-Notation (IPv4 und IPv6).",
+    "Ranges überlappen sich nicht (Uniqueness-Test in tests/test_asn_fallback.py).",
+    "Alle Matches werden als 'low'-Konfidenz geflaggt — UI und Reports sollten sie separat ausweisen.",
+    "Provider-Level-Granularität: Service-Hint ist ein Default (z. B. 'Claude' für Anthropic); echte Service-Zuordnung erfordert zusätzliche Signale."
+  ],
+  "providers": [
+    {
+      "provider": "Anthropic",
+      "service_hint": "Anthropic Claude",
+      "category": "llm_api",
+      "risk_level": "high",
+      "source": "anthropic.com/ip-ranges (2026-03 Demo-Snapshot)",
+      "cidrs": [
+        "160.79.104.0/23"
+      ]
+    },
+    {
+      "provider": "OpenAI",
+      "service_hint": "OpenAI API",
+      "category": "llm_api",
+      "risk_level": "high",
+      "source": "openai.com/api-ip-ranges (2026-03 Demo-Snapshot)",
+      "cidrs": [
+        "23.102.140.112/28",
+        "13.107.42.0/24"
+      ]
+    },
+    {
+      "provider": "Google Vertex AI",
+      "service_hint": "Google Vertex AI",
+      "category": "ml_platform",
+      "risk_level": "medium",
+      "source": "gstatic.com/ipranges/goog.json Subset — us-central1 (2026-03 Demo)",
+      "cidrs": [
+        "34.64.0.0/16"
+      ]
+    },
+    {
+      "provider": "AWS Bedrock",
+      "service_hint": "AWS Bedrock",
+      "category": "ml_platform",
+      "risk_level": "medium",
+      "source": "ip-ranges.amazonaws.com Subset — BEDROCK us-east-1 (2026-03 Demo)",
+      "cidrs": [
+        "3.210.0.0/15"
+      ]
+    },
+    {
+      "provider": "Azure OpenAI",
+      "service_hint": "Azure OpenAI Service",
+      "category": "llm_api",
+      "risk_level": "high",
+      "source": "Microsoft ServiceTags Azure Cognitive — westeurope (2026-03 Demo)",
+      "cidrs": [
+        "20.50.0.0/16"
+      ]
+    }
+  ]
+}
