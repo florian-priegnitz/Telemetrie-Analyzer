@@ -5,6 +5,22 @@ Alle nennenswerten Änderungen am Telemetrie Analyzer werden in dieser Datei dok
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.2.0] — 2026-04-22
+
+Minor-Release mit zwei neuen Detection-Erweiterungen: ASN-Provider-Fallback für unbekannte IPs und formale Versionierung der AI-Endpoint-Datenbank mit Audit-Disclaimer in Reports. Backlog auf **2 offene Issues** reduziert (beide deferred mit DSFA-Bedarf).
+
+### Hinzugefügt
+
+- **ASN-Fallback (#15)** — Opt-in-Detection-Pfad. Wenn Domain-, Alias- und Service-IP-Lookup alle fehlschlagen und der Wert wie eine IP aussieht, wird gegen eine neue kuratierte Provider-CIDR-DB (`data/ai_ip_ranges.json` — Anthropic, OpenAI, Google Vertex AI, AWS Bedrock, Azure OpenAI) geprüft. Treffer tragen `detection_confidence="low"` (false-positive-anfällig). Aktivierung über `DetectionEngine(enable_asn_fallback=True)`. Neues Modul `src/detection/asn_fallback.py`. Keine externen WHOIS-/ASN-Abfragen zur Laufzeit (DSGVO).
+- **AI Endpoint DB Versioning (#14)** — Semver-Konvention (MAJOR=Kategorie/Entfernung, MINOR=neue Endpoints, PATCH=Metadaten), vollständige Snapshots unter `data/versions/<semver>.json`, formales `data/CHANGELOG_AI_ENDPOINTS.md`. Neues Modul `src/database/versioning.py` mit `DiffReport` + `compute_diff`. Drift-Guard-Test stellt sicher, dass Snapshot und Live-DB synchron bleiben.
+- **CLI-Subcommand `diff-db`** — `telemetrie-analyzer diff-db <from> <to>` erzeugt lesbaren Delta-Report (Added/Removed/Changed). Ohne Argumente listet er verfügbare Snapshots.
+- **Audit-Disclaimer in Reports** — `AIEndpointDatabase.version` und `.last_updated` werden automatisch in Report-Footer (HTML/Markdown) und in den JSON-Output (`report_meta.ai_endpoint_db`) injiziert. Basis für auditierbare Reproduzierbarkeit: ein Report verweist eindeutig auf die Endpoint-DB-Version, mit der er erzeugt wurde.
+
+### Interna
+
+- **Test-Suite** 544 → **580** (+36): 12 ASN-Fallback, 24 DB-Versioning.
+- **Issue-Cleanup** — #50 und #52 (beide als zombie erkannt und geschlossen) + #15 und #14 erledigt.
+
 ## [1.1.0] — 2026-04-22
 
 Minor-Release mit dem 6. Compliance-Framework (CRA) und konsequentem Privacy-Enforcement auf der Users-&-Patterns-Page. Board von 21 auf 4 offene Issues reduziert (7 Zombies geschlossen).
