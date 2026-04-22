@@ -29,6 +29,17 @@ def render(report_data: dict[str, Any]) -> None:
 
     _render_k_anonymity_banner(user_patterns.get("k_anonymity") or {})
 
+    if user_patterns.get("privacy_redacted"):
+        st.error(
+            "🛡️ **Redaktion aktiv (DSGVO Art. 25):** Wegen hohen "
+            "Re-Identifikations-Risikos (k-Anonymität deutlich unter Minimum) "
+            "sind Top-Clients-Ranking und Stunden-Heatmap ausgeblendet. "
+            "Erweitere das Dataset auf mindestens die halbe Minimum-k-Grenze "
+            "oder dokumentiere eine Rechtsgrundlage, um die Auswertung "
+            "wieder freizuschalten."
+        )
+        return
+
     top_clients = user_patterns.get("top_clients") or []
     if not top_clients:
         st.info("Keine Client-Daten im Analysezeitraum.")

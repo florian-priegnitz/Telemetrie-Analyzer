@@ -124,7 +124,7 @@ def detect_bursts(
 
 
 def _build_event(
-    group_key,
+    group_key: object,  # skalarer Wert bei 1 Spalte, Tupel bei mehreren (pandas-GroupBy-Kontrakt)
     group_cols: list[str],
     sorted_df: pd.DataFrame,
     start_idx: int,
@@ -133,7 +133,6 @@ def _build_event(
     window_minutes: int,
 ) -> BurstEvent:
     """Erzeugt einen BurstEvent aus einer erkannten Fenster-Range."""
-    # group_key kann skalar (bei 1 Spalte) oder Tupel sein
     key_dict = dict(zip(group_cols, (group_key if isinstance(group_key, tuple) else (group_key,))))
     start = sorted_df.at[start_idx, "timestamp"].to_pydatetime()
     end = sorted_df.at[end_idx, "timestamp"].to_pydatetime()
