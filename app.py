@@ -9,7 +9,15 @@ from __future__ import annotations
 import streamlit as st
 
 from src.ui.components.upload_widget import render_upload_section
-from src.ui.pages import compliance, findings, formats, overview, settings, users_patterns
+from src.ui.pages import (
+    compliance,
+    findings,
+    formats,
+    overview,
+    sessions,
+    settings,
+    users_patterns,
+)
 from src.ui.state import init_session_state
 
 
@@ -17,6 +25,7 @@ _PAGE_FUNCS = {
     "📊 Übersicht": overview.render,
     "🔍 Findings": findings.render,
     "👥 Users & Patterns": users_patterns.render,
+    "🔗 Sessions": sessions.render,
     "📋 Compliance": compliance.render,
     "📚 Formate": formats.render,
     "⚙️ Einstellungen": settings.render,

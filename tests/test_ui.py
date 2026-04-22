@@ -173,6 +173,24 @@ def test_user_patterns_redacts_on_high_reid_risk():
     assert patterns["hourly_heatmap"] == {}
 
 
+def test_run_pipeline_includes_sessions():
+    """Pipeline-Output enthält das sessions-Dict mit Graph-Daten (#23)."""
+    from src.ui.state import run_pipeline
+    data = run_pipeline(
+        SAMPLE_PIHOLE_LOG.read_bytes(), "pihole_sample.log",
+        salt="test-salt", log_format="pihole",
+    )
+    sessions = data.get("sessions")
+    assert sessions is not None, "run_pipeline muss sessions-Block liefern"
+    assert sessions["window_minutes"] == 30
+    assert "graph_nodes" in sessions
+    assert "graph_edges" in sessions
+    assert "global_top_pairs" in sessions
+    # Top-Pairs-Keys sind pseudonymisiert (client_<hex>)
+    for pseudo in sessions.get("top_pairs", {}):
+        assert pseudo.startswith("client_"), f"Leak in key: {pseudo!r}"
+
+
 def test_user_patterns_no_redaction_on_medium_risk():
     """Bei medium-Risk (>= minimum_k/2) wird nicht redigiert, nur der k-Banner angezeigt."""
     import pandas as pd
