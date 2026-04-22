@@ -92,6 +92,7 @@ _FRAMEWORK_LABELS: dict[Framework, str] = {
     Framework.ISO_42001: "ISO/IEC 42001",
     Framework.ISO_27001: "ISO/IEC 27001",
     Framework.DSGVO: "DSGVO",
+    Framework.CRA: "EU CRA",
 }
 
 

@@ -1,8 +1,10 @@
 """Tests für Compliance Models und Engine."""
 
 from datetime import datetime
+from pathlib import Path
 
 import pytest
+import yaml
 
 from src.compliance.engine import ComplianceEngine
 from src.compliance.models import (
@@ -13,6 +15,8 @@ from src.compliance.models import (
     Severity,
 )
 from src.detection.engine import DetectionResult, Finding
+
+_CRA_YAML_PATH = Path(__file__).resolve().parent.parent / "mappings" / "cra.yaml"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -62,6 +66,10 @@ class TestComplianceModels:
     def test_framework_enum_values(self):
         assert Framework.DORA.value == "DORA"
         assert Framework.DSGVO.value == "DSGVO"
+        assert Framework.CRA.value == "CRA"
+
+    def test_framework_enum_count(self):
+        assert len(Framework) == 6
 
     def test_severity_enum_values(self):
         assert Severity.CRITICAL.value == "critical"
@@ -236,3 +244,151 @@ class TestComplianceEngine:
         result = self.engine.analyze(_make_result([finding]))
         mappings = result.finding_mappings[0]
         assert all("DeepSeek" in m.rationale for m in mappings)
+
+
+# ---------------------------------------------------------------------------
+# CRA-specific rule tests (Issue #42 — Regulation (EU) 2024/2847)
+# ---------------------------------------------------------------------------
+
+class TestComplianceEngineCRA:
+
+    def setup_method(self):
+        self.engine = ComplianceEngine()
+
+    def _cra_controls(self, finding: Finding) -> list[str]:
+        result = self.engine.analyze(_make_result([finding]))
+        return [
+            m.control_id
+            for m in result.finding_mappings[0]
+            if m.framework == Framework.CRA
+        ]
+
+    def test_any_finding_triggers_cra_art6(self):
+        """Art. 6 (Essential Requirements) must trigger for every finding."""
+        for risk in ("low", "medium", "high", "critical"):
+            controls = self._cra_controls(_make_finding(risk_level=risk))
+            assert "Art. 6" in controls, f"Art. 6 missing for risk_level={risk}"
+
+    def test_high_risk_category_triggers_cra_art7(self):
+        controls = self._cra_controls(_make_finding(category="code_assistant"))
+        assert "Art. 7" in controls
+
+    def test_non_high_risk_category_skips_cra_art7(self):
+        controls = self._cra_controls(_make_finding(
+            category="image_generation", risk_level="low",
+        ))
+        assert "Art. 7" not in controls
+
+    def test_llm_api_triggers_cra_art10(self):
+        controls = self._cra_controls(_make_finding(category="llm_api"))
+        assert "Art. 10" in controls
+
+    def test_image_gen_skips_cra_art10(self):
+        controls = self._cra_controls(_make_finding(category="image_generation"))
+        assert "Art. 10" not in controls
+
+    def test_document_upload_triggers_cra_art11(self):
+        controls = self._cra_controls(_make_finding(has_document_upload=True))
+        assert "Art. 11" in controls
+
+    def test_no_upload_skips_cra_art11(self):
+        controls = self._cra_controls(_make_finding(has_document_upload=False))
+        assert "Art. 11" not in controls
+
+    def test_high_risk_level_triggers_cra_art13(self):
+        controls = self._cra_controls(_make_finding(risk_level="high"))
+        assert "Art. 13" in controls
+
+    def test_low_risk_level_skips_cra_art13(self):
+        controls = self._cra_controls(_make_finding(risk_level="low"))
+        assert "Art. 13" not in controls
+
+    def test_systematic_triggers_cra_art14(self):
+        controls = self._cra_controls(_make_finding(
+            is_systematic=True, queries_per_day=15.0,
+        ))
+        assert "Art. 14" in controls
+
+    def test_non_systematic_skips_cra_art14(self):
+        controls = self._cra_controls(_make_finding(is_systematic=False))
+        assert "Art. 14" not in controls
+
+    def test_cloud_service_triggers_cra_art24(self):
+        controls = self._cra_controls(_make_finding(category="llm_chatbot"))
+        assert "Art. 24" in controls
+
+    def test_cra_in_framework_scores(self):
+        finding = _make_finding()
+        result = self.engine.analyze(_make_result([finding]))
+        assert Framework.CRA in result.framework_scores
+        cra_score = result.framework_scores[Framework.CRA]
+        assert cra_score.total_controls == 7
+
+    def test_cra_critical_finding_non_compliant(self):
+        finding = _make_finding(
+            risk_level="critical",
+            is_systematic=True,
+            category="code_assistant",
+            has_document_upload=True,
+            queries_per_day=15.0,
+        )
+        result = self.engine.analyze(_make_result([finding]))
+        cra_mappings = [
+            m for m in result.finding_mappings[0] if m.framework == Framework.CRA
+        ]
+        # All 7 CRA controls should hit for a maxed-out finding
+        assert len(cra_mappings) == 7
+        assert all(
+            m.assessment_status == AssessmentStatus.NON_COMPLIANT
+            for m in cra_mappings
+        )
+
+
+# ---------------------------------------------------------------------------
+# CRA YAML metadata registry (mappings/cra.yaml)
+# ---------------------------------------------------------------------------
+
+class TestCRAYamlRegistry:
+
+    def test_cra_yaml_exists(self):
+        assert _CRA_YAML_PATH.exists(), f"Missing {_CRA_YAML_PATH}"
+
+    def test_cra_yaml_loads(self):
+        data = yaml.safe_load(_CRA_YAML_PATH.read_text(encoding="utf-8"))
+        assert isinstance(data, dict)
+        assert "framework" in data
+        assert "controls" in data
+
+    def test_cra_yaml_framework_metadata(self):
+        data = yaml.safe_load(_CRA_YAML_PATH.read_text(encoding="utf-8"))
+        fw = data["framework"]
+        assert fw["id"] == "CRA"
+        assert fw["regulation_id"] == "Regulation (EU) 2024/2847"
+
+    def test_cra_yaml_control_ids_match_engine(self):
+        """YAML must list exactly the controls emitted by the engine."""
+        data = yaml.safe_load(_CRA_YAML_PATH.read_text(encoding="utf-8"))
+        yaml_ids = {c["id"] for c in data["controls"]}
+
+        engine = ComplianceEngine()
+        finding = _make_finding(
+            risk_level="critical",
+            is_systematic=True,
+            category="code_assistant",
+            has_document_upload=True,
+        )
+        result = engine.analyze(_make_result([finding]))
+        engine_ids = {
+            m.control_id for m in result.finding_mappings[0]
+            if m.framework == Framework.CRA
+        }
+        assert yaml_ids == engine_ids, (
+            f"YAML/engine drift: yaml={yaml_ids}, engine={engine_ids}"
+        )
+
+    def test_cra_yaml_control_schema(self):
+        data = yaml.safe_load(_CRA_YAML_PATH.read_text(encoding="utf-8"))
+        required = {"id", "name", "article_title", "description", "applies_to"}
+        for ctrl in data["controls"]:
+            missing = required - ctrl.keys()
+            assert not missing, f"Control {ctrl.get('id')} missing {missing}"

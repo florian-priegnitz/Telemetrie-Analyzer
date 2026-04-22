@@ -180,7 +180,7 @@ def test_compliance_page_renders_with_real_findings():
     """W4-D Regression: Compliance-Page darf mit realen Demo-Daten nicht crashen.
 
     Prüft auch, dass:
-    - alle 5 Framework-Tabs gerendert werden
+    - alle 6 Framework-Tabs gerendert werden
     - die Mapping-Tabellen Status als Emoji-Badge zeigen
     - die Cross-Framework-Summary angezeigt wird
     """
