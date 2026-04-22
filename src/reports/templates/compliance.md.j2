@@ -50,3 +50,6 @@ Zeitraum: **{{ ctx.period_start.strftime("%d.%m.%Y") }}** bis **{{ ctx.period_en
 
 ---
 *Generiert von Telemetrie Analyzer · Frameworks: DORA, EU AI Act, ISO 42001, ISO 27001, DSGVO, EU CRA*
+{% if ctx.db_version -%}
+*AI Endpoint DB: v{{ ctx.db_version }}{% if ctx.db_last_updated %} (Stand {{ ctx.db_last_updated }}){% endif %}*
+{%- endif %}

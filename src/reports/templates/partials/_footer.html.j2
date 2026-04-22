@@ -3,5 +3,8 @@
     Generiert von <strong>Telemetrie Analyzer</strong> ·
     Compliance-Frameworks: DORA, EU AI Act, ISO 42001, ISO 27001, DSGVO, EU CRA ·
     Detection-Schwellwerte: ≥10 Req/Tag = systematisch, &gt;500 KB Upload = document_upload
+    {% if ctx.db_version -%}
+    · AI Endpoint DB: v{{ ctx.db_version }}{% if ctx.db_last_updated %} (Stand {{ ctx.db_last_updated }}){% endif %}
+    {%- endif %}
   </p>
 </footer>
