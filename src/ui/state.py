@@ -22,7 +22,7 @@ from typing import Any, Literal
 import pandas as pd
 import streamlit as st
 
-from src.analytics.temporal import build_hourly_heatmap
+from src.analytics.temporal import build_hourly_heatmap, mask_low_count_cells
 from src.compliance.engine import ComplianceEngine
 from src.detection.engine import DetectionEngine
 from src.parsers.detection import detect_format
@@ -200,6 +200,11 @@ def run_pipeline(
     result["user_patterns"] = _build_user_patterns(df, result["findings"], salt)
     result["retention"] = retention_report
 
+    # df enthält pseudonymisierte, aber nach DSGVO Art. 4(5) immer noch
+    # personenbezogene Zeitreihen-Daten. Expliziter Discard nach letzter
+    # Nutzung, analog zum `uploaded_bytes = None`-Pattern in overview.py.
+    del df, df_trimmed
+
     # Pre-rendern aller Report-Varianten, während DetectionResult noch
     # in-scope ist. Wird später vom UI-Export-Button in der Overview-
     # Page direkt als Download ausgegeben. Overhead: ~50-200 KB je nach
@@ -227,16 +232,27 @@ def _build_user_patterns(
     Liefert k-Anonymitäts-Check, Top-Clients-Ranking und eine pseudonymisierte
     Stunden-Heatmap. DataFrame wird vor Discard konsumiert; alle Client-Keys
     werden über pseudonymize_client auf `client_<hash>` normalisiert.
+
+    Privacy-Enforcement (DSGVO Art. 25):
+    - Heatmap-Zellen mit Count < 3 werden maskiert (Re-ID-Schutz über
+      24h-Aktivitätsmuster).
+    - Bei ``reidentification_risk == "high"`` (beobachtetes k unterhalb
+      ``minimum_k / 2``) wird das Top-Clients-Ranking redigiert, Heatmap
+      komplett unterdrückt, und ein ``privacy_redacted``-Flag gesetzt, damit
+      die UI eine Warnung rendert.
     """
     k = check_k_anonymity(df, field="client", minimum_k=5)
+    high_reid_risk = k.reidentification_risk == "high"
 
-    heatmap = build_hourly_heatmap(df)
     heatmap_by_client: dict[str, list[int]] = {}
-    if not heatmap.empty:
-        for raw_client, row in heatmap.iterrows():
-            heatmap_by_client[pseudonymize_client(str(raw_client), salt)] = [
-                int(v) for v in row.tolist()
-            ]
+    if not high_reid_risk:
+        heatmap = build_hourly_heatmap(df)
+        heatmap = mask_low_count_cells(heatmap, min_count=3)
+        if not heatmap.empty:
+            for raw_client, row in heatmap.iterrows():
+                heatmap_by_client[pseudonymize_client(str(raw_client), salt)] = [
+                    int(v) for v in row.tolist()
+                ]
 
     by_client: dict[str, dict[str, Any]] = {}
     risk_rank = {"critical": 4, "high": 3, "medium": 2, "low": 1}
@@ -260,23 +276,26 @@ def _build_user_patterns(
         entry["upload_events"] += f.get("upload_events", 0)
         entry["has_document_upload"] = entry["has_document_upload"] or f.get("has_document_upload", False)
 
-    top_clients = sorted(
-        (
-            {
-                "client_pseudonym": e["client_pseudonym"],
-                "service_count": len(e["services"]),
-                "services": sorted(e["services"]),
-                "total_queries": e["total_queries"],
-                "risk_max": e["risk_max"],
-                "risk_level_max": e["risk_level_max"],
-                "upload_events": e["upload_events"],
-                "has_document_upload": e["has_document_upload"],
-            }
-            for e in by_client.values()
-        ),
-        key=lambda e: (e["risk_max"], e["total_queries"]),
-        reverse=True,
-    )
+    if high_reid_risk:
+        # DSGVO Art. 25 Redaktion: k-Wert unterhalb minimum_k/2 → kein Ranking.
+        top_clients: list[dict[str, Any]] = []
+    else:
+        top_clients = sorted(
+            (
+                {
+                    "client_pseudonym": e["client_pseudonym"],
+                    "service_count": len(e["services"]),
+                    "total_queries": e["total_queries"],
+                    "risk_max": e["risk_max"],
+                    "risk_level_max": e["risk_level_max"],
+                    "upload_events": e["upload_events"],
+                    "has_document_upload": e["has_document_upload"],
+                }
+                for e in by_client.values()
+            ),
+            key=lambda e: (e["risk_max"], e["total_queries"]),
+            reverse=True,
+        )
 
     return {
         "k_anonymity": {
@@ -285,6 +304,7 @@ def _build_user_patterns(
             "is_sufficient": k.is_sufficient,
             "reidentification_risk": k.reidentification_risk,
         },
+        "privacy_redacted": high_reid_risk,
         "top_clients": top_clients,
         "hourly_heatmap": heatmap_by_client,
     }
