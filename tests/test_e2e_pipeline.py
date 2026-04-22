@@ -87,8 +87,8 @@ class TestPiholePipelineE2E:
         paths = gen.write(tmp_path, audience="compliance", format="html")
         path_list = paths if isinstance(paths, list) else [paths]
         html = Path(path_list[0]).read_text(encoding="utf-8")
-        # Alle 5 Frameworks sollten im Compliance-Report auftauchen
-        for framework in ("DORA", "EU AI Act", "ISO 42001", "ISO 27001", "DSGVO"):
+        # Alle 6 Frameworks sollten im Compliance-Report auftauchen
+        for framework in ("DORA", "EU AI Act", "ISO 42001", "ISO 27001", "DSGVO", "EU CRA"):
             assert framework in html, f"{framework} fehlt im HTML-Report"
 
     def test_report_passes_privacy_assertion(self, pipeline, tmp_path: Path) -> None:

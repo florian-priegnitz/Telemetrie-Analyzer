@@ -1,0 +1,82 @@
+# ============================================================================
+# EU Cyber Resilience Act — Control Registry
+# Regulation (EU) 2024/2847 on horizontal cybersecurity requirements for
+# products with digital elements
+# ============================================================================
+#
+# Declarative metadata for CRA controls mapped by the compliance engine.
+# The engine rules live in src/compliance/engine.py; this file is the
+# authoritative source for control names, article titles and descriptions
+# and is validated by tests/test_compliance.py::test_cra_yaml_*.
+
+framework:
+  id: CRA
+  name: "EU Cyber Resilience Act"
+  regulation_id: "Regulation (EU) 2024/2847"
+  effective_from: "2024-12-10"
+  full_compliance_deadline: "2027-12-11"
+  reporting_deadline: "2026-09-11"
+
+controls:
+  - id: "Art. 6"
+    name: "Essential Cybersecurity Requirements"
+    article_title: "Artikel 6 — Wesentliche Anforderungen (Annex I)"
+    description: >
+      Produkte mit digitalen Elementen (inkl. Software-as-a-Service mit
+      Update-Funktion) müssen grundlegende Cybersicherheitsanforderungen
+      erfüllen und eine CE-Konformitätserklärung vorweisen.
+    applies_to: all_shadow_ai
+
+  - id: "Art. 7"
+    name: "Important and Critical Products with Digital Elements"
+    article_title: "Artikel 7 — Wichtige und kritische Produkte (Annex III/IV)"
+    description: >
+      Hochrisiko-KI-Kategorien (llm_api, ml_platform, code_assistant,
+      llm_chatbot) zählen zu den wichtigen Produkten und erfordern
+      zusätzliche Konformitätsbewertung durch Dritte.
+    applies_to: high_risk_ai_categories
+
+  - id: "Art. 10"
+    name: "Security Requirements during Product Lifecycle"
+    article_title: "Artikel 10 — Sicherheitsanforderungen im Lebenszyklus"
+    description: >
+      LLM-APIs und Code-Assistants mit Zugriff auf Quellcode oder
+      Prompt-Strömen bergen Supply-Chain-Risiken und erfordern
+      dokumentierten Lifecycle-Security-Nachweis inkl. Patch-Pipeline.
+    applies_to: llm_api_and_code_assistant
+
+  - id: "Art. 11"
+    name: "Obligations for Manufacturers — Vulnerability Handling"
+    article_title: "Artikel 11 — Pflichten zur Schwachstellenbehandlung"
+    description: >
+      Beim Upload von Dokumenten in externe KI-Dienste entsteht ein
+      Datenabflussrisiko, das ein formalisiertes Vulnerability-Handling
+      seitens des Betreibers erfordert.
+    applies_to: document_upload_findings
+
+  - id: "Art. 13"
+    name: "Obligations of Manufacturers"
+    article_title: "Artikel 13 — Herstellerpflichten"
+    description: >
+      Hersteller von Hochrisiko-Produkten (risk_level critical oder high)
+      müssen eine Konformitätserklärung ausstellen; ohne diese Erklärung
+      darf das Produkt nicht in Verkehr gebracht werden.
+    applies_to: high_and_critical_risk_level
+
+  - id: "Art. 14"
+    name: "Reporting Obligations for Actively Exploited Vulnerabilities"
+    article_title: "Artikel 14 — Meldepflichten (24h/72h)"
+    description: >
+      Systematisch genutzte Shadow-AI-Dienste erfordern eine Incident-
+      Reporting-Pipeline mit 24-Stunden-Früherkennung und 72-Stunden-
+      Vollmeldung an ENISA/CSIRT bei aktiver Ausnutzung.
+    applies_to: systematic_usage
+
+  - id: "Art. 24"
+    name: "Technical Documentation"
+    article_title: "Artikel 24 — Technische Dokumentation (Annex V)"
+    description: >
+      Cloud-gehostete KI-Dienste benötigen technische Dokumentation nach
+      Annex V (Architektur, Bedrohungsmodell, Risikobewertung,
+      Konformitätsnachweise).
+    applies_to: cloud_hosted_services
