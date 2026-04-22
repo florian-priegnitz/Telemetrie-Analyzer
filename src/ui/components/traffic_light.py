@@ -25,7 +25,7 @@ def render_compliance_traffic_light(report_data: dict[str, Any]) -> None:
           {traffic_light_dot(state, size_px=48)}
           <div>
             <div style="font-size:1.6em;font-weight:700;">{percent:.1f}% — {label}</div>
-            <div style="color:#57606a;">Erfüllungsgrad über alle 5 Frameworks</div>
+            <div style="color:#57606a;">Erfüllungsgrad über alle 6 Frameworks</div>
           </div>
         </div>
         """,

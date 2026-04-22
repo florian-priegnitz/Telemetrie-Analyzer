@@ -74,8 +74,8 @@ def test_generator_renders_compliance_html_smoke():
     html = ReportGenerator(det, comp, salt=_FIXED_SALT).render(audience="compliance", format="html")
     assert "Compliance Report" in html
     assert "Framework-Übersicht" in html
-    # Alle 5 Frameworks sollten erscheinen
-    for fw in ("DORA", "EU AI Act", "ISO/IEC 42001", "ISO/IEC 27001", "DSGVO"):
+    # Alle 6 Frameworks sollten erscheinen
+    for fw in ("DORA", "EU AI Act", "ISO/IEC 42001", "ISO/IEC 27001", "DSGVO", "EU CRA"):
         assert fw in html
 
 

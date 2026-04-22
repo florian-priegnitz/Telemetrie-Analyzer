@@ -53,7 +53,7 @@ def render(report_data: dict[str, Any]) -> None:
     )
 
     # Stable Order (analog Compliance-Modell)
-    order = ["DORA", "EU_AI_ACT", "ISO_42001", "ISO_27001", "DSGVO"]
+    order = ["DORA", "EU_AI_ACT", "ISO_42001", "ISO_27001", "DSGVO", "CRA"]
     fw_by_id = {fv["framework"]: fv for fv in framework_scores}
     ordered = [fw_by_id[fw_id] for fw_id in order if fw_id in fw_by_id]
 

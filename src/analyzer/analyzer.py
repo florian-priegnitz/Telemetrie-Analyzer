@@ -98,8 +98,8 @@ class ClaudeAnalyzer:
         return (
             "Du bist ein erfahrener IT-Security- und Compliance-Analyst in einem "
             "deutschen Finanzunternehmen. Du analysierst Shadow-AI-Nutzung und "
-            "bewertest Risiken im Kontext von DORA, EU AI Act, ISO 42001, ISO 27001 "
-            "und DSGVO.\n\n"
+            "bewertest Risiken im Kontext von DORA, EU AI Act, ISO 42001, ISO 27001, "
+            "DSGVO und dem EU Cyber Resilience Act (CRA).\n\n"
             "Antworte immer auf Deutsch. Gib deine Analyse als valides JSON zurück.\n\n"
             "JSON-Schema:\n"
             "{\n"

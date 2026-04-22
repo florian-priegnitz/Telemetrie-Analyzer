@@ -181,6 +181,65 @@ def _build_rules() -> list[_Rule]:
             severity_fn=lambda f: Severity.HIGH,
             rationale_template="Hochrisiko-KI-Dienst '{service}' erfordert DSFA (Datentransfer an {provider}).",
         ),
+
+        # --- CRA (Regulation (EU) 2024/2847 — Cyber Resilience Act) ---
+        # Metadata: mappings/cra.yaml
+        _Rule(
+            framework=Framework.CRA,
+            control_id="Art. 6",
+            control_name="Essential Cybersecurity Requirements",
+            condition=lambda f: True,  # every shadow AI = product with digital elements without CE
+            severity_fn=_severity_from_risk,
+            rationale_template="KI-Dienst '{service}' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA.",
+        ),
+        _Rule(
+            framework=Framework.CRA,
+            control_id="Art. 7",
+            control_name="Important and Critical Products with Digital Elements",
+            condition=lambda f: f.category in _HIGH_RISK_AI_CATEGORIES,
+            severity_fn=lambda f: Severity.HIGH,
+            rationale_template="'{service}' (Kategorie {category}) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte.",
+        ),
+        _Rule(
+            framework=Framework.CRA,
+            control_id="Art. 10",
+            control_name="Security Requirements during Product Lifecycle",
+            condition=lambda f: f.category in {"llm_api", "code_assistant"},
+            severity_fn=lambda f: Severity.HIGH,
+            rationale_template="'{service}' ({category}) — Supply-Chain-Risiko ohne Lifecycle-Security-Nachweis und Patch-Pipeline.",
+        ),
+        _Rule(
+            framework=Framework.CRA,
+            control_id="Art. 11",
+            control_name="Obligations for Manufacturers — Vulnerability Handling",
+            condition=lambda f: f.has_document_upload,
+            severity_fn=lambda f: Severity.HIGH,
+            rationale_template="Dokument-Uploads an '{service}' ohne nachgewiesenes Vulnerability-Handling-Verfahren.",
+        ),
+        _Rule(
+            framework=Framework.CRA,
+            control_id="Art. 13",
+            control_name="Obligations of Manufacturers",
+            condition=lambda f: f.risk_level in ("critical", "high"),
+            severity_fn=_severity_from_risk,
+            rationale_template="Hochrisiko-Dienst '{service}' ({provider}) ohne Hersteller-Konformitätserklärung nach CRA.",
+        ),
+        _Rule(
+            framework=Framework.CRA,
+            control_id="Art. 14",
+            control_name="Reporting Obligations for Actively Exploited Vulnerabilities",
+            condition=lambda f: f.is_systematic,
+            severity_fn=lambda f: Severity.HIGH,
+            rationale_template="Systematische Nutzung von '{service}' ({queries_per_day} Queries/Tag) ohne Incident-Reporting-Pipeline (24h/72h).",
+        ),
+        _Rule(
+            framework=Framework.CRA,
+            control_id="Art. 24",
+            control_name="Technical Documentation",
+            condition=lambda f: f.category in _CLOUD_CATEGORIES,
+            severity_fn=lambda f: Severity.MEDIUM,
+            rationale_template="Cloud-KI-Dienst '{service}' ohne technische Dokumentation nach CRA-Anhang V.",
+        ),
     ]
 
 
@@ -191,6 +250,7 @@ _CONTROLS_PER_FRAMEWORK: dict[Framework, int] = {
     Framework.EU_AI_ACT: 3,   # Art. 6, Art. 9, Art. 53
     Framework.ISO_42001: 2,   # 6.1.2, 8.4
     Framework.DSGVO: 3,       # Art. 6, Art. 25, Art. 35
+    Framework.CRA: 7,         # Art. 6, 7, 10, 11, 13, 14, 24
 }
 
 

@@ -5,6 +5,12 @@ Alle nennenswerten Änderungen am Telemetrie Analyzer werden in dieser Datei dok
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unreleased]
+
+### Hinzugefügt
+
+- **CRA Phase 2a (#42)** — 6. Compliance-Framework **EU Cyber Resilience Act** (Verordnung (EU) 2024/2847) produktiv. 7 Kontrollen (Art. 6, 7, 10, 11, 13, 14, 24) werden auf Shadow-AI-Findings gemappt. Neue `mappings/cra.yaml` als deklarative Control-Registry mit Framework-Metadaten, Artikel-Titeln und Beschreibungen. Engine-Regeln in `src/compliance/engine.py`, UI-Tab in Compliance-Page, Reports (Executive/IT-Security/Compliance × HTML/Markdown/JSON) führen CRA-Spalten/Mappings. **20 neue Tests** (CRA-Regeln + YAML-Schema + Engine/YAML-Drift-Check) — Suite von 516 auf 536 Tests gewachsen. CRA-Volle-Compliance-Deadline: 2027-12-11, Meldepflichten ab 2026-09-11.
+
 ## [1.0.0] — 2026-04-21
 
 Erste stabile Produktiv-Version. Fokus dieser Finalisierung: **Ops + Onboarding** — der Analyzer ist jetzt in 2 Kommandos per Docker Compose startbar, vollständig CI/CD-abgesichert und DSGVO-Retention-konform. Das Parser-Epic E3 ist mit 12/12 Parsern komplett abgeschlossen, inkl. Windows-Sysmon und dem vendor-agnostischen Elastic-Common-Schema-Parser als universeller Fallback.
