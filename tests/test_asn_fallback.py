@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import ipaddress
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-import pytest
 
-from src.detection.asn_fallback import AsnDatabase, AsnMatch
+from src.detection.asn_fallback import AsnDatabase
 from src.detection.engine import DetectionEngine
 
 _DEFAULT_DB = Path(__file__).resolve().parent.parent / "data" / "ai_ip_ranges.json"
