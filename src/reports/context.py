@@ -82,6 +82,10 @@ class ReportContext:
     overall_compliance_percent: float  # Mittelwert über alle Frameworks
     compliance_traffic_light: str  # green / yellow / red
 
+    # AI Endpoint DB Version (#14) — für Audit-Disclaimer
+    db_version: str = ""
+    db_last_updated: str = ""
+
     # Embedded Charts (HTML-Snippets, bereits gerendert)
     charts: dict[str, str] = field(default_factory=dict)
 
@@ -151,8 +155,16 @@ def build_context(
     compliance_result: ComplianceResult,
     salt: str,
     charts: dict[str, str] | None = None,
+    db_version: str = "",
+    db_last_updated: str = "",
 ) -> ReportContext:
-    """Baut den ReportContext aus Detection- + Compliance-Result + Salt."""
+    """Baut den ReportContext aus Detection- + Compliance-Result + Salt.
+
+    Args:
+        db_version / db_last_updated: Optionaler Audit-Disclaimer (#14 E1-6).
+            Wenn vom Aufrufer gesetzt, erscheint die AI-Endpoint-DB-Version
+            im Reports-Footer und ermöglicht auditierbare Reproduzierbarkeit.
+    """
     findings_view: list[FindingView] = []
     upload_events_total = 0
     total_bytes_uploaded = 0
@@ -207,6 +219,8 @@ def build_context(
         framework_scores=framework_views,
         overall_compliance_percent=round(overall, 1),
         compliance_traffic_light=_traffic_light(overall),
+        db_version=db_version,
+        db_last_updated=db_last_updated,
         charts=charts or {},
     )
 
@@ -223,6 +237,10 @@ def context_to_json_dict(ctx: ReportContext) -> dict[str, Any]:
             "pseudonymized": ctx.pseudonymized,
             "salt_fingerprint": ctx.salt_fingerprint,
             "period": {"start": _ts(ctx.period_start), "end": _ts(ctx.period_end)},
+            "ai_endpoint_db": {
+                "version": ctx.db_version,
+                "last_updated": ctx.db_last_updated,
+            },
         },
         "summary": {
             "total_queries": ctx.total_queries,

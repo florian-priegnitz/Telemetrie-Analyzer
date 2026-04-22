@@ -52,11 +52,23 @@ class ReportGenerator:
         compliance_result: ComplianceResult,
         salt: str | None = None,
         offline: bool = False,
+        db_version: str | None = None,
+        db_last_updated: str | None = None,
     ):
+        """Initialisiert den Generator.
+
+        Args:
+            db_version / db_last_updated: Optionaler Audit-Disclaimer (#14).
+                Wenn nicht gesetzt, wird die Default-AI-Endpoint-DB einmalig
+                gelesen, um die Metadaten zu füllen (Footer-Ausgabe).
+                Explizites Setzen (z. B. ""/"") unterdrückt die Anzeige.
+        """
         self._detection = detection_result
         self._compliance = compliance_result
         self._salt = salt or get_default_salt()
         self._offline = offline
+        self._db_version = db_version
+        self._db_last_updated = db_last_updated
         self._env = Environment(
             loader=FileSystemLoader(_TEMPLATE_DIR),
             autoescape=select_autoescape(["html", "html.j2", "xml"]),
@@ -65,12 +77,32 @@ class ReportGenerator:
         )
         self._context: ReportContext | None = None
 
+    def _resolve_db_meta(self) -> tuple[str, str]:
+        """Liest DB-Version/-Datum; lazy-loaded beim ersten Zugriff."""
+        if self._db_version is not None or self._db_last_updated is not None:
+            return self._db_version or "", self._db_last_updated or ""
+        try:
+            from src.database.ai_endpoints import AIEndpointDatabase
+            db = AIEndpointDatabase()
+            self._db_version = db.version
+            self._db_last_updated = db.last_updated
+        except Exception:
+            self._db_version = ""
+            self._db_last_updated = ""
+        return self._db_version, self._db_last_updated
+
     def _get_context(self) -> ReportContext:
         if self._context is None:
-            ctx_no_charts = build_context(self._detection, self._compliance, self._salt)
+            db_version, db_updated = self._resolve_db_meta()
+            ctx_no_charts = build_context(
+                self._detection, self._compliance, self._salt,
+                db_version=db_version, db_last_updated=db_updated,
+            )
             charts = build_all_charts(ctx_no_charts, offline=self._offline)
             self._context = build_context(
-                self._detection, self._compliance, self._salt, charts=charts,
+                self._detection, self._compliance, self._salt,
+                charts=charts,
+                db_version=db_version, db_last_updated=db_updated,
             )
         return self._context
 

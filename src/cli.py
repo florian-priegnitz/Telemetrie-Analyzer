@@ -30,6 +30,7 @@ from typing import Any
 
 from src.compliance.engine import ComplianceEngine
 from src.database.ai_endpoints import AIEndpointDatabase
+from src.database.versioning import compute_diff, list_versions
 from src.detection.engine import DetectionEngine
 from src.parsers.detection import detect_format
 from src.privacy.pseudonymizer import Pseudonymizer
@@ -179,6 +180,27 @@ def _validate_db(args: argparse.Namespace) -> int:
     return 0
 
 
+def _diff_db(args: argparse.Namespace) -> int:
+    """CLI-Handler für ``diff-db`` (#14). Ohne Args: verfügbare Snapshots listen."""
+    if not args.from_version or not args.to_version:
+        available = list_versions()
+        if not available:
+            print("Keine Versions-Snapshots unter data/versions/ gefunden.", file=sys.stderr)
+            return 1
+        print("Verfügbare Endpoint-DB-Versionen:")
+        for v in available:
+            print(f"  {v}")
+        print("\nUsage: telemetrie-analyzer diff-db <from> <to>")
+        return 0
+    try:
+        report = compute_diff(args.from_version, args.to_version)
+    except FileNotFoundError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    print(report.format_text())
+    return 0
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="telemetrie-analyzer",
@@ -214,6 +236,14 @@ def _build_parser() -> argparse.ArgumentParser:
         help="AI-Endpoint-Database gegen Schema validieren")
     validate.add_argument("--path", help="Alternativer DB-Pfad")
     validate.set_defaults(func=_validate_db)
+
+    diff_db = subparsers.add_parser("diff-db",
+        help="Delta-Report zwischen zwei Endpoint-DB-Versionen")
+    diff_db.add_argument("from_version", nargs="?",
+                         help="Quell-Version (z. B. 2.1.0). Ohne Args: Liste aller Snapshots.")
+    diff_db.add_argument("to_version", nargs="?",
+                         help="Ziel-Version (z. B. 2.2.0)")
+    diff_db.set_defaults(func=_diff_db)
 
     return parser
 

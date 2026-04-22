@@ -52,6 +52,8 @@ class AIEndpointDatabase:
         self._alias_index: dict[str, AIEndpoint] = {}
         self._ip_networks: list[tuple[ipaddress._BaseNetwork, AIEndpoint]] = []
         self._sni_patterns: list[tuple[str, AIEndpoint]] = []
+        self._version: str = ""
+        self._last_updated: str = ""
         self._load(db_path, validate=validate)
 
     def _load(self, path: Path, validate: bool) -> None:
@@ -60,6 +62,9 @@ class AIEndpointDatabase:
 
         if validate:
             self._validate_schema(data, path.parent / "ai_endpoints_schema.json")
+
+        self._version = str(data.get("version", ""))
+        self._last_updated = str(data.get("last_updated") or "")
 
         for entry in data["endpoints"]:
             endpoint = AIEndpoint(
@@ -168,6 +173,16 @@ class AIEndpointDatabase:
     @property
     def domains(self) -> set[str]:
         return set(self._domain_index.keys())
+
+    @property
+    def version(self) -> str:
+        """Semver-String aus dem DB-Header (z. B. '2.2.0'). Leer falls nicht gesetzt."""
+        return self._version
+
+    @property
+    def last_updated(self) -> str:
+        """ISO-Datum des letzten Updates aus dem DB-Header. Leer falls nicht gesetzt."""
+        return self._last_updated
 
     def by_category(self, category: str) -> list[AIEndpoint]:
         return [e for e in self._endpoints if e.category == category]
