@@ -35,7 +35,7 @@ jobs:
         run: python -m src.database.ai_endpoints --validate
 
       - name: Create PR if changes
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "chore(data): monthly endpoint-db refresh"
           title: "[auto] Endpoint-DB monthly refresh"
