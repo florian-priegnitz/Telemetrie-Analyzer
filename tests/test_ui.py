@@ -154,6 +154,41 @@ def test_user_patterns_k_anonymity_flags_small_dataset():
     assert k["reidentification_risk"] in {"medium", "high"}
 
 
+def test_user_patterns_redacts_on_high_reid_risk():
+    """#43 MED #1: bei reidentification_risk='high' werden Ranking + Heatmap redigiert."""
+    import pandas as pd
+
+    from src.ui.state import _build_user_patterns
+
+    # Nur 1 einziger Client → observed_k=1 < max(2, 5//2)=2 → risk=high
+    df = pd.DataFrame({
+        "timestamp": pd.to_datetime(["2026-04-19 09:00", "2026-04-19 10:00"]),
+        "client": ["ip_solo", "ip_solo"],
+        "domain": ["chat.openai.com", "chat.openai.com"],
+    })
+    patterns = _build_user_patterns(df, findings_json=[], salt="test-salt")
+    assert patterns["k_anonymity"]["reidentification_risk"] == "high"
+    assert patterns["privacy_redacted"] is True
+    assert patterns["top_clients"] == []
+    assert patterns["hourly_heatmap"] == {}
+
+
+def test_user_patterns_no_redaction_on_medium_risk():
+    """Bei medium-Risk (>= minimum_k/2) wird nicht redigiert, nur der k-Banner angezeigt."""
+    import pandas as pd
+
+    from src.ui.state import _build_user_patterns
+
+    df = pd.DataFrame({
+        "timestamp": pd.to_datetime(["2026-04-19 09:00"] * 4),
+        "client": ["ip_a", "ip_b", "ip_a", "ip_b"],
+        "domain": ["chat.openai.com"] * 4,
+    })
+    patterns = _build_user_patterns(df, findings_json=[], salt="test-salt")
+    assert patterns["k_anonymity"]["reidentification_risk"] == "medium"
+    assert patterns["privacy_redacted"] is False
+
+
 def test_users_patterns_page_runs_on_sample_data():
     """E2-4 Page lädt ohne Exception auf dem Pi-hole-Sample (inkl. Sidebar-Nav)."""
     from streamlit.testing.v1 import AppTest
