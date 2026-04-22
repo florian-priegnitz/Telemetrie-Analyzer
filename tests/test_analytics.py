@@ -5,12 +5,14 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 
 import pandas as pd
+import pytest
 
 from src.analytics.bursts import detect_bursts
 from src.analytics.temporal import (
     BUSINESS_HOURS_END,
     BUSINESS_HOURS_START,
     build_hourly_heatmap,
+    mask_low_count_cells,
     off_hours_ratio,
 )
 from src.privacy.k_anonymity import check_k_anonymity
@@ -68,6 +70,41 @@ class TestHourlyHeatmap:
 
 
 # ===========================================================================
+# #43 MED — Heatmap Cell Masking (DSGVO Art. 25)
+# ===========================================================================
+class TestMaskLowCountCells:
+
+    def test_empty_passthrough(self):
+        result = mask_low_count_cells(pd.DataFrame())
+        assert result.empty
+
+    def test_cells_below_threshold_zeroed(self):
+        """Zellen mit Count < min_count werden auf 0 maskiert."""
+        # Client c1 hat Stunde 8 = 5 Queries, Stunde 14 = 1 Query (= Einzelereignis)
+        base = datetime(2026, 4, 1, 8, 0, 0)
+        events = [("c1", "x.com", base)] * 5 + [("c1", "x.com", base + timedelta(hours=6))]
+        heatmap = build_hourly_heatmap(_make_df(events))
+        masked = mask_low_count_cells(heatmap, min_count=3)
+        assert masked.loc["c1", 8] == 5   # ≥3, bleibt
+        assert masked.loc["c1", 14] == 0  # <3, maskiert
+
+    def test_default_threshold_is_3(self):
+        base = datetime(2026, 4, 1, 10, 0, 0)
+        events = [("c1", "x.com", base), ("c1", "x.com", base)]  # Stunde 10 = 2
+        heatmap = build_hourly_heatmap(_make_df(events))
+        masked = mask_low_count_cells(heatmap)  # Default min_count=3
+        assert masked.loc["c1", 10] == 0
+
+    def test_preserves_shape(self):
+        base = datetime(2026, 4, 1, 8, 0, 0)
+        events = [("c1", "x.com", base)]
+        heatmap = build_hourly_heatmap(_make_df(events))
+        masked = mask_low_count_cells(heatmap, min_count=3)
+        assert masked.shape == heatmap.shape
+        assert list(masked.columns) == list(heatmap.columns)
+
+
+# ===========================================================================
 # E2-2 — Off-Hours Ratio
 # ===========================================================================
 class TestOffHoursRatio:
@@ -99,18 +136,37 @@ class TestOffHoursRatio:
         assert off_hours_ratio(pd.DataFrame()) == 0.0
 
     def test_configurable_business_hours(self):
-        # Schicht-Arbeit: 22–06 Uhr wäre "business"
+        """Enge Business-Hours (10–12): 23:00 und 14:00 beide off → 100%."""
         events = [
-            ("c1", "x.com", datetime(2026, 4, 1, 23, 0, 0)),  # wäre normal off, hier business
-            ("c1", "x.com", datetime(2026, 4, 1, 14, 0, 0)),  # wäre normal business, hier off
+            ("c1", "x.com", datetime(2026, 4, 1, 23, 0, 0)),
+            ("c1", "x.com", datetime(2026, 4, 1, 14, 0, 0)),
         ]
-        # Umgekehrte Schicht: 22–06 business
-        ratio = off_hours_ratio(_make_df(events), business_start=22, business_end=6)
-        # Mit dieser Implementierung wäre alles off, da start > end nicht unterstützt —
-        # wir testen stattdessen enge Business-Hours (10–12).
         ratio = off_hours_ratio(_make_df(events), business_start=10, business_end=12)
-        # 23:00 = off, 14:00 = off → 100%
         assert ratio == 1.0
+
+    def test_overnight_shift_wraps_midnight(self):
+        """Overnight-Shift (start > end, z. B. 22–06): Business umspannt Mitternacht.
+
+        Events: 23:00 und 02:00 liegen im Nacht-Business, 14:00 im Tag-Off.
+        Erwartung: nur 14:00 ist off → 1/3.
+        """
+        events = [
+            ("c1", "x.com", datetime(2026, 4, 1, 23, 0, 0)),  # in [22, 24) → business
+            ("c1", "x.com", datetime(2026, 4, 1, 2, 0, 0)),   # in [0, 6)   → business
+            ("c1", "x.com", datetime(2026, 4, 1, 14, 0, 0)),  # in [6, 22)  → off
+        ]
+        ratio = off_hours_ratio(_make_df(events), business_start=22, business_end=6)
+        assert ratio == pytest.approx(1 / 3)
+
+    def test_overnight_shift_boundary_hours(self):
+        """Grenzwerte der Overnight-Shift: 22 ist Start (inkl.), 6 ist Ende (exkl.)."""
+        events = [
+            ("c1", "x.com", datetime(2026, 4, 1, 22, 0, 0)),  # = start → business
+            ("c1", "x.com", datetime(2026, 4, 1, 6, 0, 0)),   # = end   → off
+            ("c1", "x.com", datetime(2026, 4, 1, 21, 0, 0)),  # < start, > end → off
+        ]
+        ratio = off_hours_ratio(_make_df(events), business_start=22, business_end=6)
+        assert ratio == pytest.approx(2 / 3)
 
 
 # ===========================================================================

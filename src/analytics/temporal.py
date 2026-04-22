@@ -78,6 +78,31 @@ def build_hourly_heatmap(
     return heatmap.astype(int)
 
 
+def mask_low_count_cells(
+    heatmap: pd.DataFrame,
+    min_count: int = 3,
+) -> pd.DataFrame:
+    """Maskiert Heatmap-Zellen mit Count < ``min_count`` auf 0 (k-Anonymity-Schutz).
+
+    Eine vollständige 24h-Aktivitätsreihe pro Client ist über das Muster
+    re-identifizierbar, selbst wenn der Client-Key pseudonymisiert ist
+    (DSGVO Art. 25). Zellen mit Einzelereignissen (niedriger Count)
+    werden daher ausgeblendet.
+
+    Args:
+        heatmap: DataFrame (Client × Stunde) von ``build_hourly_heatmap``.
+        min_count: Schwellwert, unterhalb dessen Zellen auf 0 gesetzt werden
+            (Default 3 — kleine-Zahlen-Problem nach DSGVO).
+
+    Returns:
+        Maskierter DataFrame mit gleicher Form. Bei leerem Input wird er
+        unverändert durchgereicht.
+    """
+    if heatmap.empty:
+        return heatmap
+    return heatmap.where(heatmap >= min_count, 0).astype(int)
+
+
 def off_hours_ratio(
     df: pd.DataFrame,
     business_start: int = BUSINESS_HOURS_START,
@@ -91,7 +116,10 @@ def off_hours_ratio(
     Args:
         df: DataFrame mit ``timestamp``
         business_start: Erste Stunde, die als Business-Hour gilt (inklusive)
-        business_end: Erste Stunde NACH Business-Hours (exklusiv; ≥end = Off-Hours)
+        business_end: Erste Stunde NACH Business-Hours (exklusiv; ≥end = Off-Hours).
+            Wenn ``business_start > business_end`` wird die Schicht als Overnight-
+            Shift interpretiert (z. B. 22–06): Business-Fenster umfasst dann
+            ``[start, 24) ∪ [0, end)`` und Off-Hours ist ``[end, start)``.
 
     Returns:
         Float in [0.0, 1.0]; 0.0 = alles während Business-Hours, 1.0 = alles off-hours.
@@ -101,5 +129,11 @@ def off_hours_ratio(
         return 0.0
 
     hours = pd.to_datetime(df["timestamp"]).dt.hour
-    off_hours_mask = (hours < business_start) | (hours >= business_end)
+    if business_start <= business_end:
+        # Normale Tagschicht: Business-Fenster ist [start, end)
+        off_hours_mask = (hours < business_start) | (hours >= business_end)
+    else:
+        # Overnight-Shift: Business-Fenster umspannt Mitternacht.
+        # Off-Hours liegt im geschlossenen Intervall [end, start).
+        off_hours_mask = (hours >= business_end) & (hours < business_start)
     return float(off_hours_mask.mean())
