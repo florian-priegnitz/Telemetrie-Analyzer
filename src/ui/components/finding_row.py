@@ -7,7 +7,7 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
-from src.ui.components.badges import risk_badge, severity_badge, status_badge
+from src.ui.components.badges import risk_badge
 
 
 def render_finding_expander(finding: dict[str, Any]) -> None:

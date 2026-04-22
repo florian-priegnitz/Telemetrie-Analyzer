@@ -26,7 +26,6 @@ from src.reports.context import (
 )
 from src.reports.privacy import assert_no_plaintext, get_default_salt
 
-
 _TEMPLATE_DIR = Path(__file__).parent / "templates"
 
 Audience = Literal["executive", "it_sec", "compliance", "all"]

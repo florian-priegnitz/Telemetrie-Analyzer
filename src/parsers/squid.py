@@ -16,13 +16,13 @@ Beispiel-Konfiguration siehe `config/squid_logformat.conf`.
 """
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
 import pandas as pd
 
-from src.parsers.base import BaseParser
+from src.parsers.base import BaseParser, coerce_timestamp_ns
 from src.privacy.pseudonymizer import Pseudonymizer
 
 # Squid native: 10 whitespace-separated felder, time ist epoch.ms
@@ -146,6 +146,7 @@ def parse_squid_log(
     df["bytes_uploaded"] = df["bytes_uploaded"].astype("Int64")
     df["bytes_downloaded"] = df["bytes_downloaded"].astype("Int64")
     df["status_code"] = df["status_code"].astype("Int16")
+    df = coerce_timestamp_ns(df)
     return df[_COLUMNS]
 
 
@@ -162,7 +163,7 @@ def _parse_line(
         m = _NATIVE_PATTERN.match(line)
         if not m:
             return None
-        ts = datetime.fromtimestamp(float(m.group("time")), tz=timezone.utc).replace(tzinfo=None)
+        ts = datetime.fromtimestamp(float(m.group("time")), tz=UTC).replace(tzinfo=None)
         url = m.group("url")
         domain = _extract_domain(url)
         if not domain:
@@ -193,7 +194,7 @@ def _parse_line(
             return None
         try:
             ts = datetime.strptime(m.group("date"), _COMMON_DATE_FMT)
-            ts = ts.astimezone(timezone.utc).replace(tzinfo=None)
+            ts = ts.astimezone(UTC).replace(tzinfo=None)
         except ValueError:
             return None
         url = m.group("url")

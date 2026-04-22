@@ -5,6 +5,54 @@ Alle nennenswerten Änderungen am Telemetrie Analyzer werden in dieser Datei dok
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.0.0] — 2026-04-21
+
+Erste stabile Produktiv-Version. Fokus dieser Finalisierung: **Ops + Onboarding** — der Analyzer ist jetzt in 2 Kommandos per Docker Compose startbar, vollständig CI/CD-abgesichert und DSGVO-Retention-konform. Das Parser-Epic E3 ist mit 12/12 Parsern komplett abgeschlossen, inkl. Windows-Sysmon und dem vendor-agnostischen Elastic-Common-Schema-Parser als universeller Fallback.
+
+### Hinzugefügt
+
+- **12 Log-Parser (Epic E3, Sprint 7 komplett)** — Pi-hole, Squid, Zscaler ZIA, Palo Alto PAN-OS, Cisco Umbrella, Fortinet, AWS VPC Flow (v2+v5), Azure Entra ID, Cloudflare Gateway, Netskope CASB, **Windows Sysmon Event 22** (E3-9, #34), **Elastic Common Schema** (E3-10, #35) als vendor-agnostischer Fallback. Alle Parser erfüllen den `BaseParser`-Contract (E3-0) und pseudonymisieren Identitäten bereits beim Import.
+- **CLI Entry Point (#3)** — `telemetrie-analyzer analyze <log> --format html|markdown|json --audience …` mit Auto-Detect für alle 12 Formate, `--stdout` für Pipe-Nutzung, `--no-retention` für Tests, separates `validate-db`-Subkommando. Headless-Automation für Cron/CI/SIEM.
+- **Multi-Fallback-Lookup in Detection Engine (#50, #52)** — Endpoint-Match erkennt jetzt dreistufig: Subdomain → Alias (Entra `AppDisplayName`) → IP-Range (AWS VPC Flow ohne Domain). Deckt heterogene Log-Formate ab. 12 kritische Services haben Entra-Aliases (ChatGPT, Claude, Gemini, Copilot, …), 3 haben dokumentierte IP-Ranges als Mechanism-Demo.
+- **Retention Management (#38)** — `src/privacy/retention.py` trimmt Parser-Output auf konfigurierbaren Horizont (Default 90 Tage, per Log-Typ überschreibbar via `config/retention.yaml`). ENV-Overrides: `RETENTION_DAYS`, `RETENTION_CONFIG`. Settings-Page zeigt aktive Policy + Audit-Report der letzten Analyse (DSGVO Art. 5 (1e)).
+- **AI Endpoint Database v2.2** — 178 Endpoints (+18 in 3 neuen Kategorien): HR/Recruiting-AI (HireVue, Paradox, Eightfold, …), Browser-Extensions-AI (Merlin, HARPA, Monica, …), Customer-Support-AI (Intercom Fin, Forethought, Zendesk AI, …). Monthly Auto-Refresh via GitHub Actions (#11, #12).
+- **CI/CD Pipeline (#37)** — GitHub Actions mit Python-3.11/3.12-Matrix, `pytest`, `ruff`, `bandit`, Schema-Validator. Auto-Release on Tag `v*` mit Wheel + SBOM.
+- **GHCR Docker-Publish** — Multi-Arch-Image (amd64+arm64) wird bei Tag `v*` automatisch nach `ghcr.io/florian-priegnitz/telemetrie-analyzer` gepusht. User ziehen das fertige Image statt lokal zu bauen.
+- **Docker-Image + docker-compose.yml** — 1-Command-Deployment (`docker compose up --build`), Multi-Stage Build, Non-Root-User, HEALTHCHECK auf Streamlit `/_stcore/health`.
+- **Makefile + pre-commit** — 14 Developer-Targets (`make test/lint/docker/streamlit/analyze-sample`), `.pre-commit-config.yaml` mit ruff/bandit/Schema-Validator.
+- **End-to-End Integration Tests** — `tests/test_e2e_pipeline.py` (11 Tests) schützt die Pipeline Parser → Retention → Detection → Compliance → Report gegen Regressions-Brüche.
+- **Dokumentation für End-User** — [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [INSTALLATION.md](INSTALLATION.md), [docs/QUICKSTART.md](docs/QUICKSTART.md) mit 10-Minuten-Walkthrough + UI-Mockup.
+- **Packaging-Metadaten** — pyproject.toml mit authors, classifiers, URLs, keywords (PyPI-ready), Hatchling-Build-System.
+- **SBOM-Script** (`scripts/generate_sbom.sh`) — CycloneDX-JSON für CRA-Vorbereitung (VO EU 2024/2847).
+- **Endpoint-DB-CLI** — `python -m src.database.ai_endpoints --validate` für Schema-Checks in CI.
+- **GitHub-Metadaten** — `.github/dependabot.yml` (monthly pip + actions), Pull-Request-Template mit DSGVO-Checkliste.
+
+### Geändert
+
+- **pyproject.toml** auf Hatchling umgestellt, SemVer-Version 0.1.0 → 1.0.0, Dev-Status 5 (Production/Stable).
+- **README.md** überarbeitet mit CI-Badge, „Get Started in 2 Commands"-Sektion, aktualisierter Feature-Liste (10 Parser, 359 Tests).
+- **Ruff-Config** aktiviert (E/F/W/I/UP/B/SIM) mit pragmatischer Ignore-Liste für pre-existing Style-Issues.
+
+### Sicherheit
+
+- **Retention** wirkt rein In-Memory (keine Persistenz von Rohdaten), `apply_retention` ist idempotent und respektiert existierende Pseudonymisierung.
+- **Bandit-Scan** als CI-Gate: 0 High, 0 Medium Findings beim Release.
+- **SBOM** als Release-Asset (CycloneDX) dokumentiert Dependencies für Supply-Chain-Audits.
+- `.env.example` + `.gitignore`-Eintrag für `.env` verhindern Secret-Leaks.
+
+### Tests
+
+- **441 Tests grün** (von 161 in v0.1.0) — +17 Retention, +6 Endpoint-DB-v2.1, +24 Sysmon, +27 Elastic ECS, +9 CLI, +11 E2E-Pipeline, +11 Multi-Fallback-Detection.
+
+### Known Limitations / v1.1 Roadmap
+
+Folgende Items sind bewusst für v1.0 deferred:
+
+- **#22 Squid `%un`-Username-Parsing** (P1) — braucht DSFA-Review vor Reaktivierung
+- **#23 Session-Korrelation** (P1) — E3-0 BaseParser-Foundation bereits vorhanden, für Sprint 8
+- **#42 CRA Phase 2a** — separates Projekt `cra-compliance`, Deadline 2026-09-11
+- **#14, #15, #16, #43** — Endpoint-DB-Housekeeping, ASN-Fallback, Coverage-Details
+
 ## [0.1.0] — 2026-04-19
 
 Erstes öffentliches Release. MVP für Shadow-AI-Detection via DNS/Proxy-Log-Analyse
@@ -69,4 +117,5 @@ mit Compliance-Mapping auf DORA, EU AI Act, ISO 42001, ISO 27001 und DSGVO.
 
 - 161 Tests, alle grün (inkl. 18 Analytics-Tests und 3 Users-&-Patterns-UI-Tests).
 
+[1.0.0]: https://github.com/florian-priegnitz/Telemetrie-Analyzer/releases/tag/v1.0.0
 [0.1.0]: https://github.com/florian-priegnitz/Telemetrie-Analyzer/releases/tag/v0.1.0

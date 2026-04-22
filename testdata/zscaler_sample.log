@@ -1,25 +1,25 @@
-23-Jun-2024 08:15:32	alice@acme.corp	10.0.1.42	https://chat.openai.com/	Allowed	Productivity	ChatGPT	200	412	2048	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:15:35	alice@acme.corp	10.0.1.42	https://chat.openai.com/backend-api/conversation	Allowed	Productivity	ChatGPT	200	1820	5120	POST	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:16:02	bob@acme.corp	10.0.1.50	https://claude.ai/chats	Allowed	Productivity	Claude	200	512	4096	GET	Mozilla/5.0 Firefox/125
-23-Jun-2024 08:16:44	bob@acme.corp	10.0.1.50	https://api.anthropic.com/v1/messages	Allowed	Productivity	Claude	200	2560	8192	POST	anthropic-sdk-python/0.30
-23-Jun-2024 08:17:11	-	10.0.1.33	https://copilot.microsoft.com/	Allowed	Productivity	Copilot	200	220	1024	GET	Mozilla/5.0 Edge/125
-23-Jun-2024 08:18:05	carol@acme.corp	10.0.1.44	https://gemini.google.com/	Allowed	Productivity	Gemini	200	380	2560	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:18:22	dave@acme.corp	10.0.1.55	https://huggingface.co/models	Allowed	Productivity	HuggingFace	200	600	10240	GET	Mozilla/5.0 Firefox/125
-23-Jun-2024 08:20:17	alice@acme.corp	10.0.1.42	https://chat.openai.com/api/auth/session	Allowed	Productivity	ChatGPT	200	128	512	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:21:03	eve@acme.corp	10.0.1.66	https://character.ai/chat	Blocked	Uncategorized	CharacterAI	403	256	128	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:22:41	-	10.0.1.77	https://perplexity.ai/	Allowed	Productivity	Perplexity	200	340	3072	GET	Mozilla/5.0 Safari/17
-23-Jun-2024 08:23:00	frank@acme.corp	10.0.1.88	https://replicate.com/account/api-tokens	Allowed	Developer	Replicate	200	412	1536	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:25:18	grace@acme.corp	10.0.1.99	https://api.openai.com/v1/chat/completions	Allowed	Productivity	ChatGPT	200	890512	2048	POST	openai-python/1.35
-23-Jun-2024 08:25:44	alice@acme.corp	10.0.1.42	https://www.notion.so/workspace/AI-Notes	Allowed	Productivity	Notion	200	420	6144	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:26:29	heidi@acme.corp	10.0.2.10	https://api.mistral.ai/v1/chat/completions	Allowed	Productivity	Mistral	200	3140	7168	POST	curl/8.4
-23-Jun-2024 08:27:55	bob@acme.corp	10.0.1.50	https://claude.ai/api/organizations/123/chat_conversations	Allowed	Productivity	Claude	200	5210	12288	POST	Mozilla/5.0 Firefox/125
-23-Jun-2024 08:29:02	ivan@acme.corp	10.0.2.21	https://cohere.ai/chat	Allowed	Productivity	Cohere	200	280	3584	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:30:11	-	10.0.2.32	https://poe.com/	Allowed	Productivity	Poe	200	198	2048	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:31:48	alice@acme.corp	10.0.1.42	https://chat.openai.com/g/g-BhDPQhWuS/cybersecurity-mentor	Allowed	Productivity	ChatGPT	200	612	9216	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:33:27	judy@acme.corp	10.0.2.43	https://you.com/search?tbm=youchat	Allowed	Productivity	YouAI	200	340	4096	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:34:15	mallory@acme.corp	10.0.2.54	https://openrouter.ai/api/v1/chat/completions	Allowed	Developer	OpenRouter	200	2048	6144	POST	openrouter/1.0
-23-Jun-2024 08:35:42	alice@acme.corp	10.0.1.42	https://labs.openai.com/	Allowed	Productivity	ChatGPT	200	520	8192	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:37:09	niaj@acme.corp	10.0.2.65	https://gemini.google.com/app/chat	Allowed	Productivity	Gemini	200	410	5120	GET	Mozilla/5.0 Chrome/124
-23-Jun-2024 08:38:52	olivia@acme.corp	10.0.2.76	https://chat.mistral.ai/	Allowed	Productivity	Mistral	200	380	4608	GET	Mozilla/5.0 Firefox/125
-23-Jun-2024 08:40:11	bob@acme.corp	10.0.1.50	https://api.anthropic.com/v1/complete	Allowed	Productivity	Claude	200	12480	-	POST	anthropic-sdk-python/0.30
-23-Jun-2024 08:41:44	alice@acme.corp	10.0.1.42	https://platform.openai.com/api-keys	Allowed	Developer	ChatGPT	200	280	3072	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:15:32	alice@acme.corp	10.0.1.42	https://chat.openai.com/	Allowed	Productivity	ChatGPT	200	412	2048	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:15:35	alice@acme.corp	10.0.1.42	https://chat.openai.com/backend-api/conversation	Allowed	Productivity	ChatGPT	200	1820	5120	POST	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:16:02	bob@acme.corp	10.0.1.50	https://claude.ai/chats	Allowed	Productivity	Claude	200	512	4096	GET	Mozilla/5.0 Firefox/125
+14-Apr-2026 08:16:44	bob@acme.corp	10.0.1.50	https://api.anthropic.com/v1/messages	Allowed	Productivity	Claude	200	2560	8192	POST	anthropic-sdk-python/0.30
+14-Apr-2026 08:17:11	-	10.0.1.33	https://copilot.microsoft.com/	Allowed	Productivity	Copilot	200	220	1024	GET	Mozilla/5.0 Edge/125
+14-Apr-2026 08:18:05	carol@acme.corp	10.0.1.44	https://gemini.google.com/	Allowed	Productivity	Gemini	200	380	2560	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:18:22	dave@acme.corp	10.0.1.55	https://huggingface.co/models	Allowed	Productivity	HuggingFace	200	600	10240	GET	Mozilla/5.0 Firefox/125
+14-Apr-2026 08:20:17	alice@acme.corp	10.0.1.42	https://chat.openai.com/api/auth/session	Allowed	Productivity	ChatGPT	200	128	512	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:21:03	eve@acme.corp	10.0.1.66	https://character.ai/chat	Blocked	Uncategorized	CharacterAI	403	256	128	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:22:41	-	10.0.1.77	https://perplexity.ai/	Allowed	Productivity	Perplexity	200	340	3072	GET	Mozilla/5.0 Safari/17
+14-Apr-2026 08:23:00	frank@acme.corp	10.0.1.88	https://replicate.com/account/api-tokens	Allowed	Developer	Replicate	200	412	1536	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:25:18	grace@acme.corp	10.0.1.99	https://api.openai.com/v1/chat/completions	Allowed	Productivity	ChatGPT	200	890512	2048	POST	openai-python/1.35
+14-Apr-2026 08:25:44	alice@acme.corp	10.0.1.42	https://www.notion.so/workspace/AI-Notes	Allowed	Productivity	Notion	200	420	6144	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:26:29	heidi@acme.corp	10.0.2.10	https://api.mistral.ai/v1/chat/completions	Allowed	Productivity	Mistral	200	3140	7168	POST	curl/8.4
+14-Apr-2026 08:27:55	bob@acme.corp	10.0.1.50	https://claude.ai/api/organizations/123/chat_conversations	Allowed	Productivity	Claude	200	5210	12288	POST	Mozilla/5.0 Firefox/125
+14-Apr-2026 08:29:02	ivan@acme.corp	10.0.2.21	https://cohere.ai/chat	Allowed	Productivity	Cohere	200	280	3584	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:30:11	-	10.0.2.32	https://poe.com/	Allowed	Productivity	Poe	200	198	2048	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:31:48	alice@acme.corp	10.0.1.42	https://chat.openai.com/g/g-BhDPQhWuS/cybersecurity-mentor	Allowed	Productivity	ChatGPT	200	612	9216	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:33:27	judy@acme.corp	10.0.2.43	https://you.com/search?tbm=youchat	Allowed	Productivity	YouAI	200	340	4096	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:34:15	mallory@acme.corp	10.0.2.54	https://openrouter.ai/api/v1/chat/completions	Allowed	Developer	OpenRouter	200	2048	6144	POST	openrouter/1.0
+14-Apr-2026 08:35:42	alice@acme.corp	10.0.1.42	https://labs.openai.com/	Allowed	Productivity	ChatGPT	200	520	8192	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:37:09	niaj@acme.corp	10.0.2.65	https://gemini.google.com/app/chat	Allowed	Productivity	Gemini	200	410	5120	GET	Mozilla/5.0 Chrome/124
+14-Apr-2026 08:38:52	olivia@acme.corp	10.0.2.76	https://chat.mistral.ai/	Allowed	Productivity	Mistral	200	380	4608	GET	Mozilla/5.0 Firefox/125
+14-Apr-2026 08:40:11	bob@acme.corp	10.0.1.50	https://api.anthropic.com/v1/complete	Allowed	Productivity	Claude	200	12480	-	POST	anthropic-sdk-python/0.30
+14-Apr-2026 08:41:44	alice@acme.corp	10.0.1.42	https://platform.openai.com/api-keys	Allowed	Developer	ChatGPT	200	280	3072	GET	Mozilla/5.0 Chrome/124

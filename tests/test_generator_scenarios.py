@@ -23,7 +23,6 @@ from src.testdata.generator import (
     generate_squid_log,
 )
 
-
 SEED = 1337
 DAYS = 7
 QPD = 400  # queries per day

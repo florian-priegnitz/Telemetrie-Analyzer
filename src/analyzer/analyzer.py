@@ -7,7 +7,7 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from src.compliance.models import ComplianceResult, Framework
+from src.compliance.models import ComplianceResult
 from src.detection.engine import DetectionResult
 
 logger = logging.getLogger(__name__)

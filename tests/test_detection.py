@@ -3,14 +3,13 @@
 import tempfile
 from pathlib import Path
 
+from src.detection.engine import (
+    UPLOAD_RISK_BOOST,
+    UPLOAD_THRESHOLD_BYTES,
+    DetectionEngine,
+)
 from src.parsers.pihole import parse_pihole_log
 from src.privacy.pseudonymizer import Pseudonymizer
-from src.detection.engine import (
-    DetectionEngine,
-    SYSTEMATIC_THRESHOLD,
-    UPLOAD_THRESHOLD_BYTES,
-    UPLOAD_RISK_BOOST,
-)
 
 
 def _make_log(lines: list[str]) -> Path:

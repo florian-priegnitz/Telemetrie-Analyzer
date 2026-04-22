@@ -1,7 +1,11 @@
 # Backlog — Telemetrie Analyzer
 
-**Stand:** 2026-04-19
-**Status:** Sprint 1+2+4+6 implementiert + 5 Review-Blocker gefixt. 161 Tests grün. v0.1.0 release-bereit.
+**Stand:** 2026-04-21
+**Status:** v1.0.0 release-bereit. Sprint 7 Wave 1 + Wave 2 abgeschlossen:
+- Wave 1: 8 Enterprise-Parser + CI/CD + Retention + Docs + Docker + Endpoint-DB v2.1
+- Wave 2: +Sysmon + Elastic ECS (Epic E3 komplett 12/12), +CLI, +GHCR-Publish, +Multi-Fallback-Detection (Entra App-Names + IP-Ranges), +Makefile/pre-commit, +E2E-Tests
+
+**441 Tests grün**. Details siehe [CHANGELOG.md](CHANGELOG.md).
 
 ---
 

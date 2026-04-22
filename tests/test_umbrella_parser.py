@@ -5,13 +5,12 @@ import io
 import re
 from pathlib import Path
 
-import pandas as pd
 import pytest
 
 from src.parsers.umbrella import (
     USER_IDENTITY_TYPES,
-    UmbrellaDNSParser,
     V10_COLUMNS,
+    UmbrellaDNSParser,
     parse_umbrella_log,
 )
 from src.privacy.pseudonymizer import Pseudonymizer

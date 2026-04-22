@@ -8,7 +8,6 @@ import pandas as pd
 from src.parsers.squid import parse_squid_log
 from src.privacy.pseudonymizer import Pseudonymizer
 
-
 NATIVE_SAMPLE = (
     "1709971200.123 234 192.168.1.42 TCP_MISS/200 1547 POST "
     "https://api.openai.com/v1/chat - HIER_DIRECT/1.2.3.4 application/json\n"

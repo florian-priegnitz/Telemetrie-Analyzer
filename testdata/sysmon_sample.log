@@ -1,0 +1,10 @@
+{"EventID": 22, "UtcTime": "2026-04-18 09:00:01.123", "QueryName": "chat.openai.com", "QueryStatus": "0", "Image": "C:\\Program Files\\Mozilla Firefox\\firefox.exe", "Computer": "WKS-ALPHA", "User": "CONTOSO\\alice"}
+{"EventID": 22, "UtcTime": "2026-04-18 09:00:05.456", "QueryName": "api.anthropic.com", "QueryStatus": "0", "Image": "C:\\Users\\alice\\AppData\\Local\\Programs\\cursor\\Cursor.exe", "Computer": "WKS-ALPHA", "User": "CONTOSO\\alice"}
+{"EventID": 1, "UtcTime": "2026-04-18 09:00:07.000", "Image": "notepad.exe", "Computer": "WKS-ALPHA"}
+{"EventID": 22, "UtcTime": "2026-04-18 09:00:10.789", "QueryName": "copilot.microsoft.com", "QueryStatus": "0", "Image": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "Computer": "WKS-BETA", "User": "CONTOSO\\bob"}
+{"@timestamp": "2026-04-18T10:15:00.000Z", "event": {"code": "22"}, "host": {"name": "WKS-GAMMA"}, "user": {"name": "carol"}, "winlog": {"event_data": {"QueryName": "claude.ai", "QueryStatus": "0", "Image": "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe"}}}
+{"@timestamp": "2026-04-18T10:20:30.000Z", "event": {"code": "22"}, "host": {"name": "WKS-GAMMA"}, "user": {"name": "carol"}, "winlog": {"event_data": {"QueryName": "gemini.google.com", "QueryStatus": "0", "Image": "msedge.exe"}}}
+{"TimeCreated": "2026-04-18T11:00:00.000Z", "sysmon": {"EventID": 22, "QueryName": "perplexity.ai", "QueryStatus": "0", "Image": "brave.exe"}, "Computer": "WKS-DELTA", "User": "eve"}
+{"EventID": 22, "UtcTime": "invalid-timestamp", "QueryName": "should.be.dropped", "Computer": "WKS-X"}
+{"EventID": 22, "UtcTime": "2026-04-18 12:00:00.000", "QueryName": "", "Computer": "WKS-X"}
+{"EventID": 22, "UtcTime": "2026-04-18 13:00:00.000", "QueryName": "ChatGPT.OpenAI.Com.", "QueryStatus": "0", "Image": "firefox.exe", "Computer": "WKS-EPSILON"}
