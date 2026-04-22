@@ -11,6 +11,7 @@ class Framework(str, Enum):
     ISO_42001 = "ISO_42001"
     ISO_27001 = "ISO_27001"
     DSGVO = "DSGVO"
+    CRA = "CRA"
 
 
 class Severity(str, Enum):
