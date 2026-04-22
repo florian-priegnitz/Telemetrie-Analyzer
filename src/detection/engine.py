@@ -11,6 +11,7 @@ import pandas as pd
 
 from src.analytics.temporal import off_hours_ratio
 from src.database.ai_endpoints import AIEndpoint, AIEndpointDatabase
+from src.detection.asn_fallback import AsnDatabase, AsnMatch
 
 
 @dataclass
@@ -84,6 +85,26 @@ class DetectionResult:
         return self.ai_queries / self.total_queries
 
 
+def _asn_match_to_endpoint(asn: AsnMatch) -> AIEndpoint:
+    """Wandelt einen Provider-Level-ASN-Match in einen synthetischen AIEndpoint.
+
+    Das macht ASN-Treffer strukturell kompatibel zum übrigen Pipeline-Code
+    (Finding-Bau, Compliance-Mapping, Reports). Der ``service`` trägt den
+    service_hint aus der Range-DB, ``detection_confidence="low"`` ist immer
+    gesetzt (#15 Akzeptanzkriterium).
+    """
+    return AIEndpoint(
+        service=asn.service_hint,
+        provider=asn.provider,
+        category=asn.category,
+        risk_level=asn.risk_level,
+        domains=(),
+        description=f"ASN-Fallback-Match via Provider-CIDR ({asn.source}).",
+        detection_confidence=asn.confidence,
+        source=f"asn-fallback:{asn.provider}",
+    )
+
+
 SYSTEMATIC_THRESHOLD = 10  # Requests pro Tag
 UPLOAD_THRESHOLD_BYTES = 500 * 1024  # >500 KB = vermutlich Dokument-Upload (CLAUDE.md)
 UPLOAD_RISK_BOOST = 20  # Additiv zum Base-Score wenn Dokument-Upload erkannt
@@ -94,8 +115,29 @@ OFF_HOURS_RISK_BOOST = 15  # Additiv wenn off_hours_ratio > OFF_HOURS_TRIGGER_RA
 class DetectionEngine:
     """Erkennt Shadow-AI-Nutzung durch Matching und Frequenz-Analyse."""
 
-    def __init__(self, db: AIEndpointDatabase | None = None):
+    def __init__(
+        self,
+        db: AIEndpointDatabase | None = None,
+        *,
+        enable_asn_fallback: bool = False,
+        asn_db: AsnDatabase | None = None,
+    ):
+        """Initialisiert die Engine.
+
+        Args:
+            db: Custom Endpoint-DB. Default: ``AIEndpointDatabase()``.
+            enable_asn_fallback: Opt-in für Provider-Level-CIDR-Match (E1-7, #15).
+                Wenn True und kein Domain-/Alias-/Service-IP-Match greift, wird
+                gegen ``data/ai_ip_ranges.json`` (Anthropic, OpenAI, Google,
+                AWS, Azure) geprüft. Treffer haben ``detection_confidence="low"``.
+            asn_db: Custom AsnDatabase (z. B. für Tests mit Fixture-Pfad).
+                Wird nur geladen wenn ``enable_asn_fallback`` True ist.
+        """
         self._db = db or AIEndpointDatabase()
+        self._asn_enabled = enable_asn_fallback
+        self._asn_db: AsnDatabase | None = None
+        if enable_asn_fallback:
+            self._asn_db = asn_db or AsnDatabase()
 
     def analyze(self, df: pd.DataFrame) -> DetectionResult:
         """Analysiert ein DNS-Query-DataFrame auf Shadow-AI-Nutzung.
@@ -139,8 +181,11 @@ class DetectionEngine:
     def _match_endpoint(self, value: str | None) -> AIEndpoint | None:
         """Multi-Fallback-Lookup für heterogene ``domain``-Werte.
 
-        Reihenfolge: Subdomain → Alias → IP-Range. Der erste Treffer gewinnt.
-        Leere / None-Werte liefern None zurück.
+        Reihenfolge: Subdomain → Alias → Service-IP-Range → ASN-Provider-Range.
+        Der erste Treffer gewinnt. Leere / None-Werte liefern None zurück.
+        Der ASN-Pfad (E1-7, #15) ist nur aktiv bei ``enable_asn_fallback=True``
+        und liefert synthetische ``AIEndpoint``-Objekte mit
+        ``detection_confidence="low"``.
         """
         if not value or not isinstance(value, str):
             return None
@@ -152,9 +197,17 @@ class DetectionEngine:
         if result := self._db.lookup_alias(text):
             return result
         # IP-Range-Fallback (#50): nur wenn value wie eine IP aussieht
-        if text.replace(".", "").replace(":", "").isalnum() and any(c.isdigit() for c in text):
+        looks_like_ip = (
+            text.replace(".", "").replace(":", "").isalnum()
+            and any(c.isdigit() for c in text)
+        )
+        if looks_like_ip:
             if result := self._db.lookup_ip(text):
                 return result
+            # ASN-Fallback (#15) — letzter Schritt, nur bei Opt-in
+            if self._asn_enabled and self._asn_db is not None:
+                if asn := self._asn_db.lookup(text):
+                    return _asn_match_to_endpoint(asn)
         return None
 
     def _build_findings(self, ai_df: pd.DataFrame) -> list[Finding]:
