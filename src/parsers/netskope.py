@@ -43,13 +43,13 @@ Referenz: https://docs.netskope.com/en/rest-api-v2-overview-312207/
 """
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
 import pandas as pd
 
-from src.parsers.base import BaseParser
+from src.parsers.base import BaseParser, coerce_timestamp_ns
 from src.privacy.pseudonymizer import Pseudonymizer
 
 _COLUMNS = [
@@ -89,7 +89,7 @@ def _parse_timestamp(event: dict) -> datetime | None:
         if epoch > 10_000_000_000:
             epoch //= 1000  # ms → s
         try:
-            return datetime.fromtimestamp(epoch, tz=timezone.utc).replace(tzinfo=None)
+            return datetime.fromtimestamp(epoch, tz=UTC).replace(tzinfo=None)
         except (ValueError, OSError, OverflowError):
             continue
     return None
@@ -174,6 +174,7 @@ def parse_netskope_log(
     df["bytes_uploaded"] = df["bytes_uploaded"].astype("Int64")
     df["bytes_downloaded"] = df["bytes_downloaded"].astype("Int64")
     df["status_code"] = df["status_code"].astype("Int16")
+    df = coerce_timestamp_ns(df)
     return df[_COLUMNS]
 
 

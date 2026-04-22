@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    # Keine branches:-Filter — jeder PR (auch stacked PRs mit non-main base)
+    # bekommt CI-Feedback. Ohne das bleiben Sprint-Zwischen-PRs ohne grünen
+    # Check-Beleg vor dem Merge in main.
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Tests & Lint (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install ruff bandit
+
+      - name: Lint (ruff)
+        run: ruff check src/ tests/
+
+      - name: Security scan (bandit)
+        run: bandit -r src/ -lll -q
+        continue-on-error: false
+
+      - name: Tests (pytest)
+        run: pytest tests/ -v --tb=short
+
+      - name: Endpoint-DB schema validation
+        run: python -m src.database.ai_endpoints --validate
+        continue-on-error: true

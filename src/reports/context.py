@@ -8,14 +8,12 @@ und konzentriert die DSGVO-Filterung auf eine einzige Schicht.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from src.compliance.models import (
-    AssessmentStatus,
     ComplianceMapping,
     ComplianceResult,
-    ComplianceScore,
     Framework,
     Severity,
 )
@@ -190,7 +188,7 @@ def build_context(
     )
 
     return ReportContext(
-        generated_at=datetime.now(timezone.utc).replace(tzinfo=None),
+        generated_at=datetime.now(UTC).replace(tzinfo=None),
         period_start=detection_result.analysis_period_start,
         period_end=detection_result.analysis_period_end,
         pseudonymized=True,

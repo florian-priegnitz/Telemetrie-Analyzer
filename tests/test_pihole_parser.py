@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from src.parsers.pihole import parse_pihole_log, parse_pihole_ftl_csv
+from src.parsers.pihole import parse_pihole_ftl_csv, parse_pihole_log
 from src.privacy.pseudonymizer import Pseudonymizer
 
 SAMPLE_LOG = """\

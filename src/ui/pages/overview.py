@@ -1,19 +1,104 @@
-"""Übersichts-Page: KPIs, Compliance-Ampel, 2 Charts, Top-3-Findings."""
+"""Übersichts-Page: KPIs, Compliance-Ampel, Charts, Top-3-Findings + Report-Export."""
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import streamlit as st
 
-from src.reports.charts import (
-    render_framework_scores_bar,
-    render_risk_distribution_donut,
-)
-from src.reports.context import build_context
 from src.ui.components.badges import risk_badge
 from src.ui.components.kpi_row import render_kpi_row
 from src.ui.components.traffic_light import render_compliance_traffic_light
+
+_AUDIENCE_LABELS = {
+    "executive": "Executive / CISO",
+    "it_sec": "IT-Security",
+    "compliance": "Compliance-Officer",
+}
+_FORMAT_LABELS = {
+    "html": "HTML (Browser)",
+    "markdown": "Markdown (.md)",
+    "json": "JSON (maschinenlesbar)",
+}
+_MIME_TYPES = {
+    "html": "text/html",
+    "markdown": "text/markdown",
+    "json": "application/json",
+}
+
+
+def _render_export_section(report_data: dict[str, Any]) -> None:
+    """Report-Export-Panel: Audience + Format wählen, Download-Button generiert Datei on-demand."""
+    with st.expander("📥 **Report exportieren**", expanded=False):
+        st.caption(
+            "Erzeugt einen pseudonymisierten Report zum Herunterladen. "
+            "Drei Zielgruppen-Templates × drei Formate. JSON ist die "
+            "maschinenlesbare Struktur für Downstream-Pipelines."
+        )
+        c_aud, c_fmt = st.columns(2)
+        audience = c_aud.selectbox(
+            "Zielgruppe",
+            options=list(_AUDIENCE_LABELS),
+            format_func=lambda k: _AUDIENCE_LABELS[k],
+            key="export_audience",
+        )
+        fmt = c_fmt.selectbox(
+            "Format",
+            options=list(_FORMAT_LABELS),
+            format_func=lambda k: _FORMAT_LABELS[k],
+            key="export_format",
+        )
+
+        if st.button("🎯 Report generieren", use_container_width=True):
+            st.session_state["_export_ready"] = _generate_export(report_data, audience, fmt)
+
+        export = st.session_state.get("_export_ready")
+        if export and export.get("audience") == audience and export.get("format") == fmt:
+            st.download_button(
+                label=f"⬇ {export['filename']} ({len(export['data'])/1024:.1f} KB)",
+                data=export["data"],
+                file_name=export["filename"],
+                mime=_MIME_TYPES[fmt],
+                use_container_width=True,
+            )
+            st.success(f"Report bereit: **{_AUDIENCE_LABELS[audience]}** · "
+                       f"{_FORMAT_LABELS[fmt]}")
+
+
+def _generate_export(report_data: dict[str, Any], audience: str, fmt: str) -> dict[str, Any]:
+    """Gibt ein vor-gerendertes Artefakt zurück.
+
+    HTML/Markdown werden während ``run_pipeline()`` pre-rendered und im
+    ``report_data["_exports"]``-Block abgelegt, solange die
+    DetectionResult-Objekte in-scope sind (nach DSGVO-Reset nicht mehr
+    rekonstruierbar). Hier nur Lookup + Download-Bundle bauen.
+    """
+    if fmt == "json":
+        data = json.dumps(report_data, default=str, indent=2, ensure_ascii=False).encode("utf-8")
+        return {
+            "audience": audience, "format": fmt,
+            "filename": f"telemetrie_report_{audience}.json",
+            "data": data,
+        }
+
+    exports = report_data.get("_exports", {})
+    if "error" in exports:
+        st.error(f"Export nicht verfügbar: {exports['error']}")
+        return {}
+
+    bundle = exports.get(fmt, {})
+    rendered = bundle.get(audience) if isinstance(bundle, dict) else None
+    if not rendered:
+        st.error(f"Kein {fmt}-Report für {audience} verfügbar.")
+        return {}
+
+    ext = "html" if fmt == "html" else "md"
+    return {
+        "audience": audience, "format": fmt,
+        "filename": f"telemetrie_report_{audience}.{ext}",
+        "data": rendered.encode("utf-8"),
+    }
 
 
 def render(report_data: dict[str, Any]) -> None:
@@ -30,6 +115,8 @@ def render(report_data: dict[str, Any]) -> None:
     render_kpi_row(report_data)
     st.markdown("")
     render_compliance_traffic_light(report_data)
+    st.markdown("")
+    _render_export_section(report_data)
 
     # Für Charts brauchen wir einen ReportContext — aus dem Dict re-hydrieren wäre umständlich.
     # Pragmatik: wir nutzen die Daten direkt aus dem Dict für eigene Streamlit-Charts.

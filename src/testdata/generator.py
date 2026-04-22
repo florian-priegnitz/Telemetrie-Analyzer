@@ -23,7 +23,6 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 
-
 # Normale Domains (Hintergrund-Traffic)
 NORMAL_DOMAINS = [
     "www.google.com", "google.com", "dns.google",

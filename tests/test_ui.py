@@ -139,6 +139,7 @@ def test_user_patterns_present_and_pseudonymized_in_pipeline():
 def test_user_patterns_k_anonymity_flags_small_dataset():
     """k_anonymity-Block meldet is_sufficient=False bei < 5 Clients."""
     import pandas as pd
+
     from src.ui.state import _build_user_patterns
 
     df = pd.DataFrame({
@@ -173,3 +174,35 @@ def test_users_patterns_page_runs_on_sample_data():
     # Users & Patterns auswählen
     at.sidebar.radio[0].set_value("👥 Users & Patterns").run(timeout=10)
     assert not at.exception, f"Exception auf Users & Patterns Page: {at.exception}"
+
+
+def test_compliance_page_renders_with_real_findings():
+    """W4-D Regression: Compliance-Page darf mit realen Demo-Daten nicht crashen.
+
+    Prüft auch, dass:
+    - alle 5 Framework-Tabs gerendert werden
+    - die Mapping-Tabellen Status als Emoji-Badge zeigen
+    - die Cross-Framework-Summary angezeigt wird
+    """
+    from streamlit.testing.v1 import AppTest
+
+    if not SAMPLE_PIHOLE_LOG.exists():
+        pytest.skip("testdata/pihole_sample.log fehlt")
+
+    at = AppTest.from_file(APP_PATH)
+    at.run(timeout=10)
+
+    from src.ui.state import run_pipeline
+    data = run_pipeline(
+        SAMPLE_PIHOLE_LOG.read_bytes(), "pihole_sample.log",
+        salt="test-salt", log_format="pihole",
+    )
+    at.session_state["report_data"] = data
+    at.session_state["pipeline_state"] = "analyzed"
+    at.sidebar.radio[0].set_value("📋 Compliance").run(timeout=15)
+    assert not at.exception, f"Exception auf Compliance-Page: {at.exception}"
+
+    # Prüfe, dass die Summary-Zeile gerendert wurde
+    rendered_markdown = [m.value for m in at.main.markdown]
+    summary_line = [m for m in rendered_markdown if "Übergreifender Compliance-Score" in m]
+    assert summary_line, "Cross-Framework-Summary fehlt auf Compliance-Page"

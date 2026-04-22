@@ -1,0 +1,28 @@
+# Retention-Konfiguration (DSGVO Art. 5 (1e) — Speicherbegrenzung)
+#
+# Die Retention gilt ausschliesslich für das In-Memory-DataFrame während
+# einer Analyse-Session. Der Telemetrie Analyzer persistiert keine Rohdaten
+# auf Disk. Die Konfiguration wirkt als Trim-Step im Pipeline-Hook.
+#
+# Reload ohne Neustart via "Apply Retention Now"-Button in der Settings-Page.
+
+enabled: true
+
+# Default-Fenster wenn kein Log-Typ-spezifischer Eintrag existiert
+default_days: 90
+
+# Pro Log-Typ überschreibbar (Format-Name wie vom Parser gemeldet)
+# Leere Sektion = Default gilt.
+policies:
+  pihole:
+    days: 90
+  squid:
+    days: 180
+  aws_vpc_flow:
+    days: 30
+  entra_id:
+    days: 90
+  cloudflare_gateway:
+    days: 90
+  netskope:
+    days: 90

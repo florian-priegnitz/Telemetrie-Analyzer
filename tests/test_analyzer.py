@@ -10,12 +10,10 @@ from src.analyzer.analyzer import (
     AnalysisResult,
     AnalyzerError,
     ClaudeAnalyzer,
-    FindingRecommendation,
 )
 from src.compliance.engine import ComplianceEngine
-from src.compliance.models import ComplianceResult, ComplianceScore, Framework
+from src.compliance.models import ComplianceResult
 from src.detection.engine import DetectionResult, Finding
-
 
 # ---------------------------------------------------------------------------
 # Helpers

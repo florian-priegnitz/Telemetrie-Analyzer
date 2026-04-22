@@ -174,3 +174,30 @@ class AIEndpointDatabase:
 
     def by_risk_level(self, level: str) -> list[AIEndpoint]:
         return [e for e in self._endpoints if e.risk_level == level]
+
+
+def _cli() -> int:
+    """CLI-Einstiegspunkt: `python -m src.database.ai_endpoints --validate`."""
+    import argparse
+    import sys
+
+    parser = argparse.ArgumentParser(description="AI Endpoint DB utilities")
+    parser.add_argument("--validate", action="store_true",
+                        help="Validiere DB gegen ai_endpoints_schema.json")
+    parser.add_argument("--path", type=Path, default=None,
+                        help="Alternativer DB-Pfad (default: data/ai_endpoints.json)")
+    args = parser.parse_args()
+
+    try:
+        db = AIEndpointDatabase(db_path=args.path, validate=args.validate)
+    except Exception as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
+    print(f"OK: {len(db.endpoints)} Endpoints geladen"
+          + (" (Schema valid)" if args.validate else ""))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(_cli())

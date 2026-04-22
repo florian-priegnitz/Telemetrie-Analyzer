@@ -4,7 +4,6 @@ import json
 import re
 from pathlib import Path
 
-import pandas as pd
 import pytest
 
 from src.parsers.entra_id import (

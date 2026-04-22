@@ -1,0 +1,21 @@
+services:
+  telemetrie-analyzer:
+    build: .
+    image: telemetrie-analyzer:latest
+    container_name: telemetrie-analyzer
+    ports:
+      - "8501:8501"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - REPORT_SALT=${REPORT_SALT:-}
+      - PSEUDONYM_SALT=${PSEUDONYM_SALT:-}
+    volumes:
+      - ./reports:/app/reports
+      - ./uploads:/app/uploads:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
