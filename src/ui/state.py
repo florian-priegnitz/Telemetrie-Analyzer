@@ -22,6 +22,11 @@ from typing import Any, Literal
 import pandas as pd
 import streamlit as st
 
+from src.analytics.sessions import (
+    build_session_graph,
+    top_global_pairs,
+    top_service_pairs_per_client,
+)
 from src.analytics.temporal import build_hourly_heatmap, mask_low_count_cells
 from src.compliance.engine import ComplianceEngine
 from src.detection.engine import DetectionEngine
@@ -198,6 +203,10 @@ def run_pipeline(
     ctx = build_context(detection, compliance, salt=salt)
     result = context_to_json_dict(ctx)
     result["user_patterns"] = _build_user_patterns(df, result["findings"], salt)
+    result["sessions"] = _build_sessions(
+        df, salt,
+        redacted=bool(result["user_patterns"].get("privacy_redacted")),
+    )
     result["retention"] = retention_report
 
     # df enthält pseudonymisierte, aber nach DSGVO Art. 4(5) immer noch
@@ -307,6 +316,52 @@ def _build_user_patterns(
         "privacy_redacted": high_reid_risk,
         "top_clients": top_clients,
         "hourly_heatmap": heatmap_by_client,
+    }
+
+
+def _build_sessions(
+    df: pd.DataFrame,
+    salt: str,
+    *,
+    window_minutes: int = 30,
+    redacted: bool = False,
+) -> dict[str, Any]:
+    """Service-Co-Occurrence-Analyse für die Sessions-Page (#23, E2-6).
+
+    - ``top_pairs``: Dict pseudonymisierte_client → Top-5-SessionPair-Dicts.
+      Bei ``redacted=True`` leer (analog user_patterns).
+    - ``global_top_pairs``: Top-20-Paare globaler Graph (immer gesetzt,
+      Graph ist Service-zentriert und enthält keine Client-Information).
+    - ``graph_nodes`` / ``graph_edges``: JSON-taugliche Node/Edge-Listen für
+      die Streamlit-Plotly-Visualisierung.
+    - ``window_minutes``: Für Report-Disclaimer und Tests.
+    """
+    graph = build_session_graph(df, window_minutes=window_minutes)
+    global_pairs = [p.as_dict() for p in top_global_pairs(graph, top_n=20)]
+
+    if redacted:
+        per_client = {}
+    else:
+        per_client = {
+            pseudo: [pair.as_dict() for pair in pairs]
+            for pseudo, pairs in top_service_pairs_per_client(
+                df, salt, window_minutes=window_minutes, top_n=5,
+            ).items()
+        }
+
+    return {
+        "window_minutes": window_minutes,
+        "top_pairs": per_client,
+        "global_top_pairs": global_pairs,
+        "graph_nodes": sorted(graph.nodes()),
+        "graph_edges": [
+            {
+                "a": a, "b": b,
+                "weight": int(data.get("weight", 0)),
+                "clients": int(data.get("clients", 0)),
+            }
+            for a, b, data in graph.edges(data=True)
+        ],
     }
 
 
