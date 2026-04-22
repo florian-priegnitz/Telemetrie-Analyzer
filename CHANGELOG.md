@@ -5,11 +5,31 @@ Alle nennenswerten Änderungen am Telemetrie Analyzer werden in dieser Datei dok
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
-## [Unreleased]
+## [1.1.0] — 2026-04-22
+
+Minor-Release mit dem 6. Compliance-Framework (CRA) und konsequentem Privacy-Enforcement auf der Users-&-Patterns-Page. Board von 21 auf 4 offene Issues reduziert (7 Zombies geschlossen).
 
 ### Hinzugefügt
 
-- **CRA Phase 2a (#42)** — 6. Compliance-Framework **EU Cyber Resilience Act** (Verordnung (EU) 2024/2847) produktiv. 7 Kontrollen (Art. 6, 7, 10, 11, 13, 14, 24) werden auf Shadow-AI-Findings gemappt. Neue `mappings/cra.yaml` als deklarative Control-Registry mit Framework-Metadaten, Artikel-Titeln und Beschreibungen. Engine-Regeln in `src/compliance/engine.py`, UI-Tab in Compliance-Page, Reports (Executive/IT-Security/Compliance × HTML/Markdown/JSON) führen CRA-Spalten/Mappings. **20 neue Tests** (CRA-Regeln + YAML-Schema + Engine/YAML-Drift-Check) — Suite von 516 auf 536 Tests gewachsen. CRA-Volle-Compliance-Deadline: 2027-12-11, Meldepflichten ab 2026-09-11.
+- **CRA Phase 2a (#42)** — 6. Compliance-Framework **EU Cyber Resilience Act** (Verordnung (EU) 2024/2847) produktiv. 7 Kontrollen (Art. 6, 7, 10, 11, 13, 14, 24) werden auf Shadow-AI-Findings gemappt. Neue `mappings/cra.yaml` als deklarative Control-Registry mit Framework-Metadaten, Artikel-Titeln und Beschreibungen. Engine-Regeln in `src/compliance/engine.py`, UI-Tab in Compliance-Page, Reports (Executive/IT-Security/Compliance × HTML/Markdown/JSON) führen CRA-Spalten/Mappings. CRA-Volle-Compliance-Deadline: 2027-12-11, Meldepflichten ab 2026-09-11.
+- **Heatmap Cell-Masking (DSGVO Art. 25, #43)** — Neue Funktion `mask_low_count_cells(heatmap, min_count=3)` in `src/analytics/temporal.py` maskiert Heatmap-Zellen mit niedrigem Count auf 0, um Re-Identifikation über 24h-Aktivitätsmuster zu verhindern.
+- **k-Anonymity Redaktion (DSGVO Art. 25, #43)** — Bei `reidentification_risk == "high"` (beobachtetes k < `minimum_k / 2`) werden Top-Clients-Ranking und Stunden-Heatmap automatisch redigiert (`top_clients=[]`, `hourly_heatmap={}`), neues Flag `privacy_redacted=True` steuert Error-Banner in Users-&-Patterns-Page. Konservativer Default ohne Opt-out.
+
+### Geändert
+
+- **Overnight-Shift in `off_hours_ratio` (#43)** — Wrap-around-Logik: bei `business_start > business_end` (z. B. 22–06 Nachtschicht) wird Business-Fenster als `[start, 24) ∪ [0, end)` interpretiert, Off-Hours liegt in `[end, start)`. Vorher zählte bei Nachtschicht alles als off-hours.
+- **Framework-Zählung in UI/Reports** — Alle Freitext-Listen und hardcoded "5 Frameworks"-Strings auf 6 erweitert (Templates, Traffic-Light-Komponente, Claude-API-System-Prompt).
+- **`_build_user_patterns` Output** — ungenutzte `services`-Liste aus `top_clients` entfernt (Privacy-Konservativ, nur `service_count` bleibt).
+
+### Behoben
+
+- `_build_event` in `src/analytics/bursts.py` hatte keinen Type-Hint auf `group_key` — jetzt `object` + Kontrakt-Kommentar.
+- Expliziter `del df, df_trimmed` nach `_build_user_patterns` in `src/ui/state.py` (Intent-Klarheit analog zum `uploaded_bytes=None`-Pattern).
+
+### Interna
+
+- **Test-Suite** 516 → **544** (+28): 20 neu für CRA, 8 neu für #43 (3 Heatmap-Masking, 2 Overnight-Shift, 3 Redaktions-Logik).
+- **Issue-Cleanup** — 7 Zombie-Issues geschlossen (#12, #19, #20, #24, #35, #50, #52) + 3 echte Issues erledigt (#42, #43 + v1.0.0-Arbeit).
 
 ## [1.0.0] — 2026-04-21
 
