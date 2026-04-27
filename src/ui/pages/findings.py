@@ -8,6 +8,7 @@ import pandas as pd
 import streamlit as st
 
 from src.ui.components.finding_row import render_finding_expander
+from src.ui.components.help import page_intro
 
 _RISK_LEVELS = ["critical", "high", "medium", "low"]
 _FRAMEWORKS = ["DORA", "EU_AI_ACT", "ISO_42001", "ISO_27001", "DSGVO"]
@@ -15,6 +16,17 @@ _FRAMEWORKS = ["DORA", "EU_AI_ACT", "ISO_42001", "ISO_27001", "DSGVO"]
 
 def render(report_data: dict[str, Any]) -> None:
     st.title("🔍 Findings")
+    page_intro(
+        title="Findings",
+        what_you_see=(
+            "Jede Zeile ist ein **Finding** = ein Client × KI-Service über den gesamten "
+            "Analysezeitraum. Sortiert nach Risk-Score absteigend. Die Sidebar filtert "
+            "nach Risk-Level und Framework; mit Klick auf eine Zeile öffnet sich ein "
+            "Expander mit Domains, Compliance-Mappings, Upload-Events und ggf. "
+            "LLM-generierter Empfehlung."
+        ),
+        key_terms=("risk_score", "compliance_mapping", "systematic_threshold", "upload_threshold"),
+    )
     findings = report_data.get("findings", [])
 
     if not findings:

@@ -19,10 +19,21 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.ui.components.badges import risk_badge
+from src.ui.components.help import page_intro
 
 
 def render(report_data: dict[str, Any]) -> None:
     st.title("👥 Users & Patterns")
+    page_intro(
+        title="Users & Patterns",
+        what_you_see=(
+            "Per-Client-Sicht (pseudonymisiert): **Top-10-Ranking** nach maximalem "
+            "Risk-Score, **Stunden-Heatmap** (Client × Tagesstunde), **Off-Hours-Anteil** "
+            "und Drilldown auf Service-Ebene. User-IDs sind durchgängig HMAC-Pseudonyme — "
+            "Klartext-Namen erscheinen nur bei explizitem Squid-`%un`-Reveal-Opt-in."
+        ),
+        key_terms=("pseudonymisierung", "k_anonymitaet", "off_hours_ratio", "heatmap"),
+    )
 
     user_patterns = report_data.get("user_patterns") or {}
     findings = report_data.get("findings", [])

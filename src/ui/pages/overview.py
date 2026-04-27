@@ -8,6 +8,7 @@ from typing import Any
 import streamlit as st
 
 from src.ui.components.badges import risk_badge
+from src.ui.components.help import page_intro
 from src.ui.components.kpi_row import render_kpi_row
 from src.ui.components.traffic_light import render_compliance_traffic_light
 
@@ -103,6 +104,17 @@ def _generate_export(report_data: dict[str, Any], audience: str, fmt: str) -> di
 
 def render(report_data: dict[str, Any]) -> None:
     st.title("📊 Übersicht")
+    page_intro(
+        title="Übersicht",
+        what_you_see=(
+            "Schnellüberblick über alle erkannten Schatten-KI-Befunde im hochgeladenen "
+            "Log. Vier KPI-Karten oben zeigen Volumen und Reichweite, die "
+            "**Compliance-Ampel** zeigt den Erfüllungsgrad pro Framework, und unten "
+            "lassen sich Reports direkt für drei Zielgruppen exportieren "
+            "(Executive / IT-Security / Compliance × HTML / Markdown / JSON)."
+        ),
+        key_terms=("erfuellungsgrad", "compliance_ampel", "risk_score", "compliance_mapping"),
+    )
     summary = report_data.get("summary", {})
     period = report_data.get("report_meta", {}).get("period", {})
 
