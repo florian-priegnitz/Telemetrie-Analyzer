@@ -2,7 +2,9 @@
 # Nutzung: `make <target>`. `make help` zeigt alle Targets.
 
 .PHONY: help install dev test lint security sbom docker docker-run \
-        clean testdata validate-db analyze-sample pre-commit
+        clean testdata validate-db analyze-sample pre-commit \
+        offline-up offline-down offline-pull verify-screenshots \
+        generate-examples check-all
 
 PYTHON ?= python3.11
 VENV ?= .venv
@@ -52,6 +54,27 @@ docker: ## Baut Docker-Image ($(IMAGE))
 
 docker-run: ## Startet Docker-Container auf :8501
 	docker run --rm -p 8501:8501 --env-file .env $(IMAGE)
+
+offline-up: ## Startet Telemetrie-Analyzer + Ollama-Sidecar (Compose-Profile offline)
+	docker compose -f docker-compose.yml -f docker-compose.offline.yml --profile offline up -d
+
+offline-down: ## Stoppt den Offline-Stack
+	docker compose -f docker-compose.yml -f docker-compose.offline.yml --profile offline down
+
+offline-pull: ## Pulled das Default-Modell (llama3.1:8b) im laufenden Ollama-Container
+	docker compose -f docker-compose.yml -f docker-compose.offline.yml --profile offline exec ollama ollama pull $${OLLAMA_MODEL:-llama3.1:8b}
+
+verify-screenshots: ## Prueft Vollstaendigkeit der docs/screenshots/ gegen CHECKLIST.md
+	. $(ACTIVATE) && python scripts/verify_screenshots.py
+
+generate-examples: ## Erzeugt 86 Beispiel-Reports (Idempotent, seed=42)
+	. $(ACTIVATE) && python scripts/generate_example_reports.py
+
+check-all: ## pytest + ruff + verify-screenshots + generate-examples --check
+	. $(ACTIVATE) && pytest tests/ -q
+	. $(ACTIVATE) && ruff check src/ tests/ scripts/
+	. $(ACTIVATE) && python scripts/verify_screenshots.py
+	. $(ACTIVATE) && python scripts/generate_example_reports.py --check
 
 testdata: ## Generiert synthetische Testdaten (enterprise-mixed Szenario)
 	. $(ACTIVATE) && python -m src.testdata.generator --scenario enterprise-mixed --format both --seed 42

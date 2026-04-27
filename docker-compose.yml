@@ -9,6 +9,10 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - REPORT_SALT=${REPORT_SALT:-}
       - PSEUDONYM_SALT=${PSEUDONYM_SALT:-}
+      - LLM_BACKEND=${LLM_BACKEND:-}
+      - OLLAMA_HOST=${OLLAMA_HOST:-}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-}
+      - OLLAMA_TIMEOUT=${OLLAMA_TIMEOUT:-}
     volumes:
       - ./reports:/app/reports
       - ./uploads:/app/uploads:ro

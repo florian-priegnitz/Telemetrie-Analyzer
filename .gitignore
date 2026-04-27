@@ -13,3 +13,4 @@ build/
 *:Zone.Identifier
 /reports/
 .tmp_*.md
+ollama-data/
