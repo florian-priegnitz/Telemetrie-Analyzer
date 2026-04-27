@@ -51,6 +51,12 @@ def init_session_state() -> None:
         "detected_format": None,
         "report_data": None,  # JSON-Dict (siehe Modul-Docstring)
         "report_salt": get_default_salt(),
+        # Double-Opt-in Squid-Username-Parsing (Issue #22).
+        # Parser-Flag: aktiviert `%un`-Extraktion inkl. DSFA-Verantwortung
+        # beim Operator. UI-Reveal: zweite Opt-in-Stufe, zeigt Pseudonyme
+        # in der Users-Page unmaskiert an. Beides Default False.
+        "squid_username_parsing_enabled": False,
+        "squid_username_reveal": False,
         # Filter-Keys werden NICHT vor-initialisiert: ein st.multiselect mit
         # key=<...> liest zuerst aus st.session_state[key]. Wenn dort bereits
         # eine leere Liste steht, ignoriert Streamlit den `default`-Parameter
@@ -160,10 +166,13 @@ def run_pipeline(
     filename: str,
     salt: str,
     log_format: LogFormat,
+    squid_username_parsing: bool = False,
 ) -> dict[str, Any]:
     """Führt Parser → Detection → Compliance → ReportContext-Aufbau aus.
 
-    Caching erfolgt anhand von (file_bytes, filename, salt, log_format) automatisch.
+    Caching erfolgt anhand aller Parameter automatisch. ``squid_username_parsing``
+    ist Teil des Cache-Keys, damit das Umschalten des Flags eine frische
+    Pipeline-Ausführung erzwingt.
 
     Returns:
         JSON-serialisiertes Dict (entspricht `context_to_json_dict()`).
@@ -181,7 +190,14 @@ def run_pipeline(
     pseudo = Pseudonymizer(key=salt.encode("utf-8"))
     tmp_path = _bytes_to_temp(file_bytes)
     try:
-        df = parse_fn(tmp_path, pseudonymizer=pseudo)
+        # Squid-Parser kennt ``parse_username`` opt-in (Issue #22). Andere
+        # Parser haben diesen Parameter nicht — deshalb nur squid-spezifisch
+        # durchreichen, damit der generische Dispatch nicht mit unbekannten
+        # kwargs bricht.
+        if log_format == "squid" and squid_username_parsing:
+            df = parse_fn(tmp_path, pseudonymizer=pseudo, parse_username=True)
+        else:
+            df = parse_fn(tmp_path, pseudonymizer=pseudo)
     finally:
         tmp_path.unlink(missing_ok=True)
 
@@ -208,6 +224,10 @@ def run_pipeline(
         redacted=bool(result["user_patterns"].get("privacy_redacted")),
     )
     result["retention"] = retention_report
+    result["user_aggregation"] = _build_user_aggregation(
+        df, salt,
+        redacted=bool(result["user_patterns"].get("privacy_redacted")),
+    )
 
     # df enthält pseudonymisierte, aber nach DSGVO Art. 4(5) immer noch
     # personenbezogene Zeitreihen-Daten. Expliziter Discard nach letzter
@@ -316,6 +336,45 @@ def _build_user_patterns(
         "privacy_redacted": high_reid_risk,
         "top_clients": top_clients,
         "hourly_heatmap": heatmap_by_client,
+    }
+
+
+def _build_user_aggregation(
+    df: pd.DataFrame,
+    salt: str,
+    *,
+    redacted: bool,
+) -> dict[str, Any]:
+    """Aggregiert Client → {user_pseudonyms} für die Users-Page (#22).
+
+    Liefert ein Mapping pseudonymisierter Client → sortierte Liste der
+    zugehörigen `user_<hash>`-Werte, sofern der Parser die ``user_pseudonym``-
+    Spalte gefüllt hat (nur aktiv, wenn ``squid_username_parsing=True``
+    gesetzt wurde).
+
+    Bei ``redacted=True`` (k-Anonymität deutlich unterschritten) wird die
+    Aggregation analog zu Top-Clients unterdrückt — DSGVO Art. 25 verlangt
+    hier zusätzliche Schutzmaßnahmen gegen Re-Identifikation.
+    """
+    if "user_pseudonym" not in df.columns or redacted:
+        return {"enabled": False, "per_client": {}, "unique_users": 0}
+
+    aggregation: dict[str, set[str]] = {}
+    all_users: set[str] = set()
+    for _, row in df.iterrows():
+        pseudo_user = row.get("user_pseudonym") or ""
+        if not pseudo_user:
+            continue
+        pseudo_client = pseudonymize_client(str(row["client"]), salt)
+        aggregation.setdefault(pseudo_client, set()).add(pseudo_user)
+        all_users.add(pseudo_user)
+
+    return {
+        "enabled": True,
+        "per_client": {
+            client: sorted(users) for client, users in aggregation.items()
+        },
+        "unique_users": len(all_users),
     }
 
 
@@ -450,6 +509,7 @@ def trigger_analysis() -> None:
     fname = st.session_state.uploaded_filename
     fmt = st.session_state.detected_format
     salt = st.session_state.report_salt
+    squid_user_flag = bool(st.session_state.get("squid_username_parsing_enabled"))
 
     if not fb or not fname or not fmt:
         st.session_state.pipeline_state = "error"
@@ -458,7 +518,10 @@ def trigger_analysis() -> None:
 
     st.session_state.pipeline_state = "analyzing"
     try:
-        st.session_state.report_data = run_pipeline(fb, fname, salt, fmt)
+        st.session_state.report_data = run_pipeline(
+            fb, fname, salt, fmt,
+            squid_username_parsing=squid_user_flag,
+        )
         st.session_state.pipeline_state = "analyzed"
         st.session_state.error_message = None
         # DSGVO Art. 25: Klartext-Bytes nach Pseudonymisierung im Session-State verwerfen.

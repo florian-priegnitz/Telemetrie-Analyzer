@@ -26,8 +26,10 @@ def render(report_data: dict[str, Any]) -> None:
 
     user_patterns = report_data.get("user_patterns") or {}
     findings = report_data.get("findings", [])
+    user_aggregation = report_data.get("user_aggregation") or {}
 
     _render_k_anonymity_banner(user_patterns.get("k_anonymity") or {})
+    _render_username_gating_banner(user_aggregation)
 
     if user_patterns.get("privacy_redacted"):
         st.error(
@@ -47,7 +49,48 @@ def render(report_data: dict[str, Any]) -> None:
 
     _render_top_ranking(top_clients)
     _render_heatmap(user_patterns.get("hourly_heatmap") or {}, top_clients)
-    _render_drilldown(top_clients, findings)
+    _render_drilldown(top_clients, findings, user_aggregation)
+
+
+def _render_username_gating_banner(aggregation: dict[str, Any]) -> None:
+    """Warnt prominent, wenn Username-Parsing aktiv ist, und steuert den Reveal-Opt-in.
+
+    Zweite Stufe des Double-Opt-in (Issue #22): Selbst wenn der Operator in
+    den Einstellungen den Parser-Flag gesetzt hat, bleiben Pseudonyme bis
+    zur expliziten Button-Bestätigung maskiert. Der Opt-in gilt nur in der
+    aktuellen Streamlit-Session und wird nicht persistiert.
+    """
+    if not aggregation.get("enabled"):
+        return
+    unique_users = aggregation.get("unique_users", 0)
+    st.warning(
+        f"⚠️ **Username-Parsing aktiv** — {unique_users} pseudonymisierte "
+        "Usernamen im Dataset. Pseudonyme sind personenbezogene Daten "
+        "(DSGVO Art. 4(5)). Die DSFA-Verantwortung nach Art. 35 liegt "
+        "beim Betreiber dieser Instanz."
+    )
+    reveal = st.session_state.get("squid_username_reveal", False)
+    col_left, col_right = st.columns([3, 1])
+    with col_left:
+        st.caption(
+            "Standardmäßig werden User-Pseudonyme maskiert (`user_***`). "
+            "Der folgende Button hebt die Maskierung nur in dieser Session auf."
+        )
+    with col_right:
+        btn_label = "👁️ Pseudonyme ausblenden" if reveal else "👁 Pseudonyme anzeigen"
+        if st.button(btn_label, key="users_username_reveal_btn", use_container_width=True):
+            st.session_state.squid_username_reveal = not reveal
+            st.rerun()
+
+
+def _mask_user_pseudonym(pseudo: str) -> str:
+    """`user_a3b2c1d4` → `user_a***` (behält 1 Zeichen für Wiedererkennung)."""
+    if not pseudo or not pseudo.startswith("user_"):
+        return pseudo
+    tail = pseudo[5:]
+    if len(tail) <= 1:
+        return "user_***"
+    return f"user_{tail[0]}***"
 
 
 def _render_k_anonymity_banner(k_info: dict[str, Any]) -> None:
@@ -132,6 +175,7 @@ def _render_heatmap(
 def _render_drilldown(
     top_clients: list[dict[str, Any]],
     findings: list[dict[str, Any]],
+    user_aggregation: dict[str, Any] | None = None,
 ) -> None:
     st.markdown("### Drilldown")
     client_options = [c["client_pseudonym"] for c in top_clients]
@@ -149,6 +193,20 @@ def _render_drilldown(
 
     client_findings = [f for f in findings if f.get("client_pseudonym") == selected]
     st.caption(f"**{len(client_findings)}** Findings für `{selected}`")
+
+    if user_aggregation and user_aggregation.get("enabled"):
+        users_for_client = (user_aggregation.get("per_client") or {}).get(selected, [])
+        if users_for_client:
+            reveal = st.session_state.get("squid_username_reveal", False)
+            shown = users_for_client if reveal else [
+                _mask_user_pseudonym(u) for u in users_for_client
+            ]
+            hint = "" if reveal else " (maskiert — Reveal-Button oben)"
+            st.markdown(
+                f"**Usernamen für `{selected}`{hint}:** "
+                + ", ".join(f"`{u}`" for u in shown)
+            )
+
     if not client_findings:
         st.info("Keine Findings für diesen Client.")
         return

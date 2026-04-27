@@ -59,6 +59,7 @@ Diese Regeln gelten projektweit — **jeder PR, der eine davon verletzt, wird ab
 4. **Salt-Wechsel** triggert `reset_pipeline()` (Hard-Reset aller Analyse-Daten)
 5. **Neue Parser** müssen `BaseParser`-Contract erfüllen (siehe `src/parsers/base.py`) und Path/Username-Felder gemäß DSGVO Art. 25 minimieren
 6. **k-Anonymität** (Default k=5) für UI-Drill-Downs
+7. **Username-Parsing** (Squid `%un`, LDAP-/UPN-Felder) ist **Double-Opt-in**: Parser-Default ist off, UI-Reveal-Button ist off. Der Raw-Username darf in **keinem** DataFrame, Cache-Entry, Log oder Report erscheinen — nur das HMAC-Pseudonym. Details siehe [`docs/PRIVACY.md`](docs/PRIVACY.md)
 
 ## Tests
 

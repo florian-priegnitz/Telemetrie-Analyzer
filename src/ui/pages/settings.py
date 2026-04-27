@@ -46,6 +46,42 @@ def render(report_data: dict[str, Any] | None) -> None:
             reset_pipeline()
             st.success("Neuer zufälliger Salt gesetzt. Analyse-Daten verworfen.")
 
+    st.markdown("### Squid Username-Parsing (Double-Opt-in, DSFA-pflichtig)")
+    st.caption(
+        "Optional: aktiviert das Auslesen des `%un`/`rfc931`-Feldes aus Squid-"
+        "Access-Logs und macht User-Level-Korrelation möglich. Der Raw-Username "
+        "wird nie persistiert — nur ein deterministisches HMAC-Pseudonym. "
+        "Trotzdem bleiben pseudonymisierte Usernamen nach DSGVO Art. 4(5) "
+        "personenbezogene Daten und erfordern eine DSFA (Art. 35) durch den "
+        "Betreiber vor der Aktivierung."
+    )
+    username_enabled = st.session_state.get("squid_username_parsing_enabled", False)
+    new_state = st.toggle(
+        "Username-Parsing aktivieren (DSFA-Verantwortung beim Betreiber)",
+        value=username_enabled,
+        key="squid_username_toggle",
+        help=(
+            "Wenn aktiv, extrahiert der Squid-Parser das `%un`-Feld und "
+            "pseudonymisiert es. Die Users-Page zeigt dann Pseudonyme "
+            "standardmäßig maskiert; ein zweiter Opt-in-Button in der "
+            "Users-Page hebt die Maskierung session-weit auf."
+        ),
+    )
+    if new_state != username_enabled:
+        st.session_state.squid_username_parsing_enabled = new_state
+        # Reveal-Opt-in verliert mit Toggle seine Grundlage, zurücksetzen.
+        st.session_state.squid_username_reveal = False
+        reset_pipeline()
+        if new_state:
+            st.warning(
+                "✅ Username-Parsing aktiviert. Bitte eine neue Analyse starten. "
+                "**Hinweis:** Die DSFA-Dokumentation liegt in Ihrer Verantwortung "
+                "als Betreiber (DSGVO Art. 35, Verzeichnis von "
+                "Verarbeitungstätigkeiten nach Art. 30)."
+            )
+        else:
+            st.success("Username-Parsing deaktiviert. Analyse-Daten verworfen.")
+
     with st.expander("Analyse-Session beenden (alle Daten löschen)"):
         st.caption(
             "Löscht hochgeladene Bytes, Pipeline-Cache und Report-Daten aus der "
