@@ -18,6 +18,7 @@ from typing import Any
 import streamlit as st
 
 from src.parsers.detection import PARSER_LABELS, PARSER_METADATA, SUPPORTED_PARSERS
+from src.ui.components.help import page_intro
 
 _TESTDATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "testdata"
 _MAX_EXAMPLE_LINES = 2
@@ -107,6 +108,16 @@ def _render_format_card(key: str, meta: dict[str, Any]) -> None:
 def render(_report_data: Any | None = None) -> None:
     """Formate-Page-Entry-Point. Signatur wie andere Pages (ignoriert report_data)."""
     st.title("📚 Unterstützte Log-Formate")
+    page_intro(
+        title="Formate",
+        what_you_see=(
+            "Katalog aller **12 unterstützten Log-Formate** mit Quelle, Beispiel-Zeile, "
+            "Feld-Mapping auf das Common-Schema und Risk-Signal-Hinweisen. Beim Upload "
+            "wird das Format automatisch erkannt (Auto-Detect liest die ersten Zeilen). "
+            "Die Sample-Dateien sind synthetisch und können direkt heruntergeladen werden."
+        ),
+        key_terms=("parser_auto_detect", "asn_fallback", "pseudonymisierung"),
+    )
     st.markdown(
         "Der Telemetrie Analyzer verarbeitet **12 Telemetrie-Log-Formate** — "
         "von klassischem Pi-hole DNS bis zu modernen Cloud-Security-Plattformen. "
