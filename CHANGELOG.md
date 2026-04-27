@@ -16,6 +16,10 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - **Sample-Logs angereichert** — `testdata/sysmon_sample.log` (5 → 11 unique User) und `testdata/elastic_ecs_sample.log` (6 → 11 unique User) auf ≥10 User erweitert, um die Anforderung "Testreport pro Tool mit 10 verschiedenen Usern" auch ohne KRITIS-Generator-Lauf abzudecken.
 - **+2 Tests** (`test_kritis_kmu_scenario_has_50_clients_and_strong_shadow_ai`, aktualisierter `test_all_scenarios_are_tested`).
 
+- **Offline-Stack via Docker-Compose-Profile (#75, Sprint 10D)** — `docker-compose.offline.yml` definiert Telemetrie-Analyzer + Ollama als Sidecar (Compose-Profile `offline`, Standard-Compose bleibt unbeeinflusst). Ollama-Image gepinnt auf `0.4.7`, Healthcheck via `ollama list`, named volume `telemetrie-ollama-data`. `docker-compose.yml` erhält Pass-through für `LLM_BACKEND`, `OLLAMA_HOST`, `OLLAMA_MODEL`, `OLLAMA_TIMEOUT`. `.gitignore` ergänzt `ollama-data/` für lokale Bind-Mount-Varianten.
+- **`scripts/verify_screenshots.py` (#75, Sprint 10D)** — parst `docs/screenshots/CHECKLIST.md`, extrahiert Filenames aus `- [ ] NN_*.png`-Zeilen und prüft `Path.exists()` pro PNG. Default `--warn` (Exit 0 bei fehlenden Files), `--strict` (Exit 1) für Release-CI. 8 Unit-Tests in `tests/test_verify_screenshots.py`.
+- **Makefile-Targets:** `offline-up`, `offline-down`, `offline-pull`, `verify-screenshots`, `generate-examples`, `check-all`.
+
 - **Squid Username-Parsing mit Double-Opt-in Privacy-Gating (#22)** — Zwei aktive Entscheidungsstufen entkoppeln die Fähigkeit von der Wirksamkeit. Stufe 1: Parser-Flag `parse_username` aktiviert `%un`/RFC931-Extraktion, normalisiert AD-Down-Level-/UPN-/LDAP-CN-Formate (`DOMAIN\user`, `user@corp.tld`, `CN=user,...` → `user`) und schreibt nur das HMAC-Pseudonym in eine neue optionale Spalte `user_pseudonym`. Stufe 2: UI-Reveal-Button in der Users-Page hebt die Maskierung (`user_a***`) session-scoped auf. Default für beides: off. Der Raw-Username wird zu keinem Zeitpunkt persistiert.
 - **Settings-Toggle "Squid Username-Parsing (DSFA-pflichtig)"** mit explizitem Warnbanner und Pipeline-Reset beim Umschalten (analog Salt-Wechsel). DSFA-Verantwortung bleibt dokumentiert beim Betreiber (DSGVO Art. 35).
 - **`docs/PRIVACY.md`** — zentrale Dokumentation der Privacy-Engineering-Entscheidungen inkl. DSFA-Kurz-Checkliste für den Username-Parsing-Opt-in.
@@ -32,10 +36,11 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ### Interna
 
-- **Test-Suite** 597 → **642** (+17 für #22 + **+27 für #72** Backend-Layer + **+1 für #73** KRITIS-Szenario, kompensiert durch +2 angepasste Sample-Counts).
+- **Test-Suite** 597 → **650** (+17 #22 + **+27 #72** Backend + **+1 #73** KRITIS + **+8 #75** Verifier).
 - **Issue #22** geschlossen — Epic E2 damit auch inhaltlich abgeschlossen (vorher DSFA-blockiert deferred).
 - **Issue #72** (Sprint 10A LLMBackend) — abgeschlossen, entkoppelt KI-Analyse von Anthropic-Cloud.
 - **Issue #73** (Sprint 10B Generator + Reports) — abgeschlossen, 85 Beispiel-Reports + KRITIS-KMU-Bundle.
+- **Issue #75** (Sprint 10D DevOps) — abgeschlossen, Offline-Compose-Stack + Verifier + Makefile-Targets.
 
 ## [1.3.0] — 2026-04-22
 
