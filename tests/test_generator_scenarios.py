@@ -178,11 +178,43 @@ def test_enterprise_mixed_scenario_has_diversity(tmp_path: Path, pseudo: Pseudon
 
 
 # ---------------------------------------------------------------------------
+# 6. kritis-kmu-shadow-ai — 50 User, ausgepraegte Schatten-KI (Sprint 10B / #73)
+# ---------------------------------------------------------------------------
+def test_kritis_kmu_scenario_has_50_clients_and_strong_shadow_ai(
+    tmp_path: Path, pseudo: Pseudonymizer
+):
+    # KRITIS-KMU braucht hoehere Volumina als andere Szenarien (50 Clients verteilen
+    # die Last). QPD * 16 (=6400/Tag) entspricht ~realistischem KMU-Proxy-Traffic.
+    log = generate_squid_log(
+        tmp_path / "kritis-kmu.log",
+        days=DAYS, queries_per_day=QPD * 16, seed=SEED, scenario="kritis-kmu-shadow-ai",
+    )
+    result = _detect_from_squid(log, pseudo)
+
+    # 50 Clients konfiguriert; mit zufaelliger Auswahl sollten >=40 sichtbar sein
+    assert result.unique_clients >= 40, (
+        f"KRITIS-KMU sollte >=40 sichtbare Clients haben, hat {result.unique_clients}"
+    )
+
+    # Ausgepraegte Schatten-KI: viele Findings ueber mehrere Services
+    assert len(result.findings) >= 8, (
+        f"KRITIS-KMU sollte >=8 Findings haben, hat {len(result.findings)}"
+    )
+    services = {f.service for f in result.findings}
+    assert len(services) >= 4, (
+        f"KRITIS-KMU sollte >=4 verschiedene AI-Services haben, hat {services}"
+    )
+
+
+# ---------------------------------------------------------------------------
 # Meta-Test: Alle Szenarien aus SCENARIO_PROFILES sind abgedeckt
 # ---------------------------------------------------------------------------
 def test_all_scenarios_are_tested():
     """Sicherheitsnetz: neue Szenarien ohne Test fallen hier auf."""
-    tested = {"clean", "low-risk", "systematic", "upload-leak", "enterprise-mixed"}
+    tested = {
+        "clean", "low-risk", "systematic", "upload-leak",
+        "enterprise-mixed", "kritis-kmu-shadow-ai",
+    }
     assert set(SCENARIO_PROFILES.keys()) == tested, (
         f"Neue Szenarien ohne Test: {set(SCENARIO_PROFILES.keys()) - tested}"
     )

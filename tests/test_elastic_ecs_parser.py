@@ -51,9 +51,10 @@ def test_baseparser_interface(pseudo: Pseudonymizer) -> None:
 # ---------------------------------------------------------------------------
 def test_authentication_events_dropped(df: pd.DataFrame) -> None:
     """Das Auth-Event in der Fixture darf nicht durchkommen."""
-    # Fixture hat 6 relevante Events (2 DNS + 2 web + 1 flat-dotted + 1 trailing dns)
-    # plus 1 invalid-timestamp dropped, 1 auth dropped, 1 process dropped
-    assert len(df) == 6
+    # Fixture hat 11 relevante Events (6 ursprünglich + 5 zusätzliche User für 10-User-Coverage
+    # in examples/test_reports/elastic_ecs/, Sprint-10B #73). 3 weiterhin invalide/drop
+    # (invalid-timestamp, auth, process).
+    assert len(df) == 11
 
 
 @pytest.mark.parametrize("domain", [
