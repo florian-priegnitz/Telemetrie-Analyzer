@@ -8,3 +8,9 @@
 {"EventID": 22, "UtcTime": "invalid-timestamp", "QueryName": "should.be.dropped", "Computer": "WKS-X"}
 {"EventID": 22, "UtcTime": "2026-04-18 12:00:00.000", "QueryName": "", "Computer": "WKS-X"}
 {"EventID": 22, "UtcTime": "2026-04-18 13:00:00.000", "QueryName": "ChatGPT.OpenAI.Com.", "QueryStatus": "0", "Image": "firefox.exe", "Computer": "WKS-EPSILON"}
+{"EventID": 22, "UtcTime": "2026-04-18 13:30:11.000", "QueryName": "claude.ai", "QueryStatus": "0", "Image": "C:\\Program Files\\Mozilla Firefox\\firefox.exe", "Computer": "WKS-ZETA", "User": "CONTOSO\\frank"}
+{"EventID": 22, "UtcTime": "2026-04-18 14:00:00.000", "QueryName": "api.openai.com", "QueryStatus": "0", "Image": "C:\\Users\\grace\\AppData\\Local\\Programs\\Cursor\\Cursor.exe", "Computer": "WKS-ETA", "User": "CONTOSO\\grace"}
+{"EventID": 22, "UtcTime": "2026-04-18 14:15:30.000", "QueryName": "gemini.google.com", "QueryStatus": "0", "Image": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "Computer": "WKS-THETA", "User": "CONTOSO\\heidi"}
+{"EventID": 22, "UtcTime": "2026-04-18 14:45:00.000", "QueryName": "www.perplexity.ai", "QueryStatus": "0", "Image": "C:\\Program Files\\Mozilla Firefox\\firefox.exe", "Computer": "WKS-IOTA", "User": "CONTOSO\\ivan"}
+{"EventID": 22, "UtcTime": "2026-04-18 15:00:00.000", "QueryName": "copilot.github.com", "QueryStatus": "0", "Image": "C:\\Users\\judy\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe", "Computer": "WKS-KAPPA", "User": "CONTOSO\\judy"}
+{"EventID": 22, "UtcTime": "2026-04-18 15:30:00.000", "QueryName": "huggingface.co", "QueryStatus": "0", "Image": "python.exe", "Computer": "WKS-LAMBDA", "User": "CONTOSO\\karl"}

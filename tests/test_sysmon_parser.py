@@ -56,8 +56,9 @@ def test_baseparser_interface(pseudo: Pseudonymizer) -> None:
 # ---------------------------------------------------------------------------
 def test_non_event22_is_dropped(df: pd.DataFrame) -> None:
     """Die Fixture enthält ein EventID=1 Event — muss verworfen werden."""
-    # 7 valide Event-22 im Fixture (3 flat + 2 winlogbeat + 1 sentinel + 1 trailing epsilon), 3 invalide/drop
-    assert len(df) == 7
+    # 13 valide Event-22 (7 ursprünglich + 6 zusätzliche User für 10-User-Coverage in
+    # examples/test_reports/sysmon/, Sprint-10B #73), 3 invalide/drop.
+    assert len(df) == 13
 
 
 # ---------------------------------------------------------------------------

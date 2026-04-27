@@ -156,6 +156,61 @@ SCENARIO_PROFILES: dict[str, ScenarioConfig] = {
         upload_spike_chance=0.55,  # massive Erhöhung gegenüber Default 0.18
     ),
 
+    # 6. KRITIS-KMU Shadow AI — 50-User KRITIS-Sektor-KMU mit ausgepraegter Schatten-KI
+    "kritis-kmu-shadow-ai": ScenarioConfig(
+        name="kritis-kmu-shadow-ai",
+        description=(
+            "KRITIS-KMU mit 50 Usern: 15 Heavy / 20 Systematic / 10 Casual / 5 Clean — "
+            "Demo-Datensatz fuer Vertriebs- und Audit-Argumentation"
+        ),
+        clients=[f"10.42.0.{i}" for i in range(10, 60)],
+        client_profiles={
+            # 15 Heavy Shadow-AI User (10.42.0.10–24): ChatGPT/Claude/Cursor/Deepseek
+            **{
+                f"10.42.0.{10 + i}": {
+                    "ai_domains": [
+                        "chat.openai.com", "claude.ai", "cursor.sh",
+                        "api2.cursor.sh", "chat.deepseek.com",
+                    ],
+                    "ai_weight": 0.40 + (i % 3) * 0.04,  # 0.40, 0.44, 0.48 …
+                }
+                for i in range(15)
+            },
+            # 20 Systematic User (10.42.0.25–44): >10 Req/Tag, klare Schwellwert-Trigger
+            **{
+                f"10.42.0.{25 + i}": {
+                    "ai_domains": [
+                        ["chat.openai.com", "api.openai.com"],
+                        ["claude.ai", "api.anthropic.com"],
+                        ["copilot.github.com", "api.githubcopilot.com"],
+                        ["www.perplexity.ai", "perplexity.ai"],
+                        ["gemini.google.com"],
+                    ][i % 5],
+                    "ai_weight": 0.15 + (i % 4) * 0.025,  # 0.150–0.225
+                }
+                for i in range(20)
+            },
+            # 10 Casual User (10.42.0.45–54): DeepL/Grammarly/Midjourney
+            **{
+                f"10.42.0.{45 + i}": {
+                    "ai_domains": [
+                        ["www.deepl.com", "api-free.deepl.com"],
+                        ["app.grammarly.com"],
+                        ["www.midjourney.com"],
+                        ["huggingface.co"],
+                        ["api.mistral.ai"],
+                    ][i % 5],
+                    "ai_weight": 0.03 + (i % 3) * 0.01,  # 0.03–0.05
+                }
+                for i in range(10)
+            },
+            # 5 Clean User (10.42.0.55–59): kein AI-Traffic
+            **{f"10.42.0.{55 + i}": {"ai_domains": [], "ai_weight": 0.0} for i in range(5)},
+        },
+        upload_spike_domains={"chat.openai.com", "claude.ai", "api.anthropic.com"},
+        upload_spike_chance=0.30,
+    ),
+
     # 5. Enterprise-Mixed — ~30 Clients, realistische Verteilung über alle Risk-Level
     "enterprise-mixed": ScenarioConfig(
         name="enterprise-mixed",

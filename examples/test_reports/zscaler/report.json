@@ -1,0 +1,2258 @@
+{
+  "report_meta": {
+    "generated_at": "2026-04-27T09:37:39.464203",
+    "version": "0.1.0",
+    "pseudonymized": true,
+    "salt_fingerprint": "1b7ba623",
+    "period": {
+      "start": "2026-04-14T08:15:32",
+      "end": "2026-04-14T08:41:44"
+    },
+    "ai_endpoint_db": {
+      "version": "2.2.0",
+      "last_updated": "2026-04-21"
+    }
+  },
+  "summary": {
+    "total_queries": 25,
+    "ai_queries": 23,
+    "non_ai_queries": 2,
+    "ai_query_ratio": 0.92,
+    "unique_clients": 16,
+    "unique_ai_services": 13,
+    "upload_events_total": 1,
+    "total_bytes_uploaded": 923850,
+    "overall_compliance_percent": 21.8,
+    "compliance_traffic_light": "red"
+  },
+  "framework_scores": [
+    {
+      "framework": "EU_AI_ACT",
+      "framework_label": "EU AI Act",
+      "score_percent": 0.0,
+      "total_controls": 3,
+      "triggered_controls": 3,
+      "non_compliant": 3,
+      "partially_compliant": 0,
+      "needs_review": 0,
+      "severity_counts": {
+        "critical": 0,
+        "high": 26,
+        "medium": 15,
+        "low": 0
+      }
+    },
+    {
+      "framework": "DSGVO",
+      "framework_label": "DSGVO",
+      "score_percent": 0.0,
+      "total_controls": 3,
+      "triggered_controls": 3,
+      "non_compliant": 3,
+      "partially_compliant": 0,
+      "needs_review": 0,
+      "severity_counts": {
+        "critical": 0,
+        "high": 26,
+        "medium": 19,
+        "low": 0
+      }
+    },
+    {
+      "framework": "CRA",
+      "framework_label": "EU CRA",
+      "score_percent": 14.3,
+      "total_controls": 7,
+      "triggered_controls": 6,
+      "non_compliant": 5,
+      "partially_compliant": 1,
+      "needs_review": 0,
+      "severity_counts": {
+        "critical": 0,
+        "high": 42,
+        "medium": 18,
+        "low": 0
+      }
+    },
+    {
+      "framework": "DORA",
+      "framework_label": "DORA",
+      "score_percent": 33.3,
+      "total_controls": 3,
+      "triggered_controls": 2,
+      "non_compliant": 2,
+      "partially_compliant": 0,
+      "needs_review": 0,
+      "severity_counts": {
+        "critical": 0,
+        "high": 26,
+        "medium": 3,
+        "low": 0
+      }
+    },
+    {
+      "framework": "ISO_27001",
+      "framework_label": "ISO/IEC 27001",
+      "score_percent": 33.3,
+      "total_controls": 3,
+      "triggered_controls": 2,
+      "non_compliant": 2,
+      "partially_compliant": 0,
+      "needs_review": 0,
+      "severity_counts": {
+        "critical": 0,
+        "high": 26,
+        "medium": 5,
+        "low": 0
+      }
+    },
+    {
+      "framework": "ISO_42001",
+      "framework_label": "ISO/IEC 42001",
+      "score_percent": 50.0,
+      "total_controls": 2,
+      "triggered_controls": 1,
+      "non_compliant": 1,
+      "partially_compliant": 0,
+      "needs_review": 0,
+      "severity_counts": {
+        "critical": 0,
+        "high": 13,
+        "medium": 3,
+        "low": 0
+      }
+    }
+  ],
+  "findings": [
+    {
+      "client_pseudonym": "client_d250a7f3",
+      "service": "OpenAI ChatGPT",
+      "provider": "OpenAI",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 70,
+      "domains": [
+        "api.openai.com"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:25:18",
+      "last_seen": "2026-04-14T08:25:18",
+      "has_document_upload": true,
+      "upload_events": 1,
+      "total_bytes_uploaded": 890512,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'OpenAI ChatGPT' von OpenAI erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'OpenAI ChatGPT' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'OpenAI ChatGPT' (OpenAI) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'OpenAI ChatGPT' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "KI-System 'OpenAI ChatGPT' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "KI-Dienst 'OpenAI ChatGPT' mit Risk-Score 70 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "non_compliant",
+          "rationale": "GPAI-Modell 'OpenAI ChatGPT' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "KI-Dienst 'OpenAI ChatGPT' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "Datenverarbeitung durch 'OpenAI ChatGPT' (OpenAI) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "non_compliant",
+          "rationale": "KI-Dienst 'OpenAI ChatGPT' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'OpenAI ChatGPT' erfordert DSFA (Datentransfer an OpenAI)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "KI-Dienst 'OpenAI ChatGPT' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "'OpenAI ChatGPT' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 11",
+          "control_name": "Obligations for Manufacturers — Vulnerability Handling",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "Dokument-Uploads an 'OpenAI ChatGPT' ohne nachgewiesenes Vulnerability-Handling-Verfahren."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "non_compliant",
+          "rationale": "Hochrisiko-Dienst 'OpenAI ChatGPT' (OpenAI) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "non_compliant",
+          "rationale": "Cloud-KI-Dienst 'OpenAI ChatGPT' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_040befc3",
+      "service": "OpenRouter",
+      "provider": "OpenRouter",
+      "category": "llm_api",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "openrouter.ai"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:34:15",
+      "last_seen": "2026-04-14T08:34:15",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 2048,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'OpenRouter' von OpenRouter erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'OpenRouter' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'OpenRouter' (OpenRouter) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'OpenRouter' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'OpenRouter' (Kategorie: llm_api) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'OpenRouter' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'OpenRouter' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'OpenRouter' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'OpenRouter' (OpenRouter) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'OpenRouter' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'OpenRouter' erfordert DSFA (Datentransfer an OpenRouter)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'OpenRouter' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'OpenRouter' (Kategorie llm_api) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 10",
+          "control_name": "Security Requirements during Product Lifecycle",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'OpenRouter' (llm_api) — Supply-Chain-Risiko ohne Lifecycle-Security-Nachweis und Patch-Pipeline."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'OpenRouter' (OpenRouter) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'OpenRouter' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_104d09b5",
+      "service": "Replicate",
+      "provider": "Replicate",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "replicate.com"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:23:00",
+      "last_seen": "2026-04-14T08:23:00",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 412,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Replicate' von Replicate erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Replicate' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Replicate' (Replicate) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Replicate' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Replicate' (Kategorie: ml_platform) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Replicate' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Replicate' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Replicate' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Replicate' (Replicate) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Replicate' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Replicate' erfordert DSFA (Datentransfer an Replicate)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Replicate' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Replicate' (Kategorie ml_platform) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Replicate' (Replicate) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Replicate' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_2babe8b5",
+      "service": "Perplexity AI",
+      "provider": "Perplexity",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "perplexity.ai"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:22:41",
+      "last_seen": "2026-04-14T08:22:41",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 340,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Perplexity AI' von Perplexity erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Perplexity AI' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Perplexity AI' (Perplexity) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Perplexity AI' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Perplexity AI' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Perplexity AI' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Perplexity AI' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Perplexity AI' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Perplexity AI' (Perplexity) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Perplexity AI' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Perplexity AI' erfordert DSFA (Datentransfer an Perplexity)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Perplexity AI' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Perplexity AI' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Perplexity AI' (Perplexity) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Perplexity AI' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_328407a2",
+      "service": "Anthropic Claude",
+      "provider": "Anthropic",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "api.anthropic.com",
+        "claude.ai"
+      ],
+      "total_queries": 4,
+      "queries_per_day": 4.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:16:02",
+      "last_seen": "2026-04-14T08:40:11",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 20762,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Anthropic Claude' von Anthropic erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Anthropic Claude' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Anthropic Claude' (Anthropic) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Anthropic Claude' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Anthropic Claude' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Anthropic Claude' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Anthropic Claude' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Anthropic Claude' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Anthropic Claude' (Anthropic) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Anthropic Claude' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Anthropic Claude' erfordert DSFA (Datentransfer an Anthropic)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Anthropic Claude' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Anthropic Claude' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Anthropic Claude' (Anthropic) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Anthropic Claude' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_36de2b23",
+      "service": "Hugging Face",
+      "provider": "Hugging Face",
+      "category": "ml_platform",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "huggingface.co"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:18:22",
+      "last_seen": "2026-04-14T08:18:22",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 600,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Hugging Face' von Hugging Face erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Hugging Face' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Hugging Face' (Hugging Face) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Hugging Face' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Hugging Face' (Kategorie: ml_platform) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Hugging Face' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Hugging Face' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Hugging Face' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Hugging Face' (Hugging Face) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Hugging Face' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Hugging Face' erfordert DSFA (Datentransfer an Hugging Face)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Hugging Face' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Hugging Face' (Kategorie ml_platform) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Hugging Face' (Hugging Face) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Hugging Face' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_36f21d15",
+      "service": "OpenAI ChatGPT",
+      "provider": "OpenAI",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "chat.openai.com",
+        "platform.openai.com"
+      ],
+      "total_queries": 5,
+      "queries_per_day": 5.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:15:32",
+      "last_seen": "2026-04-14T08:41:44",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 3252,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'OpenAI ChatGPT' von OpenAI erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'OpenAI ChatGPT' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'OpenAI ChatGPT' (OpenAI) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'OpenAI ChatGPT' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'OpenAI ChatGPT' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'OpenAI ChatGPT' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'OpenAI ChatGPT' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'OpenAI ChatGPT' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'OpenAI ChatGPT' (OpenAI) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'OpenAI ChatGPT' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'OpenAI ChatGPT' erfordert DSFA (Datentransfer an OpenAI)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'OpenAI ChatGPT' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'OpenAI ChatGPT' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'OpenAI ChatGPT' (OpenAI) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'OpenAI ChatGPT' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_5b89f696",
+      "service": "Mistral AI",
+      "provider": "Mistral",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "api.mistral.ai"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:26:29",
+      "last_seen": "2026-04-14T08:26:29",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 3140,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Mistral AI' von Mistral erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Mistral AI' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Mistral AI' (Mistral) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Mistral AI' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Mistral AI' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Mistral AI' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Mistral AI' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Mistral AI' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Mistral AI' (Mistral) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Mistral AI' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Mistral AI' erfordert DSFA (Datentransfer an Mistral)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Mistral AI' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Mistral AI' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Mistral AI' (Mistral) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Mistral AI' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_7acfd885",
+      "service": "Microsoft Copilot",
+      "provider": "Microsoft",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "copilot.microsoft.com"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:17:11",
+      "last_seen": "2026-04-14T08:17:11",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 220,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Microsoft Copilot' von Microsoft erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Microsoft Copilot' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Microsoft Copilot' (Microsoft) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Microsoft Copilot' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Microsoft Copilot' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Microsoft Copilot' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Microsoft Copilot' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Microsoft Copilot' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Microsoft Copilot' (Microsoft) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Microsoft Copilot' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Microsoft Copilot' erfordert DSFA (Datentransfer an Microsoft)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Microsoft Copilot' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Microsoft Copilot' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Microsoft Copilot' (Microsoft) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Microsoft Copilot' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_c32850db",
+      "service": "Google Gemini",
+      "provider": "Google",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "gemini.google.com"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:18:05",
+      "last_seen": "2026-04-14T08:18:05",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 380,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Google Gemini' von Google erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Google Gemini' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Google Gemini' (Google) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Google Gemini' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Google Gemini' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Google Gemini' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Google Gemini' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Google Gemini' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Google Gemini' (Google) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Google Gemini' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Google Gemini' erfordert DSFA (Datentransfer an Google)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Google Gemini' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Google Gemini' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Google Gemini' (Google) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Google Gemini' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_c985427c",
+      "service": "Poe",
+      "provider": "Quora",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "poe.com"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:30:11",
+      "last_seen": "2026-04-14T08:30:11",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 198,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Poe' von Quora erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Poe' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Poe' (Quora) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Poe' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Poe' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Poe' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Poe' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Poe' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Poe' (Quora) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Poe' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Poe' erfordert DSFA (Datentransfer an Quora)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Poe' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Poe' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Poe' (Quora) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Poe' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_d37b08bf",
+      "service": "Mistral AI",
+      "provider": "Mistral",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "chat.mistral.ai"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:38:52",
+      "last_seen": "2026-04-14T08:38:52",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 380,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Mistral AI' von Mistral erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Mistral AI' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Mistral AI' (Mistral) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Mistral AI' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Mistral AI' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Mistral AI' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Mistral AI' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Mistral AI' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Mistral AI' (Mistral) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Mistral AI' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Mistral AI' erfordert DSFA (Datentransfer an Mistral)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Mistral AI' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Mistral AI' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Mistral AI' (Mistral) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Mistral AI' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_f28d3cf4",
+      "service": "Google Gemini",
+      "provider": "Google",
+      "category": "llm_chatbot",
+      "risk_level": "high",
+      "risk_score": 50,
+      "domains": [
+        "gemini.google.com"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:37:09",
+      "last_seen": "2026-04-14T08:37:09",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 410,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Google Gemini' von Google erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-basierter KI-Dienst 'Google Gemini' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Google Gemini' (Google) im Einsatz."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 6",
+          "control_name": "ICT Risk Management Framework",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Google Gemini' (Risiko: high) ohne Risikomanagement."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-System 'Google Gemini' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 9",
+          "control_name": "Risk Management System",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Google Gemini' mit Risk-Score 50 ohne Risk-Management-System."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "GPAI-Modell 'Google Gemini' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Google Gemini' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Datenverarbeitung durch 'Google Gemini' (Google) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Google Gemini' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 35",
+          "control_name": "Datenschutz-Folgenabschätzung",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-KI-Dienst 'Google Gemini' erfordert DSFA (Datentransfer an Google)."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "KI-Dienst 'Google Gemini' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "'Google Gemini' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 13",
+          "control_name": "Obligations of Manufacturers",
+          "severity": "high",
+          "assessment_status": "partially_compliant",
+          "rationale": "Hochrisiko-Dienst 'Google Gemini' (Google) ohne Hersteller-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "partially_compliant",
+          "rationale": "Cloud-KI-Dienst 'Google Gemini' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_36f21d15",
+      "service": "DALL-E",
+      "provider": "OpenAI",
+      "category": "image_generation",
+      "risk_level": "medium",
+      "risk_score": 30,
+      "domains": [
+        "labs.openai.com"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:35:42",
+      "last_seen": "2026-04-14T08:35:42",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 520,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'DALL-E' von OpenAI erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Cloud-basierter KI-Dienst 'DALL-E' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'DALL-E' (OpenAI) im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'DALL-E' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Datenverarbeitung durch 'DALL-E' (OpenAI) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'DALL-E' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'DALL-E' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Cloud-KI-Dienst 'DALL-E' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_36f21d15",
+      "service": "Notion AI",
+      "provider": "Notion",
+      "category": "enterprise_embedded",
+      "risk_level": "medium",
+      "risk_score": 30,
+      "domains": [
+        "www.notion.so"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:25:44",
+      "last_seen": "2026-04-14T08:25:44",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 420,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Notion AI' von Notion erkannt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Notion AI' (Notion) im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'Notion AI' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Datenverarbeitung durch 'Notion AI' (Notion) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'Notion AI' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'Notion AI' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        }
+      ]
+    },
+    {
+      "client_pseudonym": "client_377ad3da",
+      "service": "Character.AI",
+      "provider": "Character Technologies",
+      "category": "llm_chatbot",
+      "risk_level": "medium",
+      "risk_score": 30,
+      "domains": [
+        "character.ai"
+      ],
+      "total_queries": 1,
+      "queries_per_day": 1.0,
+      "is_systematic": false,
+      "days_active": 1,
+      "first_seen": "2026-04-14T08:21:03",
+      "last_seen": "2026-04-14T08:21:03",
+      "has_document_upload": false,
+      "upload_events": 0,
+      "total_bytes_uploaded": 256,
+      "compliance_mappings": [
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.9",
+          "control_name": "Inventory of Information and Other Associated Assets",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Nicht-inventarisierter KI-Dienst 'Character.AI' von Character Technologies erkannt."
+        },
+        {
+          "framework": "ISO_27001",
+          "control_id": "A.5.23",
+          "control_name": "Information Security for Use of Cloud Services",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Cloud-basierter KI-Dienst 'Character.AI' ohne Sicherheitsbewertung genutzt."
+        },
+        {
+          "framework": "DORA",
+          "control_id": "Art. 28",
+          "control_name": "ICT Third-Party Risk",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Nicht-autorisierter ICT-Drittanbieter 'Character.AI' (Character Technologies) im Einsatz."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 6",
+          "control_name": "Classification Rules for High-Risk AI Systems",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-System 'Character.AI' (Kategorie: llm_chatbot) erfordert Risikoklassifizierung."
+        },
+        {
+          "framework": "EU_AI_ACT",
+          "control_id": "Art. 53",
+          "control_name": "Obligations for Providers of General-Purpose AI Models",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "GPAI-Modell 'Character.AI' ohne Transparenz-Dokumentation im Einsatz."
+        },
+        {
+          "framework": "ISO_42001",
+          "control_id": "6.1.2",
+          "control_name": "AI Risk Assessment",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'Character.AI' ohne AI-Risikobewertung im Einsatz."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 6",
+          "control_name": "Rechtmäßigkeit der Verarbeitung",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Datenverarbeitung durch 'Character.AI' (Character Technologies) ohne Rechtsgrundlage."
+        },
+        {
+          "framework": "DSGVO",
+          "control_id": "Art. 25",
+          "control_name": "Datenschutz durch Technikgestaltung",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'Character.AI' ohne Privacy-by-Design-Bewertung."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 6",
+          "control_name": "Essential Cybersecurity Requirements",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "KI-Dienst 'Character.AI' als Produkt mit digitalen Elementen ohne CE-Konformitätserklärung nach CRA."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 7",
+          "control_name": "Important and Critical Products with Digital Elements",
+          "severity": "high",
+          "assessment_status": "needs_review",
+          "rationale": "'Character.AI' (Kategorie llm_chatbot) ist als wichtiges Produkt mit digitalen Elementen einzustufen und erfordert Konformitätsbewertung durch Dritte."
+        },
+        {
+          "framework": "CRA",
+          "control_id": "Art. 24",
+          "control_name": "Technical Documentation",
+          "severity": "medium",
+          "assessment_status": "needs_review",
+          "rationale": "Cloud-KI-Dienst 'Character.AI' ohne technische Dokumentation nach CRA-Anhang V."
+        }
+      ]
+    }
+  ]
+}

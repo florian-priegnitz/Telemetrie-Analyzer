@@ -7,3 +7,8 @@
 {"@timestamp": "invalid", "event": {"category": "dns"}, "dns": {"question": {"name": "skip.me"}}, "source": {"ip": "10.0.1.99"}}
 {"@timestamp": "2026-04-18T09:30:00.000Z", "event": {"category": "process"}, "process": {"name": "explorer.exe"}}
 {"@timestamp": "2026-04-18T09:35:00.000Z", "event": {"category": "network"}, "dns": {"question": {"name": "midjourney.com"}}, "source": {"ip": "10.0.1.55"}, "user": {"name": "alice"}}
+{"@timestamp": "2026-04-18T09:40:00.000Z", "event": {"category": ["network", "dns"]}, "dns": {"question": {"name": "cursor.sh", "type": "A"}}, "source": {"ip": "10.0.1.56"}, "user": {"name": "dave"}}
+{"@timestamp": "2026-04-18T09:45:00.000Z", "event": {"category": "web"}, "url": {"domain": "chat.deepseek.com", "path": "/chat", "full": "https://chat.deepseek.com/chat"}, "source": {"ip": "10.0.1.57"}, "user": {"name": "eve"}, "http": {"request": {"method": "POST", "body": {"bytes": 524288}}, "response": {"status_code": 200}}}
+{"@timestamp": "2026-04-18T09:50:00.000Z", "event": {"category": ["network", "dns"]}, "dns": {"question": {"name": "huggingface.co", "type": "A"}}, "source": {"ip": "10.0.1.58"}, "user": {"name": "frank"}}
+{"@timestamp": "2026-04-18T09:55:00.000Z", "event": {"category": "web"}, "url": {"domain": "api.mistral.ai", "path": "/v1/chat/completions", "full": "https://api.mistral.ai/v1/chat/completions"}, "source": {"ip": "10.0.1.59"}, "user": {"name": "grace"}, "http": {"request": {"method": "POST"}, "response": {"status_code": 200}}}
+{"@timestamp": "2026-04-18T10:00:00.000Z", "event": {"category": ["network", "dns"]}, "dns": {"question": {"name": "copilot.github.com", "type": "A"}}, "source": {"ip": "10.0.1.60"}, "user": {"name": "heidi"}}
