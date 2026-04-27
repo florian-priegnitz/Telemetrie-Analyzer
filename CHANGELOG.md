@@ -5,6 +5,29 @@ Alle nennenswerten Änderungen am Telemetrie Analyzer werden in dieser Datei dok
 Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unreleased]
+
+### Hinzugefügt
+
+- **Squid Username-Parsing mit Double-Opt-in Privacy-Gating (#22)** — Zwei aktive Entscheidungsstufen entkoppeln die Fähigkeit von der Wirksamkeit. Stufe 1: Parser-Flag `parse_username` aktiviert `%un`/RFC931-Extraktion, normalisiert AD-Down-Level-/UPN-/LDAP-CN-Formate (`DOMAIN\user`, `user@corp.tld`, `CN=user,...` → `user`) und schreibt nur das HMAC-Pseudonym in eine neue optionale Spalte `user_pseudonym`. Stufe 2: UI-Reveal-Button in der Users-Page hebt die Maskierung (`user_a***`) session-scoped auf. Default für beides: off. Der Raw-Username wird zu keinem Zeitpunkt persistiert.
+- **Settings-Toggle "Squid Username-Parsing (DSFA-pflichtig)"** mit explizitem Warnbanner und Pipeline-Reset beim Umschalten (analog Salt-Wechsel). DSFA-Verantwortung bleibt dokumentiert beim Betreiber (DSGVO Art. 35).
+- **`docs/PRIVACY.md`** — zentrale Dokumentation der Privacy-Engineering-Entscheidungen inkl. DSFA-Kurz-Checkliste für den Username-Parsing-Opt-in.
+
+### Privacy-Invariante
+
+- Neue Invariante 7 in [`CONTRIBUTING.md`](CONTRIBUTING.md): Raw-Usernamen dürfen in keinem DataFrame, Cache-Entry oder Report erscheinen. Test `test_raw_username_never_in_dataframe` sichert das für den Squid-Parser gegen Regressionen ab.
+- Cache-Trennung: `squid_username_parsing` ist Teil des `run_pipeline`-Cache-Keys, Flag-Umschaltung erzwingt frische Pipeline-Ausführung.
+- Bei hohem Re-Identifikations-Risiko (k < k_min / 2) wird die User-Aggregation analog zum Top-Clients-Ranking komplett unterdrückt.
+
+### Behoben
+
+- **Docker-Release-Workflow** (`templates/` Copy) wurde als eigener Fix außerhalb dieses Features gemerged und entsperrt den GHCR-Image-Publish für zukünftige Tag-Pushes. (Siehe PR fix/dockerfile-templates-path.)
+
+### Interna
+
+- **Test-Suite** 597 → **614** (+17 für #22: 13 Parser-/Pseudonymizer-Unit-Tests + 4 UI-Helper-Tests).
+- **Issue #22** geschlossen — Epic E2 damit auch inhaltlich abgeschlossen (vorher DSFA-blockiert deferred).
+
 ## [1.3.0] — 2026-04-22
 
 Minor-Release mit dem Abschluss des Epic E2 Behavior Analytics: Service-Co-Occurrence-Graphen erkennen Tool-Kombinationen wie *ChatGPT + Cursor + Claude* als zusammengehörige Nutzungsmuster — risikorelevanter als die Einzelservices. Backlog auf **1 offenes Issue** reduziert (#22 bleibt DSFA-blockiert).

@@ -5,6 +5,32 @@ import hmac
 import secrets
 
 
+def normalize_username(raw: str) -> str:
+    """Normalisiert Username-Input vor der Pseudonymisierung.
+
+    Strippt Domain-Präfixe und -Suffixe, damit `DOMAIN\\user`, `user@corp.tld`
+    und `user` auf dasselbe Pseudonym abbilden. Notwendig, damit User-Level-
+    Korrelation über unterschiedliche Auth-Schemata hinweg funktioniert, ohne
+    den Klartext der Domain-Kennung zu verewigen.
+
+    Formate:
+    - ``DOMAIN\\user``  → ``user``  (Windows NT / AD down-level)
+    - ``user@corp.tld`` → ``user``  (UPN / E-Mail)
+    - ``CN=user,OU=...``→ ``user``  (LDAP DN, CN-Teil)
+    - alles andere      → unverändert getrimmt + lowercase
+    """
+    value = (raw or "").strip()
+    if not value:
+        return ""
+    if "\\" in value:
+        value = value.rsplit("\\", 1)[-1]
+    if "@" in value:
+        value = value.split("@", 1)[0]
+    if value.lower().startswith("cn="):
+        value = value[3:].split(",", 1)[0]
+    return value.lower()
+
+
 class Pseudonymizer:
     """Pseudonymisiert personenbezogene Daten (IPs, Usernamen) mit HMAC-SHA256.
 
@@ -34,7 +60,17 @@ class Pseudonymizer:
         return self.pseudonymize(ip, prefix="ip_")
 
     def pseudonymize_user(self, username: str) -> str:
-        return self.pseudonymize(username, prefix="user_")
+        """Pseudonymisiert einen Username nach vorheriger Normalisierung.
+
+        ``normalize_username`` eliminiert Auth-Provider-spezifische
+        Präfixe/Suffixe, damit `DOMAIN\\jdoe`, `jdoe@corp.tld` und `jdoe`
+        deterministisch auf dasselbe `user_<hash>` fallen. Leerer Input
+        liefert leeren String zurück (kein `user_`-Pseudonym auf "").
+        """
+        normalized = normalize_username(username)
+        if not normalized:
+            return ""
+        return self.pseudonymize(normalized, prefix="user_")
 
     @property
     def key(self) -> bytes:
