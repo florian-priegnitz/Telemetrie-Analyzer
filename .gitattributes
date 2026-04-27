@@ -9,3 +9,6 @@ Dockerfile text eol=lf
 *.jpg binary
 *.gif binary
 *.ico binary
+
+# Generated demo bundle — sonst verfaelscht es die GitHub-Sprache-Stats
+examples/test_reports/** linguist-generated=true
