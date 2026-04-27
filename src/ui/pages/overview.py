@@ -8,6 +8,7 @@ from typing import Any
 import streamlit as st
 
 from src.ui.components.badges import risk_badge
+from src.ui.components.db_status import render_db_status
 from src.ui.components.help import page_intro
 from src.ui.components.kpi_row import render_kpi_row
 from src.ui.components.traffic_light import render_compliance_traffic_light
@@ -166,3 +167,6 @@ def render(report_data: dict[str, Any]) -> None:
             )
     else:
         st.success("Keine Findings im Analysezeitraum — keine Shadow AI erkannt.")
+
+    st.markdown("---")
+    render_db_status(compact=True)
