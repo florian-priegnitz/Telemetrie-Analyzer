@@ -9,6 +9,9 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ### Hinzugefügt
 
+- **Pluggable LLM-Backend (#72, Sprint 10A)** — `src/analyzer/backends/` mit `LLMBackend`-Protocol, `AnthropicBackend` (Cloud-Default) und `OllamaBackend` (Offline, stdlib `urllib`). Backend-Selection via env `LLM_BACKEND ∈ {anthropic, ollama, skip}`, Default = `anthropic` wenn `ANTHROPIC_API_KEY`, sonst `skip`. `ClaudeAnalyzer` ist jetzt Fassade über das Backend; bestehende Tests + Aufrufe funktionieren unverändert. Settings-Page enthält neuen Block "KI-Backend" mit Radio-Auswahl + Verbindungs-Test für Ollama. Voraussetzung für KRITIS-/DSGVO-Argumentation: KI-Analyse komplett offline möglich.
+- **27 neue Tests** (`tests/test_llm_backends.py` + `tests/test_analyzer_backend_dispatch.py`) — Protocol-Konformität, AnthropicBackend, OllamaBackend (mit `urlopen`-Mock), Factory `select_backend`, Backend-Injection, Backwards-Compat-Pfad.
+
 - **Squid Username-Parsing mit Double-Opt-in Privacy-Gating (#22)** — Zwei aktive Entscheidungsstufen entkoppeln die Fähigkeit von der Wirksamkeit. Stufe 1: Parser-Flag `parse_username` aktiviert `%un`/RFC931-Extraktion, normalisiert AD-Down-Level-/UPN-/LDAP-CN-Formate (`DOMAIN\user`, `user@corp.tld`, `CN=user,...` → `user`) und schreibt nur das HMAC-Pseudonym in eine neue optionale Spalte `user_pseudonym`. Stufe 2: UI-Reveal-Button in der Users-Page hebt die Maskierung (`user_a***`) session-scoped auf. Default für beides: off. Der Raw-Username wird zu keinem Zeitpunkt persistiert.
 - **Settings-Toggle "Squid Username-Parsing (DSFA-pflichtig)"** mit explizitem Warnbanner und Pipeline-Reset beim Umschalten (analog Salt-Wechsel). DSFA-Verantwortung bleibt dokumentiert beim Betreiber (DSGVO Art. 35).
 - **`docs/PRIVACY.md`** — zentrale Dokumentation der Privacy-Engineering-Entscheidungen inkl. DSFA-Kurz-Checkliste für den Username-Parsing-Opt-in.
@@ -25,8 +28,9 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ### Interna
 
-- **Test-Suite** 597 → **614** (+17 für #22: 13 Parser-/Pseudonymizer-Unit-Tests + 4 UI-Helper-Tests).
+- **Test-Suite** 597 → **641** (+17 für #22 + **+27 für #72** Backend-Layer).
 - **Issue #22** geschlossen — Epic E2 damit auch inhaltlich abgeschlossen (vorher DSFA-blockiert deferred).
+- **Issue #72** (Sprint 10A LLMBackend) — abgeschlossen, entkoppelt KI-Analyse von Anthropic-Cloud.
 
 ## [1.3.0] — 2026-04-22
 
