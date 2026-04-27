@@ -61,27 +61,60 @@ Screenshots werden via [Playwright](scripts/capture_screenshots.py) generiert �
 
 ## Features
 
-- **10 Parser für DNS- und Proxy-Logs** — Pi-hole, Squid, Zscaler, Palo Alto, Cisco Umbrella, Fortinet, AWS VPC Flow, Azure Entra ID, Cloudflare Gateway, Netskope CASB
-- **Detection Engine** mit Risk-Scoring (0–100), systematischer Nutzung, Document-Upload-Erkennung (>500 KB)
-- **Behavior Analytics** — Off-Hours-Detection, Burst-Detection, Stunden-Heatmap, k-Anonymitäts-Guard
-- **HMAC-SHA256 Pseudonymisierung** (DSGVO Art. 25 — Privacy by Design)
-- **Compliance Engine** — 15 Regeln über 5 Frameworks, pro Finding auswertbar je Artikel/Control
-- **Claude API Analyzer** (optional, Skip-Mode verfügbar)
+- **12 Parser für DNS- / Proxy- / Identity-Logs** — Pi-hole, Squid, Zscaler, Palo Alto, Cisco Umbrella, Fortinet, AWS VPC Flow, Azure Entra ID, Cloudflare Gateway, Netskope CASB, Windows Sysmon, Elastic ECS
+- **Detection Engine** mit Risk-Scoring (0–100), systematischer Nutzung, Document-Upload-Erkennung (>500 KB), 4-Stufen-Matching (Subdomain → Alias → Service-IP → ASN-Provider-CIDR opt-in)
+- **Behavior Analytics** — Off-Hours-Detection, Burst-Detection, Stunden-Heatmap, k-Anonymitäts-Guard, Session-Korrelations-Graph (networkx)
+- **HMAC-SHA256 Pseudonymisierung** (DSGVO Art. 25 — Privacy by Design), Squid-`%un`-Username-Parsing als DSFA-Double-Opt-in
+- **Compliance Engine** — 22 Regeln über **6 Frameworks**, pro Finding auswertbar je Artikel/Control
+- **Pluggable LLM-Backend** — Anthropic Cloud oder **Ollama Offline** (`LLM_BACKEND ∈ {anthropic, ollama, skip}`); Skip-Mode für Air-Gap-Setups. Siehe [docs/OFFLINE_AI.md](docs/OFFLINE_AI.md)
 - **Report-Generator** (HTML, Markdown, JSON) mit 3 Zielgruppen-Templates: Executive, IT-Security, Compliance
-- **Streamlit-Dashboard** — 5 Pages (Übersicht, Findings, Users & Patterns, Compliance, Einstellungen), interaktive Filter, Drill-Down, Privacy-Self-Check
+- **Streamlit-Dashboard** — 7 Pages (Übersicht, Findings, Users & Patterns, Sessions, Compliance, Formate, Einstellungen), interaktive Filter, Drill-Down, Privacy-Self-Check
 - **Retention Management** — konfigurierbare Auto-Löschung (DSGVO Art. 5)
-- **336+ Tests** (pytest, CI-grün)
+- **642+ Tests** (pytest, CI-grün auf Python 3.11 + 3.12)
 
 ## Ein-Satz-Architektur
 
 ```
-Input (DNS/Proxy-Logs) → Parser → AI Endpoint Database (160 Endpoints)
- → Detection Engine → Compliance Engine → (Claude Analyzer opt.)
+Input (DNS/Proxy-Logs) → Parser → AI Endpoint Database (178 Endpoints)
+ → Detection Engine → Compliance Engine → (LLM Analyzer: Anthropic | Ollama | Skip)
  → Report Generator (HTML/MD/JSON)  ─┬→  ./reports/
  → Streamlit Dashboard (interaktiv) ─┘
 ```
 
 Kernprinzip: **Compliance-First** — jedes Finding trägt `compliance_mappings` und ist damit auswertbar pro Framework, pro Kontrolle, pro Zeitraum, pro Risiko.
+
+## Tools × Reports
+
+Pro Parser ist ein vorgeneriertes Beispiel-Bundle unter [examples/test_reports/](examples/test_reports/) committed. Die Klassifikation legt fest, welche Reports pro Parser sinnvoll sind:
+
+- **A** *Pflicht* — Demo-/Audit-Standard (committed + CI-verifiziert)
+- **B** *Interessant* — SIEM-/GRC-Integration (committed, `.gitattributes linguist-generated=true`)
+- **C** *Redundant* — gleicher Inhalt wie A/B in anderem Format (NICHT committed, lokal reproduzierbar)
+- **D** *Raus* — Datenlage des Parsers reicht nicht für sinnvollen Report
+
+| Parser | Exec HTML | Exec MD | Exec JSON | ITSec HTML | ITSec MD | ITSec JSON | Comp HTML | Comp MD | Comp JSON |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| [pihole](examples/test_reports/pihole/) | A | B | D | A | B | B | A | A | B |
+| [squid](examples/test_reports/squid/) | A | B | D | A | B | B | A | A | B |
+| [zscaler](examples/test_reports/zscaler/) | A | B | D | A | B | B | A | A | B |
+| [paloalto](examples/test_reports/paloalto/) | A | B | D | A | B | B | A | A | B |
+| [umbrella](examples/test_reports/umbrella/) | A | B | D | A | B | B | A | A | B |
+| [fortinet](examples/test_reports/fortinet/) | A | B | D | A | B | B | A | A | B |
+| [aws_vpc_flow](examples/test_reports/aws_vpc_flow/) | A | B | D | A | B | B | B | C | C |
+| [entra_id](examples/test_reports/entra_id/) | A | C | D | A | B | B | A | A | B |
+| [cloudflare_gateway](examples/test_reports/cloudflare_gateway/) | A | B | D | A | B | B | A | A | B |
+| [netskope](examples/test_reports/netskope/) | A | B | D | A | B | B | A | A | B |
+| [sysmon](examples/test_reports/sysmon/) | B | D | D | A | B | B | A | A | B |
+| [elastic_ecs](examples/test_reports/elastic_ecs/) | A | C | D | A | B | B | A | A | C |
+
+**Hinweis Exec JSON:** Alle 12 Parser haben hier `D` — Vorstände konsumieren keine maschinenlesbaren Reports. JSON-Bedarf liegt bei IT-Security (SIEM/SOAR) und Compliance (GRC-Tools).
+
+**KRITIS-KMU 50-User-Sonderfall (Squid):** Vollständiges Demo-Set unter [examples/test_reports/squid/kritis_kmu_50users_*](examples/test_reports/squid/) — alle 9 Zellen sind A. Realistischer KRITIS-KMU-Datensatz (15 Heavy / 20 Systematic / 10 Casual / 5 Clean User über 14 Tage). Reproduzierbar via:
+
+```bash
+python scripts/generate_example_reports.py            # alle 86 Files
+python scripts/generate_example_reports.py --check    # nur Existenz prüfen
+```
 
 ## Python-API (headless)
 
@@ -132,15 +165,20 @@ Alle Profile sind seed-reproduzierbar und rein synthetisch (RFC1918-IPs).
 | **ISO 42001** | 6.1.2, 8.4 | KI-Inventar-Vollständigkeit |
 | **ISO 27001** | A.5.9, A.5.23, A.8.16 | Asset-Abdeckung, Monitoring-Gaps |
 | **DSGVO** | Art. 5, 6, 25, 32, 35 | Datentransfer-Risiko, DSFA-Bedarf |
+| **EU CRA** (Reg. 2024/2847) | 7 Controls (`mappings/cra.yaml`) | Cyber Resilience, Vulnerability Disclosure |
 
 ## Dokumentation
 
 - [docs/QUICKSTART.md](docs/QUICKSTART.md) — 10-Minuten-Walkthrough mit UI
+- [docs/OFFLINE_AI.md](docs/OFFLINE_AI.md) — Ollama-Setup für Air-Gap- / KRITIS- / DSGVO-Szenarien
+- [docs/PRIVACY.md](docs/PRIVACY.md) — Privacy-Engineering, DSFA, Pseudonymisierung
+- [docs/screenshots/CHECKLIST.md](docs/screenshots/CHECKLIST.md) — 21 PNGs für Demo-Doku
 - [INSTALLATION.md](INSTALLATION.md) — Docker / venv / Windows / Python-API
 - [CONTRIBUTING.md](CONTRIBUTING.md) — Branch-/PR-Konvention, Privacy-Invarianten
 - [SECURITY.md](SECURITY.md) — Responsible Disclosure, Security-Modell
 - [CHANGELOG.md](CHANGELOG.md) — Release-Historie
 - [CLAUDE.md](CLAUDE.md) — Architektur-Details für Claude-Code-Assistenten
+- [BACKLOG.md](BACKLOG.md) — Sprint-Plan + offene Items
 
 ## License
 

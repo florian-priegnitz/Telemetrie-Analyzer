@@ -1,11 +1,43 @@
 # Backlog — Telemetrie Analyzer
 
-**Stand:** 2026-04-21
-**Status:** v1.0.0 release-bereit. Sprint 7 Wave 1 + Wave 2 abgeschlossen:
-- Wave 1: 8 Enterprise-Parser + CI/CD + Retention + Docs + Docker + Endpoint-DB v2.1
-- Wave 2: +Sysmon + Elastic ECS (Epic E3 komplett 12/12), +CLI, +GHCR-Publish, +Multi-Fallback-Detection (Entra App-Names + IP-Ranges), +Makefile/pre-commit, +E2E-Tests
+**Stand:** 2026-04-27
+**Status:** v1.3.0 released (2026-04-22) — Epic E2 komplett. Sprint 9 (#22 Squid `%un` mit DSFA-Double-Opt-in) gemerged. **Sprint 10 in Arbeit** — Offline-KI + Tools-Reports-Coverage + KRITIS-KMU-Demo, 2 von 4 Sub-PRs gemerged (#79, #80).
 
-**441 Tests grün**. Details siehe [CHANGELOG.md](CHANGELOG.md).
+**642 Tests grün** (Python 3.11 + 3.12, CI-grün). Details siehe [CHANGELOG.md](CHANGELOG.md).
+
+---
+
+## Sprint 10 — Offline-KI + Tools-Reports-Coverage + KRITIS-KMU-Demo (2026-04-27)
+
+Status: **in progress** · Tracker-Issue: [#71](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/71)
+
+### Bundle-Items
+- [x] **#BUNDLE-1 / [#72](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/72)** Pluggable LLMBackend (Anthropic + Ollama) — gemerged via PR #79
+- [x] **#BUNDLE-6+7 / [#73](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/73)** Generator + 85 Beispiel-Reports + KRITIS-KMU 50-User Squid — gemerged via PR #80
+- [ ] **#BUNDLE-4+5+8 / [#74](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/74)** Doku (README Tools-Matrix + OFFLINE_AI + Screenshot-CHECKLIST + dieser BACKLOG-Block) — diese PR
+- [ ] **#BUNDLE-2+3 / [#75](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/75)** DevOps (`docker-compose.offline.yml` + `scripts/verify_screenshots.py` + Makefile-Targets) — folgt nach #74
+
+### KRITIS-KMU-Erweiterung (Sub-Items, Prio low)
+
+Aktuell ist nur Squid mit dem KRITIS-KMU-50-User-Datensatz abgedeckt. 11 weitere Parser-Varianten als Backlog mit niedriger Priorität — werden bei Bedarf je Vertriebs- oder Demo-Anforderung hochgepriorisiert:
+
+- [ ] #BUNDLE-7a KRITIS-KMU pihole (low)
+- [ ] #BUNDLE-7b KRITIS-KMU zscaler (low)
+- [ ] #BUNDLE-7c KRITIS-KMU paloalto (low)
+- [ ] #BUNDLE-7d KRITIS-KMU umbrella (low)
+- [ ] #BUNDLE-7e KRITIS-KMU fortinet (low)
+- [ ] #BUNDLE-7f KRITIS-KMU aws_vpc_flow (low)
+- [ ] #BUNDLE-7g KRITIS-KMU entra_id (low)
+- [ ] #BUNDLE-7h KRITIS-KMU cloudflare_gateway (low)
+- [ ] #BUNDLE-7i KRITIS-KMU netskope (low)
+- [ ] #BUNDLE-7j KRITIS-KMU sysmon (low)
+- [ ] #BUNDLE-7k KRITIS-KMU elastic_ecs (low)
+
+### Offene Tracking-Issues (zukünftige Sprints)
+
+- [ ] [#76](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/76) UX: Tooltipps + Per-Page-Erklärungen (P2)
+- [ ] [#77](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/77) AI-Endpoint-DB-Freshness + monatlicher Review (P2)
+- [ ] [#78](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/78) CI-Branding (Bauhaus florian-priegnitz.de) (P2)
 
 ---
 
