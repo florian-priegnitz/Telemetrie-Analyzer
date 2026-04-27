@@ -13,6 +13,7 @@ from src.analyzer.backends import OllamaBackend, select_backend
 from src.detection.engine import SYSTEMATIC_THRESHOLD, UPLOAD_THRESHOLD_BYTES
 from src.privacy.retention import load_policy
 from src.reports.privacy import PrivacyLeakError, assert_no_plaintext
+from src.ui.components.db_status import render_db_status
 from src.ui.components.help import page_intro
 from src.ui.state import reset_pipeline
 
@@ -34,7 +35,7 @@ def render(report_data: dict[str, Any] | None) -> None:
         key_terms=(
             "llm_backend", "salt_override", "pseudonymisierung", "dsfa",
             "retention_policy", "privacy_self_check",
-            "systematic_threshold", "upload_threshold",
+            "systematic_threshold", "upload_threshold", "endpoint_db_freshness",
         ),
     )
 
@@ -140,6 +141,8 @@ def render(report_data: dict[str, Any] | None) -> None:
         "Override via ENV `RETENTION_DAYS` / `RETENTION_CONFIG`. Der Analyzer "
         "persistiert keine Rohdaten — Retention wirkt rein in-memory."
     )
+
+    render_db_status(compact=False)
 
     st.markdown("### Detection-Schwellwerte (read-only)")
     st.markdown(

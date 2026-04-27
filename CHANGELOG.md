@@ -20,6 +20,8 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - **`scripts/verify_screenshots.py` (#75, Sprint 10D)** — parst `docs/screenshots/CHECKLIST.md`, extrahiert Filenames aus `- [ ] NN_*.png`-Zeilen und prüft `Path.exists()` pro PNG. Default `--warn` (Exit 0 bei fehlenden Files), `--strict` (Exit 1) für Release-CI. 8 Unit-Tests in `tests/test_verify_screenshots.py`.
 - **Makefile-Targets:** `offline-up`, `offline-down`, `offline-pull`, `verify-screenshots`, `generate-examples`, `check-all`.
 
+- **AI-Endpoint-DB-Freshness-Sichtbarkeit + monatlicher Review-Issue (#77, Sprint 12)** — Neue Komponente `src/ui/components/db_status.py` zeigt DB-Version, Endpoint-/Provider-/Kategorie-Anzahl und ein Frische-Signal (🟢 ≤35d / 🟡 ≤70d / 🔴 darüber) auf Settings-Page (voll) und Overview-Page (kompakt im Footer). `scripts/db_coverage_report.py` generiert `docs/AI_COVERAGE.md` mit vollständigem Katalog gruppiert nach Kategorie + Top-10-Provider; ein Sync-Test bricht, wenn die Datei vom DB-Stand drifted. `.github/workflows/db-review-issue.yml` (cron `0 7 2 * *`) erzeugt monatlich ein Review-Issue gemäß `.github/ISSUE_TEMPLATE/db_review.yml` (Checkliste über Discovery, Bestandspflege, Privacy-Bewertung, DB-Bump). Glossar-Eintrag `endpoint_db_freshness` ergänzt.
+
 - **Squid Username-Parsing mit Double-Opt-in Privacy-Gating (#22)** — Zwei aktive Entscheidungsstufen entkoppeln die Fähigkeit von der Wirksamkeit. Stufe 1: Parser-Flag `parse_username` aktiviert `%un`/RFC931-Extraktion, normalisiert AD-Down-Level-/UPN-/LDAP-CN-Formate (`DOMAIN\user`, `user@corp.tld`, `CN=user,...` → `user`) und schreibt nur das HMAC-Pseudonym in eine neue optionale Spalte `user_pseudonym`. Stufe 2: UI-Reveal-Button in der Users-Page hebt die Maskierung (`user_a***`) session-scoped auf. Default für beides: off. Der Raw-Username wird zu keinem Zeitpunkt persistiert.
 - **Settings-Toggle "Squid Username-Parsing (DSFA-pflichtig)"** mit explizitem Warnbanner und Pipeline-Reset beim Umschalten (analog Salt-Wechsel). DSFA-Verantwortung bleibt dokumentiert beim Betreiber (DSGVO Art. 35).
 - **`docs/PRIVACY.md`** — zentrale Dokumentation der Privacy-Engineering-Entscheidungen inkl. DSFA-Kurz-Checkliste für den Username-Parsing-Opt-in.
@@ -41,6 +43,8 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - **Issue #72** (Sprint 10A LLMBackend) — abgeschlossen, entkoppelt KI-Analyse von Anthropic-Cloud.
 - **Issue #73** (Sprint 10B Generator + Reports) — abgeschlossen, 85 Beispiel-Reports + KRITIS-KMU-Bundle.
 - **Issue #75** (Sprint 10D DevOps) — abgeschlossen, Offline-Compose-Stack + Verifier + Makefile-Targets.
+- **Issue #77** (Sprint 12 DB-Freshness) — abgeschlossen, UI-Sichtbarkeit + Coverage-Report + Monthly-Review-Workflow.
+- **Test-Suite jetzt 692** (650 + 27 #76 + 15 #77).
 
 ## [1.3.0] — 2026-04-22
 

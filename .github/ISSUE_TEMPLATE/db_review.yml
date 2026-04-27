@@ -1,0 +1,94 @@
+name: AI-Endpoint-DB Monthly Review
+description: Checkliste fuer den monatlichen Review der AI-Endpoint-DB
+title: "[DB-Review] Monatlicher AI-Endpoint-Check für YYYY-MM"
+labels: ["epic:endpoint-db", "documentation", "priority:P2"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Monatlicher AI-Endpoint-DB Review
+
+        Dieses Issue trackt den monatlichen Review der `data/ai_endpoints.json`. Ziel: keine
+        Detection-Lücken bei neuen KI-Anbietern, Schritt halten mit Risk-Level-Drift, Stale-Endpoints
+        identifizieren.
+
+        Aktueller Stand der DB: siehe Settings-Page (`⚙️ Einstellungen → AI-Endpoint-Datenbank`)
+        oder [`docs/AI_COVERAGE.md`](../docs/AI_COVERAGE.md).
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Review-Zeitraum
+      description: Welcher Monat wird gereviewt?
+      placeholder: "z.B. April 2026 (Stand-DB v2.2.0 → v2.3.0)"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: discovery
+    attributes:
+      label: Recherche neuer KI-Anbieter
+      description: Quellen, die fuer neue Anbieter durchsucht wurden
+      options:
+        - label: "Awesome-AI-Tools / GitHub-Trending"
+        - label: "uBlock-Origin AI-Filter-Listen"
+        - label: "TechCrunch / The Information AI-Coverage"
+        - label: "Anthropic / OpenAI / Google neue Sub-Domains"
+        - label: "HR/Recruiting/Customer-Support neue Player"
+
+  - type: checkboxes
+    id: validation
+    attributes:
+      label: Bestandspflege
+      description: Pruefungen am bestehenden Katalog
+      options:
+        - label: "DNS-Auflösung der 178 Endpoints (lebt der Host?)"
+        - label: "Risk-Level-Drift geprüft (Beta → GA → höherer Risk?)"
+        - label: "`last_verified`-Timestamps aktualisiert"
+        - label: "Stale-Endpoints (>180d unverified) markiert oder entfernt"
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy-Bewertung neuer Anbieter
+      description: Pro neuem Endpoint
+      options:
+        - label: "Datenverarbeitung dokumentiert (EU/US/sonstige Lokation)"
+        - label: "Pseudonymisierungs-/Privacy-Ratings konsistent vergeben"
+        - label: "Compliance-Mappings auf DORA / EU AI Act / ISO 42001 / DSGVO / CRA geprüft"
+
+  - type: checkboxes
+    id: release
+    attributes:
+      label: DB-Bump + Release
+      description: Schritte zum Veröffentlichen
+      options:
+        - label: "DB-Version in `data/ai_endpoints.json` erhöht"
+        - label: "Versions-Snapshot unter `data/versions/<version>.json` abgelegt"
+        - label: "`scripts/db_coverage_report.py` ausgeführt → `docs/AI_COVERAGE.md` aktualisiert"
+        - label: "Drift-Guard-Test grün (`pytest tests/test_db_versioning.py`)"
+        - label: "CHANGELOG-Eintrag ergänzt"
+
+  - type: textarea
+    id: findings
+    attributes:
+      label: Findings
+      description: Neu hinzugefügte / entfernte / umkategorisierte Anbieter, Auffälligkeiten
+      placeholder: |
+        Neu:
+        - HireVue (HR Recruiting, risk=high)
+        - …
+
+        Risk-Level-Drift:
+        - …
+
+        Entfernt (stale):
+        - …
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Sonstige Notizen
+      description: Optional — z.B. Quellen, blockierende Themen, nächste Schritte

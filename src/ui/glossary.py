@@ -371,6 +371,21 @@ GLOSSARY: dict[str, GlossaryTerm] = {
         ),
         see_also=(),
     ),
+    "endpoint_db_freshness": GlossaryTerm(
+        label="DB-Frische",
+        short=(
+            "Alter der AI-Endpoint-DB seit letztem Update. 🟢 ≤35d aktuell, 🟡 ≤70d Review fällig, 🔴 darüber veraltet."
+        ),
+        long=(
+            "Die **AI-Endpoint-DB-Frische** zeigt, wie aktuell der Detection-Katalog ist:\n"
+            "- 🟢 **Aktuell** — Update ≤ 35 Tage her (innerhalb des monatlichen Reviews)\n"
+            "- 🟡 **Review fällig** — 36–70 Tage; ein Review-Zyklus wurde übersprungen\n"
+            "- 🔴 **Veraltet** — > 70 Tage; signifikantes Risiko für Detection-Lücken\n"
+            "Auto-Refresh über `.github/workflows/endpoint-db-update.yml` (cron: 1. jeden Monats). "
+            "Coverage-Report: `docs/AI_COVERAGE.md` (via `scripts/db_coverage_report.py`)."
+        ),
+        see_also=("drift_guard",),
+    ),
 }
 
 
