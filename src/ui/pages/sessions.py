@@ -20,6 +20,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from src.ui.components.help import page_intro
+
 
 def render(report_data: dict[str, Any]) -> None:
     st.title("🔗 Sessions")
@@ -34,11 +36,19 @@ def render(report_data: dict[str, Any]) -> None:
         (report_data.get("user_patterns") or {}).get("privacy_redacted")
     )
 
-    st.caption(
-        f"Service-Co-Occurrence innerhalb eines {window}-Min-Fensters. "
-        f"Kombinationen wie *ChatGPT + Cursor + Claude* innerhalb kurzer Zeit "
-        f"indizieren Code-Kontextabfluss — die Kombination ist risikorelevanter "
-        f"als Einzelservices."
+    page_intro(
+        title="Sessions",
+        what_you_see=(
+            f"**Service-Co-Occurrence-Analyse** über ein {window}-Minuten-Fenster.\n\n"
+            "Knoten = KI-Service (Größe ≈ Nutzungsfrequenz). Kanten = gemeinsame "
+            "Nutzung im Fenster (Kantenbreite ≈ Häufigkeit). Kombinationen wie "
+            "*ChatGPT + Cursor + Claude* indizieren typische Code-Kontext-Workflows — "
+            "die Kombination ist risikorelevanter als die Einzelservices, weil Daten "
+            "zwischen Tools fließen können (Kontextabfluss).\n\n"
+            "Die Per-User-Drilldown-Tabelle ist nur sichtbar, wenn k-Anonymität low "
+            "risk meldet."
+        ),
+        key_terms=("co_occurrence_fenster", "session_graph", "burst", "k_anonymitaet"),
     )
 
     if not edges:

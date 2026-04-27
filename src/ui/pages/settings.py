@@ -13,11 +13,30 @@ from src.analyzer.backends import OllamaBackend, select_backend
 from src.detection.engine import SYSTEMATIC_THRESHOLD, UPLOAD_THRESHOLD_BYTES
 from src.privacy.retention import load_policy
 from src.reports.privacy import PrivacyLeakError, assert_no_plaintext
+from src.ui.components.help import page_intro
 from src.ui.state import reset_pipeline
 
 
 def render(report_data: dict[str, Any] | None) -> None:
     st.title("⚙️ Einstellungen")
+    page_intro(
+        title="Einstellungen",
+        what_you_see=(
+            "Konfigurations-Hub für die Analyse:\n\n"
+            "- **KI-Backend** wählen (Anthropic Cloud / Ollama Offline / Skip)\n"
+            "- **Pseudonymisierungs-Salt** überschreiben (mit Hard-Reset)\n"
+            "- **Squid-Username-Parsing** als DSFA-Double-Opt-in (DSGVO Art. 35)\n"
+            "- **Retention-Policy** anzeigen (Auto-Löschung nach Default 90 Tagen)\n"
+            "- **Privacy-Self-Check** über das letzte Report-Datenset\n"
+            "- **Detection-Schwellwerte** (Read-Only zur Reproduzierbarkeit)\n\n"
+            "Änderungen am Salt oder Username-Toggle verwerfen vorhandene Analyse-Daten."
+        ),
+        key_terms=(
+            "llm_backend", "salt_override", "pseudonymisierung", "dsfa",
+            "retention_policy", "privacy_self_check",
+            "systematic_threshold", "upload_threshold",
+        ),
+    )
 
     _render_backend_section()
 

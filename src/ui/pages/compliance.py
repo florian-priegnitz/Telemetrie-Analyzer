@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.ui.components.framework_card import render_framework_card
+from src.ui.components.help import page_intro
 
 _RISK_COLORS = {"critical": "#B60205", "high": "#D93F0B", "medium": "#FBCA04", "low": "#0E8A16"}
 
@@ -29,6 +30,17 @@ def _format_status(raw: str | None) -> str:
 
 def render(report_data: dict[str, Any]) -> None:
     st.title("📋 Compliance")
+    page_intro(
+        title="Compliance",
+        what_you_see=(
+            "Ein Tab pro Framework (DORA / EU AI Act / ISO 42001 / ISO 27001 / DSGVO / CRA) "
+            "mit **Score-Card** (Erfüllungsgrad in %) und **Mapping-Tabelle** (welches "
+            "Finding verletzt welches konkrete Control). Status-Badges: ❌ non-compliant, "
+            "⚠️ partially, 🔍 needs review, ✅ compliant. Der übergreifende Score über der "
+            "Tab-Leiste mittelt alle Frameworks."
+        ),
+        key_terms=("erfuellungsgrad", "compliance_mapping", "non_compliant_status"),
+    )
 
     framework_scores = report_data.get("framework_scores", [])
     findings = report_data.get("findings", [])
