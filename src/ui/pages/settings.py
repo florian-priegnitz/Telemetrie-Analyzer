@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import os
 import secrets
 from typing import Any
 
 import streamlit as st
 
+from src.analyzer.backends import OllamaBackend, select_backend
 from src.detection.engine import SYSTEMATIC_THRESHOLD, UPLOAD_THRESHOLD_BYTES
 from src.privacy.retention import load_policy
 from src.reports.privacy import PrivacyLeakError, assert_no_plaintext
@@ -16,6 +18,8 @@ from src.ui.state import reset_pipeline
 
 def render(report_data: dict[str, Any] | None) -> None:
     st.title("⚙️ Einstellungen")
+
+    _render_backend_section()
 
     st.markdown("### Pseudonymisierung")
     st.success("Pseudonymisierung ist **immer aktiv** (HMAC-SHA256, DSGVO Art. 25).")
@@ -142,3 +146,73 @@ def render(report_data: dict[str, Any] | None) -> None:
             )
         except PrivacyLeakError as exc:
             st.error(f"❌ **Privacy-Leak gefunden:** {exc}")
+
+
+def _render_backend_section() -> None:
+    """KI-Backend-Auswahl (Anthropic Cloud / Ollama Offline / Skip)."""
+    st.markdown("### KI-Backend")
+    st.caption(
+        "Wählt das LLM-Backend für die Analyse. **Ollama** läuft komplett offline "
+        "(z.B. via `docker compose --profile offline up`) und ist für KRITIS-/DSGVO-"
+        "Argumentation relevant. **Skip** deaktiviert die KI-Analyse — Detection, "
+        "Compliance-Mapping und Reports laufen weiter."
+    )
+
+    current = (
+        st.session_state.get("llm_backend_choice")
+        or os.environ.get("LLM_BACKEND", "").strip().lower()
+        or ("anthropic" if os.environ.get("ANTHROPIC_API_KEY") else "skip")
+    )
+    options = ["anthropic", "ollama", "skip"]
+    labels = {
+        "anthropic": "Anthropic (Cloud)",
+        "ollama": "Ollama (Offline)",
+        "skip": "Skip (keine KI-Analyse)",
+    }
+    choice = st.radio(
+        "Backend",
+        options,
+        index=options.index(current) if current in options else 2,
+        format_func=lambda key: labels[key],
+        horizontal=True,
+        key="llm_backend_choice_radio",
+        help=(
+            "Wechsel wirkt für die nächste Analyse. Anthropic benötigt "
+            "`ANTHROPIC_API_KEY`; Ollama benötigt einen erreichbaren "
+            "Ollama-Server (Default `http://localhost:11434`)."
+        ),
+    )
+    if choice != current:
+        st.session_state.llm_backend_choice = choice
+
+    # Backend-spezifische Statusanzeige
+    if choice == "anthropic":
+        has_key = bool(os.environ.get("ANTHROPIC_API_KEY"))
+        if has_key:
+            st.success("✅ `ANTHROPIC_API_KEY` ist gesetzt.")
+        else:
+            st.warning(
+                "⚠️ `ANTHROPIC_API_KEY` ist nicht gesetzt. "
+                "Backend bleibt im Skip-Modus."
+            )
+    elif choice == "ollama":
+        host = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+        model = os.environ.get("OLLAMA_MODEL", "llama3.1:8b")
+        st.markdown(f"**Host:** `{host}` · **Modell:** `{model}`")
+        if st.button("🔌 Verbindung testen"):
+            backend = OllamaBackend()
+            if backend.is_available:
+                st.success(f"✅ Ollama erreichbar unter `{backend.host}` (Modell `{backend.model}`).")
+            else:
+                st.error(
+                    f"❌ Ollama nicht erreichbar unter `{backend.host}`. "
+                    "Server starten via `docker compose --profile offline up` "
+                    "oder `ollama serve`."
+                )
+    else:  # skip
+        st.info("KI-Analyse deaktiviert. Reports werden ohne LLM-generierte Empfehlungen erstellt.")
+
+    # Aktive Auflösung anzeigen (was würde `select_backend` faktisch zurückgeben?)
+    resolved = select_backend(name=choice)
+    resolved_label = resolved.name if resolved is not None else "skip"
+    st.caption(f"Effektiv aktives Backend bei nächster Analyse: **{resolved_label}**")
