@@ -7,6 +7,8 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-04-27
+
 ### Hinzugefügt
 
 - **Pluggable LLM-Backend (#72, Sprint 10A)** — `src/analyzer/backends/` mit `LLMBackend`-Protocol, `AnthropicBackend` (Cloud-Default) und `OllamaBackend` (Offline, stdlib `urllib`). Backend-Selection via env `LLM_BACKEND ∈ {anthropic, ollama, skip}`, Default = `anthropic` wenn `ANTHROPIC_API_KEY`, sonst `skip`. `ClaudeAnalyzer` ist jetzt Fassade über das Backend; bestehende Tests + Aufrufe funktionieren unverändert. Settings-Page enthält neuen Block "KI-Backend" mit Radio-Auswahl + Verbindungs-Test für Ollama. Voraussetzung für KRITIS-/DSGVO-Argumentation: KI-Analyse komplett offline möglich.

@@ -1,21 +1,21 @@
 # Backlog — Telemetrie Analyzer
 
 **Stand:** 2026-04-27
-**Status:** v1.3.0 released (2026-04-22) — Epic E2 komplett. Sprint 9 (#22 Squid `%un` mit DSFA-Double-Opt-in) gemerged. **Sprint 10 in Arbeit** — Offline-KI + Tools-Reports-Coverage + KRITIS-KMU-Demo, 2 von 4 Sub-PRs gemerged (#79, #80).
+**Status:** v1.3.0 released (2026-04-22). **Sprint 9–12 abgeschlossen** auf `main` — 7 PRs gemerged (#70, #79, #80, #81, #82, #83, #84). Code release-bereit für v1.4.0.
 
-**642 Tests grün** (Python 3.11 + 3.12, CI-grün). Details siehe [CHANGELOG.md](CHANGELOG.md).
+**692 Tests grün** (Python 3.11 + 3.12, CI-grün). Details siehe [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
-## Sprint 10 — Offline-KI + Tools-Reports-Coverage + KRITIS-KMU-Demo (2026-04-27)
+## Sprint 10 — Offline-KI + Tools-Reports-Coverage + KRITIS-KMU-Demo (2026-04-27) ✔
 
-Status: **in progress** · Tracker-Issue: [#71](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/71)
+Status: **abgeschlossen** · Tracker-Issue: [#71](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/71)
 
 ### Bundle-Items
 - [x] **#BUNDLE-1 / [#72](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/72)** Pluggable LLMBackend (Anthropic + Ollama) — gemerged via PR #79
 - [x] **#BUNDLE-6+7 / [#73](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/73)** Generator + 85 Beispiel-Reports + KRITIS-KMU 50-User Squid — gemerged via PR #80
-- [ ] **#BUNDLE-4+5+8 / [#74](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/74)** Doku (README Tools-Matrix + OFFLINE_AI + Screenshot-CHECKLIST + dieser BACKLOG-Block) — diese PR
-- [ ] **#BUNDLE-2+3 / [#75](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/75)** DevOps (`docker-compose.offline.yml` + `scripts/verify_screenshots.py` + Makefile-Targets) — folgt nach #74
+- [x] **#BUNDLE-4+5+8 / [#74](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/74)** Doku (README Tools-Matrix + OFFLINE_AI + Screenshot-CHECKLIST + BACKLOG) — gemerged via PR #81
+- [x] **#BUNDLE-2+3 / [#75](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/75)** DevOps (`docker-compose.offline.yml` + `scripts/verify_screenshots.py` + Makefile-Targets) — gemerged via PR #82
 
 ### KRITIS-KMU-Erweiterung (Sub-Items, Prio low)
 
@@ -33,10 +33,32 @@ Aktuell ist nur Squid mit dem KRITIS-KMU-50-User-Datensatz abgedeckt. 11 weitere
 - [ ] #BUNDLE-7j KRITIS-KMU sysmon (low)
 - [ ] #BUNDLE-7k KRITIS-KMU elastic_ecs (low)
 
-### Offene Tracking-Issues (zukünftige Sprints)
+---
 
-- [ ] [#76](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/76) UX: Tooltipps + Per-Page-Erklärungen (P2)
-- [ ] [#77](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/77) AI-Endpoint-DB-Freshness + monatlicher Review (P2)
+## Sprint 11 — UX-Tooltipps + zentrales Glossar (2026-04-27) ✔
+
+Status: **abgeschlossen** · Issue [#76](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/76) · PR [#83](https://github.com/florian-priegnitz/Telemetrie-Analyzer/pull/83)
+
+- [x] `src/ui/glossary.py` — 23 Compliance-/Security-Begriffe als Single Source of Truth
+- [x] `src/ui/components/help.py` — `page_intro` / `term_help` / `glossary_block`
+- [x] `page_intro` auf allen 7 UI-Pages (Übersicht, Findings, Users & Patterns, Sessions, Compliance, Formate, Einstellungen)
+- [x] +28 Tests (Glossar-Konsistenz, parametrisierte Eintrags-Tests)
+
+---
+
+## Sprint 12 — AI-Endpoint-DB-Freshness + Monthly-Review (2026-04-27) ✔
+
+Status: **abgeschlossen** · Issue [#77](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/77) · PR [#84](https://github.com/florian-priegnitz/Telemetrie-Analyzer/pull/84)
+
+- [x] `src/ui/components/db_status.py` — DB-Frische-Signal 🟢/🟡/🔴 (≤35d / ≤70d / darüber) auf Settings + Overview
+- [x] `scripts/db_coverage_report.py` + `docs/AI_COVERAGE.md` mit Drift-Guard (Sync-Test)
+- [x] `.github/workflows/db-review-issue.yml` (cron `0 7 2 * *`) + `.github/ISSUE_TEMPLATE/db_review.yml`
+- [x] +15 Tests (Schwellen, Coverage-Render, Drift-Guard)
+
+---
+
+## Offene Tracking-Issues
+
 - [ ] [#78](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/78) CI-Branding (Bauhaus florian-priegnitz.de) (P2)
 
 ---
