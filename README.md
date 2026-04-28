@@ -4,7 +4,13 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-KI-gestütztes Analyse-Tool zur Erkennung nicht-autorisierter KI-Nutzung (Shadow AI) in Unternehmensnetzen. Analysiert DNS- und Proxy-Logs, erkennt Muster und erzeugt regulatorisch eingebettete Reports nach **DORA, EU AI Act, ISO 42001, ISO 27001, DSGVO**.
+KI-gestütztes Analyse-Tool zur Erkennung nicht-autorisierter KI-Nutzung (Shadow AI) in Unternehmensnetzen. Analysiert DNS- und Proxy-Logs, erkennt Muster und erzeugt regulatorisch eingebettete Reports nach **DORA, EU AI Act, ISO 42001, ISO 27001, DSGVO, EU CRA**.
+
+## Was ist Schatten-KI?
+
+**Schatten-KI** (Shadow AI) bezeichnet die Nutzung generativer KI-Dienste — ChatGPT, Claude, Gemini, Copilot, Cursor, Perplexity, Hugging Face und weitere — *ohne* freigegebenen Vertrag, ohne Auftragsverarbeitung und außerhalb des etablierten IT-Prozesses. Mitarbeitende laden Code, Kundendaten oder Konzepte in Drittsysteme — meist gut gemeint, regulatorisch aber riskant: **DORA Art. 28** (Third-Party-Risiko), **EU AI Act Art. 6** (Risikoklassen), **DSGVO Art. 6** (Rechtsgrundlage) und **ISO 27001 A.5.23** (Cloud-Services) fordern eine belastbare Aussage darüber, *welche* KI-Dienste im Unternehmen aktiv sind.
+
+Der Telemetrie Analyzer beantwortet diese Frage **ohne Endpoint-Agent** — rein aus DNS-, Proxy- und SIEM-Telemetrie, die in Enterprise-Umgebungen ohnehin anfällt. Pseudonymisierung greift bereits im Parser (DSGVO Art. 25 — Privacy by Design), nicht erst im Report.
 
 ## Get Started in 2 Commands
 
@@ -70,18 +76,60 @@ Screenshots werden via [Playwright](scripts/capture_screenshots.py) generiert �
 - **Report-Generator** (HTML, Markdown, JSON) mit 3 Zielgruppen-Templates: Executive, IT-Security, Compliance
 - **Streamlit-Dashboard** — 7 Pages (Übersicht, Findings, Users & Patterns, Sessions, Compliance, Formate, Einstellungen), interaktive Filter, Drill-Down, Privacy-Self-Check
 - **Retention Management** — konfigurierbare Auto-Löschung (DSGVO Art. 5)
-- **642+ Tests** (pytest, CI-grün auf Python 3.11 + 3.12)
+- **692+ Tests** (pytest, CI-grün auf Python 3.11 + 3.12)
 
-## Ein-Satz-Architektur
+### Unterstützte Logformate
+
+12 Parser mit Auto-Detect — Upload-Dialog erkennt das Format an Header, Token-Layout oder Schlüsselwörtern:
+
+| Quelle | Typ | Endung | Auto-Detect-Hinweis |
+|---|---|---|---|
+| Pi-hole | DNS | `.log` (Syslog) / `.csv` (FTL) | Token `dnsmasq[` |
+| Squid | Web-Proxy | `.log` (Native + Common) | Whitespace-Token-Layout |
+| Zscaler ZIA | Web-Proxy | `.log` (NSS) | LEEF-Header |
+| Palo Alto PAN-OS | URL-Filtering | `.log` (Syslog) | `PAN-OS,` Position 1–3 |
+| Cisco Umbrella | DNS-Security | `.csv` | `identity_type`-Spalte |
+| Fortinet FortiGate | Webfilter | `.log` (key=value) | `eventtime=` |
+| AWS VPC Flow | Network | `.log` (v2/v5) | Spalten-Header v2/v5 |
+| Azure Entra ID | Sign-In | `.json` / `.jsonl` | `appDisplayName` |
+| Cloudflare Gateway | DNS + HTTP | `.ndjson` (Logpush) | `EventTimestamp` |
+| Netskope CASB | CASB | `.json` (NDJSON) | `activity` |
+| Windows Sysmon | Endpoint | `.log` / `.json` | EventID 22 (DNS) |
+| Elastic ECS | SIEM | `.json` | `@timestamp` + `event.module` |
+
+Feld-Mapping pro Parser zeigt die UI-Page **📚 Formate** (Quelle → Common-Schema). Sample-Dateien für jeden Parser liegen unter [testdata/](testdata/).
+
+### Was wird konkret erkannt?
+
+| Erkennung | Schwelle / Logik | Output-Flag |
+|---|---|---|
+| **Systematische Nutzung** | `>10 Requests/Tag` pro Client × Service | `is_systematic=true` |
+| **Dokument-Upload** | `>500 KB` pro Request an KI-Endpoint | `has_document_upload=true` |
+| **Off-Hours-Aktivität** | Anteil außerhalb 08–18 Uhr (Wochentag konfigurierbar) | `off_hours_ratio` (0–1) |
+| **Bursts** | kurzfristige Frequenz-Spitzen, Sliding-Window | `burst_count` |
+| **Service-Kombinationen** | Co-Occurrence-Graph in 30-Min-Window (z. B. *ChatGPT + Cursor + Claude*) | `session_pairs[]` |
+| **Provider-Fallback** | Domain unbekannt, IP in Provider-CIDR (Anthropic / OpenAI / Google / AWS / Azure) — opt-in | `detection_confidence=low` |
+| **Risk-Score** | aggregiert obige Signale + Service-Risikoklasse | `risk_score` (0–100) |
+
+## Funktionsweise
+
+Die Pipeline läuft in fünf strikt getrennten Stages — gleichzeitig die Verantwortungs-Grenzen für Tests und Privacy-Invarianten:
 
 ```
-Input (DNS/Proxy-Logs) → Parser → AI Endpoint Database (178 Endpoints)
- → Detection Engine → Compliance Engine → (LLM Analyzer: Anthropic | Ollama | Skip)
- → Report Generator (HTML/MD/JSON)  ─┬→  ./reports/
- → Streamlit Dashboard (interaktiv) ─┘
+Input (DNS/Proxy/SIEM) → Parser → AI Endpoint DB → Detection → Compliance
+                                                                    ↓
+                              Report Generator + LLM Analyzer (Anthropic | Ollama | Skip)
+                                       ↓
+                          ./reports/  •  Streamlit-Dashboard
 ```
 
-Kernprinzip: **Compliance-First** — jedes Finding trägt `compliance_mappings` und ist damit auswertbar pro Framework, pro Kontrolle, pro Zeitraum, pro Risiko.
+1. **Parser** — 12 Format-Adapter normalisieren auf ein Common-Schema (`timestamp, client, domain, …`). IPs und (opt-in) Usernames werden hier mit HMAC-SHA256 pseudonymisiert; Rohwerte erreichen nie ein DataFrame.
+2. **AI Endpoint Database** — 178 Endpoints, versioniert unter `data/versions/`. 4-Stufen-Matching: exact → subdomain → service-IP → ASN-Provider-CIDR (opt-in).
+3. **Detection Engine** — berechnet Risk-Score 0–100 pro `client × service`, taggt systematische Nutzung, Dokument-Upload, Off-Hours, Bursts und Service-Co-Occurrence.
+4. **Compliance Engine** — 22 Regeln über 6 Frameworks; jedes Finding trägt `compliance_mappings[]` mit `framework`, `control_id`, `severity`, `assessment_status`.
+5. **Report Generator + LLM Analyzer** — Jinja2-Templates für 3 Zielgruppen × 3 Formate (HTML/Markdown/JSON). LLM-Analyse pluggable: **Anthropic Cloud** (Default mit `ANTHROPIC_API_KEY`), **Ollama Offline** (KRITIS / Air-Gap), **Skip** (kein LLM-Aufruf). Vor jedem Report-Write greift `assert_no_plaintext()` als Defense-in-Depth.
+
+Kernprinzip: **Compliance-First** — Findings sind auswertbar pro Framework, Kontrolle, Zeitraum und Risiko, nicht nur als technische Liste.
 
 ## Tools × Reports
 
@@ -155,6 +203,17 @@ Alle Profile sind seed-reproduzierbar und rein synthetisch (RFC1918-IPs).
 - **Disclaimer-Block** in jedem Report mit Salt-Fingerprint (8 Hex), kein Salt-Leak
 - **Retention:** Standard 90 Tage, konfigurierbar via `config/retention.yaml`
 - **Uploaded Bytes** werden nach erfolgreicher Pipeline aus dem Session-State verworfen
+
+### Warum Salt?
+
+Pseudonymisierung mit einem geheimen, je Auftrag wechselnden Salt ist die rechtlich tragende Variante (DSGVO Art. 25 / Art. 32) — nicht reines Hashing.
+
+- **Deterministik innerhalb einer Analyse** — gleicher Client erscheint als gleiches Pseudonym, sodass Verhaltens-Korrelation (systematische Nutzung, Bursts, Sessions) erhalten bleibt.
+- **Trennung zwischen Analysen** — neuer Salt = nicht mehr herleitbare Hashes. Das setzt die DSGVO-Zweckbindung (Art. 5 Abs. 1 lit. b) technisch um: Pseudonyme aus Auftrag A sind in Auftrag B unbrauchbar.
+- **HMAC statt einfaches SHA-256** — IP-Bereiche sind klein und vorhersagbar (`10.0.0.0/8`, `192.168.0.0/16`). Ohne Salt würde eine Rainbow-Table aller IPv4-Adressen jedes Pseudonym binnen Sekunden brechen. HMAC mit geheimem Salt verhindert das.
+- **Salt-Wechsel als Notbremse** — die Settings-Page erzwingt bei Salt-Override einen Pipeline-Hard-Reset. Alte Pseudonyme der Session sind danach nicht mehr herleitbar.
+
+Vollständig: [docs/PRIVACY.md](docs/PRIVACY.md) (Pseudonymisierung, k-Anonymität, DSFA-Checkliste für Squid-`%un`-Username-Parsing).
 
 ## Compliance-Frameworks
 
