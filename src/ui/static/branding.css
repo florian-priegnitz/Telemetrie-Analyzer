@@ -1,0 +1,191 @@
+/* Telemetrie Analyzer — CI Branding (Bauhaus, abgeleitet von florian-priegnitz.de)
+ * Quelle: webseite/docs/ci-handbook.html
+ * Reduktion: Rostrot, Gold, Grün + Schwarz/Weiß. Keine Schatten/Gradienten/Rundungen.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700;900&family=Share+Tech+Mono&display=swap");
+
+:root {
+  --c-bg: #FFFFFF;
+  --c-layer: #F6F8FC;
+  --c-ink: #0C1A32;
+  --c-bright: #060D1E;
+  --c-acc: #9B4A2F;
+  --c-gold: #B07A10;
+  --c-green: #1A6B3A;
+  --c-mid: rgba(12, 26, 50, 0.09);
+  --c-line: rgba(12, 26, 50, 0.16);
+
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Share Tech Mono', ui-monospace, 'Courier New', monospace;
+
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px;
+  --s-6: 24px; --s-7: 28px; --s-8: 32px; --s-9: 48px; --s-10: 64px;
+
+  --bw-2: 2px;
+  --ruler-bar: 6px;
+  --ruler-line: 2px;
+  --ruler-square: 16px;
+
+  --sev-critical: #9B4A2F;
+  --sev-high:     #C26B4A;
+  --sev-medium:   #B07A10;
+  --sev-low:      rgba(12, 26, 50, 0.40);
+  --sev-compliant: #1A6B3A;
+}
+
+html, body, [class*="css"] {
+  font-family: var(--font-sans);
+  color: var(--c-ink);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  color: var(--c-bright);
+  margin: 0 0 var(--s-3) 0;
+}
+h1 { font-size: clamp(22px, 3.5vw, 42px); line-height: 1.05; }
+h2 {
+  font-size: clamp(18px, 2.2vw, 26px);
+  border-bottom: var(--bw-2) solid var(--c-ink);
+  padding-bottom: var(--s-2);
+  margin-top: var(--s-7);
+}
+h3 { font-size: 18px; font-weight: 700; }
+
+a { color: var(--c-acc); text-decoration: none; border-bottom: 1px solid transparent; }
+a:hover, a:focus-visible { border-bottom-color: var(--c-acc); }
+
+code, kbd {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--c-layer);
+  padding: 2px 5px;
+  border-radius: 0;
+}
+pre, pre code {
+  font-family: var(--font-mono);
+  border-radius: 0;
+}
+pre {
+  border-left: var(--bw-2) solid var(--c-acc);
+  padding: var(--s-4);
+}
+
+/* Markdown bullets als 10x2 Rostrot-Balken */
+.stMarkdown ul { list-style: none; padding-left: 0; }
+.stMarkdown ul li {
+  position: relative;
+  padding-left: 18px;
+  margin: 4px 0;
+}
+.stMarkdown ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 10px;
+  height: 2px;
+  background: var(--c-acc);
+}
+
+/* Streamlit-Buttons */
+.stButton > button, .stDownloadButton > button {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  border-radius: 0 !important;
+  border: var(--bw-2) solid var(--c-ink);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.stButton > button:hover, .stDownloadButton > button:hover {
+  background: var(--c-ink);
+  color: var(--c-bg);
+  border-color: var(--c-ink);
+}
+.stButton > button[kind="primary"] {
+  background: var(--c-acc);
+  color: var(--c-bg);
+  border-color: var(--c-acc);
+}
+.stButton > button[kind="primary"]:hover {
+  background: var(--c-bright);
+  border-color: var(--c-bright);
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+  background: var(--c-layer);
+  border-right: 1px solid var(--c-line);
+}
+[data-testid="stSidebar"] hr { border-color: var(--c-line); }
+
+/* Tabs (Compliance-Page) */
+.stTabs [data-baseweb="tab-list"] {
+  gap: 0;
+  border-bottom: var(--bw-2) solid var(--c-ink);
+}
+.stTabs [data-baseweb="tab"] {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 0;
+  padding: 8px 14px;
+}
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+  background: var(--c-ink);
+  color: var(--c-bg);
+}
+
+/* Mono-Meta-Block */
+.ta-meta {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-acc);
+  margin-bottom: var(--s-2);
+}
+
+/* Bauhaus-Lineal */
+.ta-lineal {
+  display: flex;
+  align-items: center;
+  width: 240px;
+  margin: var(--s-3) 0 var(--s-5) 0;
+}
+.ta-lineal__bar    { flex: 3; height: var(--ruler-bar);   background: var(--c-acc); }
+.ta-lineal__line   { flex: 1; height: var(--ruler-line);  background: var(--c-ink); }
+.ta-lineal__square {
+  width:  var(--ruler-square);
+  height: var(--ruler-square);
+  background: var(--c-gold);
+  flex-shrink: 0;
+}
+
+/* Risk-Severity-Klassen (4-stufige Akzent+Saettigung-Skala) */
+.ta-sev-critical { color: var(--sev-critical); font-weight: 700; }
+.ta-sev-high     { color: var(--sev-high);     font-weight: 700; }
+.ta-sev-medium   { color: var(--sev-medium);   font-weight: 700; }
+.ta-sev-low      { color: var(--sev-low);      font-weight: 700; }
+
+.ta-status-compliant         { color: var(--sev-compliant); font-weight: 700; }
+.ta-status-partial           { color: var(--sev-medium);    font-weight: 700; }
+.ta-status-non-compliant     { color: var(--sev-critical);  font-weight: 700; }
+
+/* Metric-Tiles (KPI-Row) */
+[data-testid="stMetricValue"] {
+  font-family: var(--font-sans);
+  font-weight: 900;
+  color: var(--c-bright);
+}
+[data-testid="stMetricLabel"] {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-acc);
+}
