@@ -1,0 +1,44 @@
+{
+  "layout": {
+    "font": {
+      "family": "DM Sans, system-ui, sans-serif",
+      "color": "#0C1A32",
+      "size": 13
+    },
+    "title": {
+      "font": {
+        "family": "DM Sans, system-ui, sans-serif",
+        "size": 18,
+        "color": "#060D1E"
+      }
+    },
+    "paper_bgcolor": "#FFFFFF",
+    "plot_bgcolor": "#FFFFFF",
+    "colorway": ["#9B4A2F", "#B07A10", "#1A6B3A", "#0C1A32", "#C26B4A", "#6B7280"],
+    "xaxis": {
+      "gridcolor": "rgba(12, 26, 50, 0.09)",
+      "linecolor": "#0C1A32",
+      "zerolinecolor": "#0C1A32",
+      "tickfont": {"family": "Share Tech Mono, ui-monospace, monospace", "size": 11}
+    },
+    "yaxis": {
+      "gridcolor": "rgba(12, 26, 50, 0.09)",
+      "linecolor": "#0C1A32",
+      "zerolinecolor": "#0C1A32",
+      "tickfont": {"family": "Share Tech Mono, ui-monospace, monospace", "size": 11}
+    },
+    "legend": {
+      "bgcolor": "#FFFFFF",
+      "bordercolor": "rgba(12, 26, 50, 0.16)",
+      "borderwidth": 1,
+      "font": {"family": "DM Sans, system-ui, sans-serif", "size": 12}
+    },
+    "colorscale": {
+      "sequential": [
+        [0.0, "#F6F8FC"],
+        [0.5, "#C26B4A"],
+        [1.0, "#9B4A2F"]
+      ]
+    }
+  }
+}
