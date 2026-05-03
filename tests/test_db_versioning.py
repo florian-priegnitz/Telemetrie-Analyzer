@@ -31,7 +31,7 @@ class TestDatabaseVersionProperties:
     def test_default_db_has_version(self):
         db = AIEndpointDatabase()
         assert db.version  # non-empty
-        assert db.version == "2.2.0"
+        assert db.version == "2.3.0"
 
     def test_last_updated_present(self):
         db = AIEndpointDatabase()
@@ -231,7 +231,7 @@ class TestReportGeneratorDbVersion:
         # Alle HTML-Audiences enthalten die DB-Version im Footer
         for audience_html in out.values():
             assert "AI Endpoint DB" in audience_html
-            assert "2.2.0" in audience_html
+            assert "2.3.0" in audience_html
 
     def test_explicit_empty_db_version_suppresses_footer(self):
         from src.compliance.models import ComplianceResult
@@ -265,7 +265,7 @@ class TestReportGeneratorDbVersion:
         assert isinstance(out, dict)
         meta = out["report_meta"]
         assert "ai_endpoint_db" in meta
-        assert meta["ai_endpoint_db"]["version"] == "2.2.0"
+        assert meta["ai_endpoint_db"]["version"] == "2.3.0"
 
 
 # ---------------------------------------------------------------------------
@@ -281,13 +281,21 @@ def test_changelog_file_exists():
 
 
 def test_snapshot_matches_live_db():
-    """data/versions/2.2.0.json muss identisch zu data/ai_endpoints.json sein
+    """data/versions/<live-version>.json muss identisch zu data/ai_endpoints.json sein
     (Drift-Guard — wenn der User ai_endpoints.json ändert, muss die
-    Version bumped und ein neuer Snapshot erzeugt werden).
+    Version bumped und ein neuer Snapshot erzeugt werden). Liest die
+    Live-Version dynamisch, damit das Pinning beim naechsten Bump
+    nicht aktualisiert werden muss.
     """
     live = json.loads((_REPO_ROOT / "data" / "ai_endpoints.json").read_text(encoding="utf-8"))
-    snap = json.loads((_VERSIONS_DIR / "2.2.0.json").read_text(encoding="utf-8"))
+    live_version = live["version"]
+    snap_path = _VERSIONS_DIR / f"{live_version}.json"
+    assert snap_path.exists(), (
+        f"Kein Snapshot fuer Live-DB-Version {live_version} unter "
+        f"data/versions/ — nach Bump muss die Live-DB als Snapshot abgelegt werden."
+    )
+    snap = json.loads(snap_path.read_text(encoding="utf-8"))
     assert live == snap, (
-        "data/ai_endpoints.json wurde seit 2.2.0 geändert — bitte Version bumpen "
+        f"data/ai_endpoints.json wurde seit {live_version} geändert — bitte Version bumpen "
         "und neuen Snapshot in data/versions/ ablegen."
     )
