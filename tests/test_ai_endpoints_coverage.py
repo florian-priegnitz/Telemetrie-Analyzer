@@ -118,13 +118,24 @@ def test_total_endpoint_count(db: AIEndpointDatabase):
     ("GitHub Copilot", "critical"),
     ("Cursor", "critical"),
     ("DeepSeek", "critical"),
-    ("OpenAI Codex / GPT API", "critical"),
 ])
 def test_critical_existing_entries_preserved(db: AIEndpointDatabase, service_name, expected_risk):
     """Bulk-Import darf existierende Einträge nicht verfälschen."""
     match = [e for e in db.endpoints if e.service == service_name]
     assert len(match) == 1, f"{service_name} nicht gefunden"
     assert match[0].risk_level == expected_risk
+
+
+def test_v2_3_0_alias_mergers(db: AIEndpointDatabase):
+    """v2.3.0 (#88): Codex/DALL-E unter OpenAI ChatGPT, Duet unter Google Gemini."""
+    chatgpt = next((e for e in db.endpoints if e.service == "OpenAI ChatGPT"), None)
+    assert chatgpt is not None
+    assert "Codex" in chatgpt.aliases
+    assert "DALL-E" in chatgpt.aliases
+
+    gemini = next((e for e in db.endpoints if e.service == "Google Gemini"), None)
+    assert gemini is not None
+    assert "Duet" in gemini.aliases
 
 
 # ---------------------------------------------------------------------------

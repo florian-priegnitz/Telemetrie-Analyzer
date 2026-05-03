@@ -17,6 +17,55 @@ Jedes Release wird als vollständiger Snapshot unter `data/versions/<semver>.jso
 Das CLI-Werkzeug `telemetrie-analyzer diff-db <from> <to>` erzeugt einen lesbaren
 Delta-Report (Added / Removed / Changed) zwischen zwei Versionen.
 
+## [2.3.0] — 2026-05-03
+
+Monatlicher Review (Issue #88) — Mergers + Schema-Hygiene.
+
+### Removed (3 Mergers)
+
+- **OpenAI Codex / GPT API** — Codex wurde 2023 deprecated und in die ChatGPT-API
+  gemerged. Endpoint `codex.openai.com` ist tot (DNS-NXDOMAIN). Aliases
+  (`Codex`, `OpenAI Codex`, `Codex API`) auf "OpenAI ChatGPT" uebertragen.
+- **DALL-E** — In ChatGPT integriert. Endpoint `labs.openai.com` ist tot.
+  Aliases (`DALL-E`, `DALL-E 2`, `DALL-E 3`) auf "OpenAI ChatGPT" uebertragen.
+- **Google Workspace Duet** — 2024 zu "Gemini for Workspace" umbenannt. Eigene
+  Domain `duet.google.com` existiert nicht mehr. Aliases (`Duet`, `Workspace Duet`,
+  `Google Duet`) auf "Google Gemini" uebertragen.
+
+### Changed
+
+- **Veo** (Google DeepMind) — Domain `veo.google` → `labs.google` (Google Labs
+  hostet Veo-Demos; eigene `.google`-TLD existiert nicht).
+- **OpenAI ChatGPT** — Aliases ergaenzt: Codex, OpenAI Codex, Codex API, DALL-E,
+  DALL-E 2, DALL-E 3 (siehe Removed).
+- **Google Gemini** — Aliases ergaenzt: Duet, Workspace Duet, Google Duet.
+
+### Schema Hygiene
+
+- 24 Endpoints (urspruenglich aus dem v1.0-Q1-2026-Initialset) erhalten
+  `source: "initial-import-2026-q1"` (vorher fehlend; entdeckt im Stufe-2-DB-
+  Health-Check via `scripts/db_health_check.py`).
+
+### Outstanding (re-verify naechster Monat)
+
+DNS-Aufloesung schlug an meinem Resolver fehl, koennte regional sein —
+Eintraege bleiben drin und werden im naechsten Review erneut geprueft:
+
+- **Amazon Q Developer** (`q.aws.amazon.com`)
+- **Salesforce Einstein** (`einstein.salesforce.com`)
+- **Play.ht** (`play.ht`, `api.play.ht`)
+
+### Status
+
+- **175 Endpoints** (von 178; -3 Mergers) in 21 Kategorien.
+- Source-Attribution: 100 % (nach Schema-Cleanup).
+
+### Migration
+
+```
+python -m telemetrie_analyzer diff-db 2.2.0 2.3.0
+```
+
 ## [2.2.0] — 2026-04-21
 
 Snapshot-Basislinie. Erste dokumentierte Version im neuen Versioning-Schema.

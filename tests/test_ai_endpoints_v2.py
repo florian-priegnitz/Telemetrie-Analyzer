@@ -50,17 +50,38 @@ def test_schema_rejects_invalid_risk_level(tmp_path: Path):
         AIEndpointDatabase(db_path=bad_db, validate=True)
 
 
-def test_schema_accepts_v1_entries_without_v2_fields():
-    """v1-Einträge ohne optionale v2-Felder müssen mit Defaults geladen werden."""
-    db = AIEndpointDatabase(validate=True)
-    # Codex wurde im v1-Import beibehalten und hat keine aliases/ip_ranges
-    codex = db.lookup("codex.openai.com")
-    assert codex is not None
-    assert codex.aliases == ()
-    assert codex.ip_ranges == ()
-    assert codex.sni_patterns == ()
-    assert codex.detection_confidence == "high"  # Default
-    assert codex.source == "manual"  # Default für Einträge ohne expliziten source
+def test_schema_accepts_v1_entries_without_v2_fields(tmp_path: Path):
+    """v1-Einträge ohne optionale v2-Felder müssen mit Defaults geladen werden.
+
+    Nutzt synthetische DB in tmp_path (statt der Live-DB), damit der Test
+    unabhaengig von DB-Bumps weiterlaeuft. Vor v2.3.0 verwies dieser Test
+    auf den Codex-Eintrag in der Live-DB; seit dem Codex-Merge (Issue #88)
+    pruefen wir das Schema-Verhalten kontrolliert auf einer Mini-DB.
+    """
+    db_json = tmp_path / "db.json"
+    db_json.write_text(json.dumps({
+        "version": "1.0.0",
+        "endpoints": [{
+            "service": "MinimalV1",
+            "provider": "P",
+            "category": "llm_chatbot",
+            "risk_level": "high",
+            "domains": ["minimal-v1.example.test"],
+            "description": "v1-style entry, no v2 fields",
+        }],
+    }), encoding="utf-8")
+    schema_src = Path(__file__).parent.parent / "data" / "ai_endpoints_schema.json"
+    (tmp_path / "ai_endpoints_schema.json").write_text(
+        schema_src.read_text(encoding="utf-8"), encoding="utf-8"
+    )
+    db = AIEndpointDatabase(db_path=db_json, validate=True)
+    ep = db.lookup("minimal-v1.example.test")
+    assert ep is not None
+    assert ep.aliases == ()
+    assert ep.ip_ranges == ()
+    assert ep.sni_patterns == ()
+    assert ep.detection_confidence == "high"  # Default
+    assert ep.source == "manual"  # Default für Einträge ohne expliziten source
 
 
 # ---------------------------------------------------------------------------

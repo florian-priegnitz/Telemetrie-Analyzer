@@ -43,7 +43,7 @@ def resolve(domain: str) -> tuple[str, bool, str]:
         return domain, True, ""
     except socket.gaierror as exc:
         return domain, False, f"gaierror: {exc.strerror or exc!s}"
-    except socket.timeout:
+    except TimeoutError:
         return domain, False, "timeout"
     except OSError as exc:
         return domain, False, f"oserror: {exc!s}"
