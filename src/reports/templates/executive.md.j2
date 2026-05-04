@@ -1,12 +1,5 @@
-# Executive Summary — Shadow AI Telemetrie
-
-Generiert: **{{ ctx.generated_at.strftime("%d.%m.%Y %H:%M UTC") }}**
-{% if ctx.period_start and ctx.period_end -%}
-Zeitraum: **{{ ctx.period_start.strftime("%d.%m.%Y") }}** bis **{{ ctx.period_end.strftime("%d.%m.%Y") }}**
-{%- endif %}
-
-> **DSGVO-Hinweis:** Alle Client-Identifikatoren sind pseudonymisiert (HMAC-SHA256).
-> Salt-Fingerprint: `{{ ctx.salt_fingerprint }}`
+{%- from "partials/_md_header.md.j2" import render with context -%}
+{{ render("Executive Summary — Shadow AI Telemetrie", "Executive Summary") }}
 
 ## Compliance-Status (Gesamtbild)
 
