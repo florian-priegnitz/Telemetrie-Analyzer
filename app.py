@@ -49,7 +49,7 @@ def main() -> None:
     with st.sidebar:
         render_lineal()
         st.markdown(
-            '<div class="ta-meta">SHADOW AI · COMPLIANCE</div>',
+            '<div class="bh-meta">SHADOW AI · COMPLIANCE</div>',
             unsafe_allow_html=True,
         )
         st.title("Telemetrie Analyzer")
