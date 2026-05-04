@@ -1,8 +1,12 @@
-"""Tests fuer src/ui/branding.py — CI-Branding (Bauhaus, Sprint 13)."""
+"""Tests fuer src/ui/branding.py — CI-Branding-Wrapper (Bauhaus, Sprint 13).
+
+Branding-Logik liegt in `bauhaus-streamlit` (Issue #89). Diese Tests
+verifizieren primaer, dass der Re-Export funktioniert und die fuer den
+Telemetrie-Analyzer relevanten Severity-/Status-Mappings stimmen.
+"""
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pytest
@@ -15,8 +19,6 @@ from src.ui.branding import (
     get_plotly_template,
     severity_color,
 )
-
-STATIC = Path(__file__).resolve().parent.parent / "src" / "ui" / "static"
 
 
 @pytest.mark.parametrize(
@@ -57,30 +59,17 @@ def test_compliance_status_color_unknown_falls_back() -> None:
     assert compliance_status_color("xyz") == COMPLIANCE_STATUS_COLORS["needs_review"]
 
 
-def test_branding_css_file_exists_and_has_ci_tokens() -> None:
-    css_path = STATIC / "branding.css"
-    assert css_path.exists(), "branding.css fehlt"
-    css = css_path.read_text(encoding="utf-8")
-    for token in (
-        "--c-acc: #9B4A2F",
-        "--c-gold: #B07A10",
-        "--c-green: #1A6B3A",
-        "--c-ink: #0C1A32",
-        "DM Sans",
-        "Share Tech Mono",
-        ".ta-lineal",
-    ):
-        assert token in css, f"CI-Token fehlt in branding.css: {token!r}"
-
-
-def test_favicon_exists_and_has_lineal_geometry() -> None:
-    assert FAVICON_PATH.exists(), "favicon.svg fehlt"
+def test_favicon_path_is_provided_by_package() -> None:
+    """FAVICON_PATH wird aus dem bauhaus-streamlit-Paket re-exportiert."""
+    assert isinstance(FAVICON_PATH, Path)
+    # Pfad zeigt in die Paket-Resources, Datei existiert.
+    assert FAVICON_PATH.exists(), f"favicon.svg fehlt im Paket: {FAVICON_PATH}"
     svg = FAVICON_PATH.read_text(encoding="utf-8")
-    for marker in ("#9B4A2F", "#0C1A32", "#B07A10", '<svg', '<rect'):
+    for marker in ("#9B4A2F", "#0C1A32", "#B07A10", "<svg", "<rect"):
         assert marker in svg, f"Lineal-Geometrie unvollstaendig: {marker!r} fehlt"
 
 
-def test_plotly_template_is_valid_json_and_uses_ci_palette() -> None:
+def test_plotly_template_uses_ci_palette() -> None:
     tpl = get_plotly_template()
     assert "layout" in tpl
     layout = tpl["layout"]
@@ -91,10 +80,17 @@ def test_plotly_template_is_valid_json_and_uses_ci_palette() -> None:
     assert layout["font"]["family"].startswith("DM Sans")
 
 
-def test_plotly_template_file_round_trips_json() -> None:
-    raw = (STATIC / "plotly_telemetrie_theme.json").read_text(encoding="utf-8")
-    parsed = json.loads(raw)
-    assert parsed["layout"]["plot_bgcolor"] == "#FFFFFF"
+def test_branding_module_re_exports_from_package() -> None:
+    """Smoke-Test: branding.py ist nun ein Wrapper auf bauhaus_streamlit."""
+    import bauhaus_streamlit
+
+    from src.ui import branding
+
+    assert branding.severity_color is bauhaus_streamlit.severity_color
+    assert branding.compliance_status_color is bauhaus_streamlit.compliance_status_color
+    assert branding.inject_global_css is bauhaus_streamlit.inject_global_css
+    assert branding.render_lineal is bauhaus_streamlit.render_lineal
+    assert branding.SEVERITY_COLORS is bauhaus_streamlit.SEVERITY_COLORS
 
 
 def _has_streamlit_testing() -> bool:
