@@ -1,8 +1,8 @@
 # AI-Coverage-Report
 
-**DB-Version:** v2.3.0 · **Stand:** 2026-05-03 (0 Tage alt) · 🟢 Aktuell (0 Tage)
+**DB-Version:** v2.3.0 · **Stand:** 2026-05-03 (1 Tage alt) · 🟢 Aktuell (1 Tage)
 
-_Auto-generiert via `scripts/db_coverage_report.py` am 2026-05-03. Manuelle Bearbeitung wird beim naechsten Skript-Lauf ueberschrieben._
+_Auto-generiert via `scripts/db_coverage_report.py` am 2026-05-04. Manuelle Bearbeitung wird beim naechsten Skript-Lauf ueberschrieben._
 
 ## Kennzahlen
 
