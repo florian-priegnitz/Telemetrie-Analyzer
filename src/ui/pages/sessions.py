@@ -20,7 +20,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from src.ui.components.help import page_intro
+from src.ui.components.help import glossary_block, page_intro, term_help
 
 
 def render(report_data: dict[str, Any]) -> None:
@@ -45,10 +45,19 @@ def render(report_data: dict[str, Any]) -> None:
             "*ChatGPT + Cursor + Claude* indizieren typische Code-Kontext-Workflows — "
             "die Kombination ist risikorelevanter als die Einzelservices, weil Daten "
             "zwischen Tools fließen können (Kontextabfluss).\n\n"
+            "Der Graph zeigt maximal 50 Knoten — bei mehr Services wird auf die "
+            "haeufigsten gefiltert.\n\n"
             "Die Per-User-Drilldown-Tabelle ist nur sichtbar, wenn k-Anonymität low "
             "risk meldet."
         ),
-        key_terms=("co_occurrence_fenster", "session_graph", "burst", "k_anonymitaet"),
+        key_terms=(
+            "co_occurrence_fenster",
+            "session_graph",
+            "edge_weight",
+            "spring_layout_determinism",
+            "burst",
+            "k_anonymitaet",
+        ),
     )
 
     if not edges:
@@ -78,6 +87,19 @@ def render(report_data: dict[str, Any]) -> None:
         ]),
         use_container_width=True,
         hide_index=True,
+        column_config={
+            "Gewicht": st.column_config.NumberColumn(
+                "Gewicht",
+                help=term_help("edge_weight"),
+            ),
+            "Unique Clients": st.column_config.NumberColumn(
+                "Unique Clients",
+                help=(
+                    "Anzahl unterschiedlicher Pseudonyme, die beide Services im "
+                    "Fenster genutzt haben — hoehere Werte = breitere Verbreitung."
+                ),
+            ),
+        },
     )
 
     st.markdown("### Per-Client Drilldown")
@@ -107,7 +129,28 @@ def render(report_data: dict[str, Any]) -> None:
         ]),
         use_container_width=True,
         hide_index=True,
+        column_config={
+            "Gewicht": st.column_config.NumberColumn(
+                "Gewicht",
+                help=term_help("edge_weight"),
+            ),
+            "Unique Clients (global)": st.column_config.NumberColumn(
+                "Unique Clients (global)",
+                help=(
+                    "Anzahl unterschiedlicher Pseudonyme global, die beide Services "
+                    "im Fenster genutzt haben."
+                ),
+            ),
+        },
     )
+
+    glossary_block([
+        "session_graph",
+        "co_occurrence_fenster",
+        "edge_weight",
+        "co_occurrence_confidence",
+        "k_anonymitaet",
+    ])
 
 
 def _build_network_figure(
@@ -175,11 +218,18 @@ def _build_network_figure(
     fig.update_layout(
         showlegend=False,
         height=500,
-        margin=dict(l=20, r=20, t=30, b=20),
+        margin=dict(l=20, r=20, t=30, b=60),
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),
         title=f"{len(graph.nodes())} Services · {len(limited['edges'])} Paare "
               f"(max Gewicht: {max_weight})",
+    )
+    fig.add_annotation(
+        text="Knotengroesse = Nutzungsfrequenz · Kantenbreite = Co-Occurrence-Haeufigkeit",
+        xref="paper", yref="paper",
+        x=0.5, y=-0.08, xanchor="center", yanchor="top",
+        showarrow=False,
+        font=dict(family="Share Tech Mono, ui-monospace, monospace", size=10, color="#9B4A2F"),
     )
     return fig
 
