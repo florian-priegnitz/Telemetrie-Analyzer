@@ -18,7 +18,7 @@ from typing import Any
 import streamlit as st
 
 from src.parsers.detection import PARSER_LABELS, PARSER_METADATA, SUPPORTED_PARSERS
-from src.ui.components.help import page_intro
+from src.ui.components.help import glossary_block, page_intro
 
 _TESTDATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "testdata"
 _MAX_EXAMPLE_LINES = 2
@@ -173,3 +173,9 @@ Siehe [`src/parsers/base.py`](https://github.com/florian-priegnitz/Telemetrie-An
 für den vollständigen Vertrag (`BaseParser` ABC).
         """
     )
+
+    glossary_block([
+        "parser_auto_detect",
+        "endpoint_db_freshness",
+        "drift_guard",
+    ])

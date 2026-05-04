@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.ui.components.badges import risk_badge
-from src.ui.components.help import page_intro
+from src.ui.components.help import glossary_block, page_intro
 
 
 def render(report_data: dict[str, Any]) -> None:
@@ -61,6 +61,13 @@ def render(report_data: dict[str, Any]) -> None:
     _render_top_ranking(top_clients)
     _render_heatmap(user_patterns.get("hourly_heatmap") or {}, top_clients)
     _render_drilldown(top_clients, findings, user_aggregation)
+
+    glossary_block([
+        "heatmap",
+        "off_hours_ratio",
+        "burst",
+        "k_anonymitaet",
+    ])
 
 
 def _render_username_gating_banner(aggregation: dict[str, Any]) -> None:
