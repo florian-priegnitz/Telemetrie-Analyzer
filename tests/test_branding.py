@@ -82,8 +82,7 @@ def test_plotly_template_uses_ci_palette() -> None:
 
 def test_branding_module_re_exports_from_package() -> None:
     """Smoke-Test: branding.py ist nun ein Wrapper auf bauhaus_streamlit."""
-    import bauhaus_streamlit
-
+    from src._vendor import bauhaus_streamlit
     from src.ui import branding
 
     assert branding.severity_color is bauhaus_streamlit.severity_color

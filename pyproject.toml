@@ -49,7 +49,6 @@ dependencies = [
     "jsonschema>=4.0",
     "pyyaml>=6.0",
     "networkx>=3.0",
-    "bauhaus-streamlit @ git+https://github.com/florian-priegnitz/bauhaus-streamlit.git@main",
 ]
 
 [project.optional-dependencies]
