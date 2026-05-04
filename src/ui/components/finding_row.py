@@ -62,3 +62,52 @@ def render_finding_expander(finding: dict[str, Any]) -> None:
             st.dataframe(df, use_container_width=True, hide_index=True)
         else:
             st.info("Keine Compliance-Mappings für dieses Finding.")
+
+        _render_risk_score_breakdown(finding)
+
+
+# Mirror der Schwellwerte aus src/detection/engine.py — bewusst dupliziert,
+# weil die Page nur lesend visualisiert. Falls die Engine-Werte sich aendern,
+# muss diese Map mitziehen (Test-Coverage in tests/test_findings_page.py).
+_RISK_BASE = {"critical": 70, "high": 50, "medium": 30, "low": 10}
+_UPLOAD_RISK_BOOST = 20
+_OFF_HOURS_TRIGGER_RATIO = 0.3
+_OFF_HOURS_RISK_BOOST = 15
+
+
+def _render_risk_score_breakdown(finding: dict[str, Any]) -> None:
+    """Zeigt die additiven Bestandteile des Risk-Scores nach engine.py-Logik."""
+    risk_level = finding.get("risk_level", "low")
+    is_systematic = bool(finding.get("is_systematic"))
+    days_active = int(finding.get("days_active", 0) or 0)
+    queries_per_day = float(finding.get("queries_per_day", 0) or 0)
+    has_upload = bool(finding.get("has_document_upload"))
+    off_hours = float(finding.get("off_hours_ratio", 0) or 0)
+    score = int(finding.get("risk_score", 0) or 0)
+
+    with st.expander("Risk-Score-Aufschluesselung", expanded=False):
+        breakdown: list[str] = [f"**Gesamt: {score}/100**", ""]
+        breakdown.append(
+            f"- Basis-Risk ({risk_level}): {_RISK_BASE.get(risk_level, 30)}"
+        )
+        if is_systematic:
+            breakdown.append("- Systematisch (>10 Q/Tag): +15")
+        if days_active > 7:
+            breakdown.append(f"- Tage aktiv ({days_active} > 7): +10")
+        elif days_active > 1:
+            breakdown.append(f"- Tage aktiv ({days_active} > 1): +5")
+        if queries_per_day > 50:
+            breakdown.append(f"- Queries/Tag ({queries_per_day:.1f} > 50): +5")
+        if has_upload:
+            breakdown.append(f"- Dokument-Upload (>500 KB): +{_UPLOAD_RISK_BOOST}")
+        if off_hours > _OFF_HOURS_TRIGGER_RATIO:
+            breakdown.append(
+                f"- Off-Hours-Anteil ({off_hours:.0%} > "
+                f"{_OFF_HOURS_TRIGGER_RATIO:.0%}): +{_OFF_HOURS_RISK_BOOST}"
+            )
+        breakdown.append("")
+        breakdown.append(
+            "_Score wird auf max. 100 gekappt. Quelle: "
+            "`src/detection/engine.py:Finding.risk_score`._"
+        )
+        st.markdown("\n".join(breakdown))
