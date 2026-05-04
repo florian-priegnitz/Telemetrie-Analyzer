@@ -4,9 +4,10 @@
 
 ━━━━━━━━━━━━ ─ ▪
 
-Dieses Dokument beschreibt die Bauhaus-CI-Konventionen für UI, Reports und Doku
-des Telemetrie-Analyzers. Source-of-Truth für die Design-Tokens ist das interne
-Paket `bauhaus-streamlit` (vendored unter `src/_vendor/bauhaus_streamlit/`).
+Dieses Dokument beschreibt die CI-Konventionen für UI, Reports und Doku
+des Telemetrie-Analyzers. Source-of-Truth für die Design-Tokens ist das
+Modul [`src/ui/branding.py`](../../src/ui/branding.py) und die zugehörige
+[`src/ui/static/branding.css`](../../src/ui/static/branding.css).
 
 Geltungsbereich: Streamlit-UI, HTML-Reports, Markdown-Reports, neue Doku-Seiten.
 
@@ -18,7 +19,7 @@ Geltungsbereich: Streamlit-UI, HTML-Reports, Markdown-Reports, neue Doku-Seiten.
 4. [Spacing](#spacing)
 5. [Severity-Skala (4-stufig)](#severity-skala-4-stufig)
 6. [Compliance-Status-Mapping](#compliance-status-mapping)
-7. [bauhaus-streamlit Public API](#bauhaus-streamlit-public-api)
+7. [Branding-API](#branding-api)
 8. [Lineal-Bildmarke](#lineal-bildmarke)
 9. [Markdown-Konventionen](#markdown-konventionen)
 10. [Mikro-Konventionen](#mikro-konventionen)
@@ -91,15 +92,16 @@ genutzt — kein externer Font-Call, da Reports auch offline lesbar sein müssen
 
 | Level | Hex | CSS-Klasse | Verwendung |
 |-------|-----|------------|------------|
-| `critical` | `#9B4A2F` | `.bh-sev-critical` | Risk-Score 80–100, sofortige Aktion |
-| `high` | `#C26B4A` | `.bh-sev-high` | Risk-Score 60–79, 30-Tage-Maßnahme |
-| `medium` | `#B07A10` | `.bh-sev-medium` | Risk-Score 30–59, Quartals-Review |
-| `low` | `rgba(12, 26, 50, 0.40)` | `.bh-sev-low` | Risk-Score 0–29, Inventar-Hinweis |
+| `critical` | `#9B4A2F` | `.ta-sev-critical` | Risk-Score 80–100, sofortige Aktion |
+| `high` | `#C26B4A` | `.ta-sev-high` | Risk-Score 60–79, 30-Tage-Maßnahme |
+| `medium` | `#B07A10` | `.ta-sev-medium` | Risk-Score 30–59, Quartals-Review |
+| `low` | `rgba(12, 26, 50, 0.40)` | `.ta-sev-low` | Risk-Score 0–29, Inventar-Hinweis |
 
 Programmierschnittstelle:
 
 ```python
-from bauhaus_streamlit import severity_color, SEVERITY_COLORS
+from src.ui.branding import severity_color, SEVERITY_COLORS
+
 severity_color("critical")    # -> "#9B4A2F"
 SEVERITY_COLORS["high"]       # -> "#C26B4A"
 ```
@@ -108,40 +110,28 @@ SEVERITY_COLORS["high"]       # -> "#C26B4A"
 
 | Status | Hex | CSS-Klasse |
 |--------|-----|------------|
-| `compliant` | `#1A6B3A` | `.bh-status-compliant` |
-| `partially_compliant` | `#B07A10` | `.bh-status-partial` |
-| `non_compliant` | `#9B4A2F` | `.bh-status-non-compliant` |
+| `compliant` | `#1A6B3A` | `.ta-status-compliant` |
+| `partially_compliant` | `#B07A10` | `.ta-status-partial` |
+| `non_compliant` | `#9B4A2F` | `.ta-status-non-compliant` |
 | `needs_review` | `rgba(12, 26, 50, 0.40)` | (Severity-Low) |
 
 Programmierschnittstelle:
 
 ```python
-from bauhaus_streamlit import compliance_status_color, COMPLIANCE_STATUS_COLORS
+from src.ui.branding import compliance_status_color, COMPLIANCE_STATUS_COLORS
+
 compliance_status_color("compliant")  # -> "#1A6B3A"
 ```
 
-## bauhaus-streamlit Public API
+## Branding-API
 
-Installation als Pip-Dependency (in `pyproject.toml`):
-
-```toml
-[project]
-dependencies = [
-  "bauhaus-streamlit @ git+https://github.com/florian-priegnitz/bauhaus-streamlit.git@v0.1.0",
-]
-```
-
-Lokal via Editable-Install (für parallele Entwicklung):
-
-```bash
-pip install -e ../bauhaus-streamlit
-```
+Alle Branding-Symbole werden aus `src.ui.branding` exportiert:
 
 ### Streamlit-Integration — Minimal-Beispiel
 
 ```python
 import streamlit as st
-from bauhaus_streamlit import (
+from src.ui.branding import (
     inject_global_css,
     render_lineal,
     FAVICON_PATH,
@@ -165,7 +155,7 @@ st.header("Findings")
 
 ```python
 import plotly.graph_objects as go
-from bauhaus_streamlit import get_plotly_template
+from src.ui.branding import get_plotly_template
 
 fig = go.Figure(data=[...])
 fig.update_layout(**get_plotly_template()["layout"])
@@ -174,28 +164,15 @@ fig.update_layout(**get_plotly_template()["layout"])
 `get_plotly_template()` liefert Colorway, Achsen-Style, Mono-Tickfonts und einen
 sequenziellen Color-Scale (Layer-Hellgrau → Hellrostrot → Rostrot).
 
-### Streamlit-Theme aus Template installieren
-
-```python
-from pathlib import Path
-from bauhaus_streamlit import install_config
-
-install_config(Path(".streamlit"), overwrite=True)
-```
-
-Schreibt eine CI-konforme `.streamlit/config.toml` (Rostrot/Weiss/Ink-Blue) in
-das Zielverzeichnis. `overwrite=False` (Default) bricht ab, falls die Datei
-existiert — mit `overwrite=True` wird sie ersetzt; vorher selbst sichern.
-
 ## Lineal-Bildmarke
 
-Die Bauhaus-Lineal ersetzt das klassische Logo. Drei Segmente in fester Geometrie:
+Die Lineal-Bildmarke ersetzt das klassische Logo. Drei Segmente in fester Geometrie:
 
 ```
 [ 6px Rostrot Bar ─────── 2px Ink Linie ─── 16px Gold Quadrat ]
 ```
 
-CSS-Klassen (`.bh-lineal__bar`, `.bh-lineal__line`, `.bh-lineal__square`) werden
+CSS-Klassen (`.ta-lineal__bar`, `.ta-lineal__line`, `.ta-lineal__square`) werden
 von `render_lineal()` ausgegeben. Verwendungsregeln:
 
 - **Streamlit-UI:** 1× pro Page-Load am Anfang der Sidebar (oder oberhalb des
@@ -264,5 +241,6 @@ Hier gilt der Markdown-Default. Keine Custom-Bullets in roher Markdown.
 
 ## Verwandte Dokumente
 
-- `src/_vendor/bauhaus_streamlit/` — vendored Source mit den Token-Definitionen (siehe auch `VENDORED_FROM.md`)
-- [`CHANGELOG.md`](../../CHANGELOG.md) — Versionshistorie der Branding-Sprints (13a/b/c)
+- [`src/ui/branding.py`](../../src/ui/branding.py) — Branding-API (inject_global_css, render_lineal, severity_color, get_plotly_template, FAVICON_PATH)
+- [`src/ui/static/branding.css`](../../src/ui/static/branding.css) — CSS-Tokens und Komponenten-Klassen
+- [`CHANGELOG.md`](../../CHANGELOG.md) — Versionshistorie der Branding-Sprints

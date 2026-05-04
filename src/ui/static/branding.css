@@ -141,7 +141,7 @@ pre {
 }
 
 /* Mono-Meta-Block */
-.bh-meta {
+.ta-meta {
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.14em;
@@ -151,15 +151,15 @@ pre {
 }
 
 /* Bauhaus-Lineal */
-.bh-lineal {
+.ta-lineal {
   display: flex;
   align-items: center;
   width: 240px;
   margin: var(--s-3) 0 var(--s-5) 0;
 }
-.bh-lineal__bar    { flex: 3; height: var(--ruler-bar);   background: var(--c-acc); }
-.bh-lineal__line   { flex: 1; height: var(--ruler-line);  background: var(--c-ink); }
-.bh-lineal__square {
+.ta-lineal__bar    { flex: 3; height: var(--ruler-bar);   background: var(--c-acc); }
+.ta-lineal__line   { flex: 1; height: var(--ruler-line);  background: var(--c-ink); }
+.ta-lineal__square {
   width:  var(--ruler-square);
   height: var(--ruler-square);
   background: var(--c-gold);
@@ -167,14 +167,14 @@ pre {
 }
 
 /* Risk-Severity-Klassen (4-stufige Akzent+Saettigung-Skala) */
-.bh-sev-critical { color: var(--sev-critical); font-weight: 700; }
-.bh-sev-high     { color: var(--sev-high);     font-weight: 700; }
-.bh-sev-medium   { color: var(--sev-medium);   font-weight: 700; }
-.bh-sev-low      { color: var(--sev-low);      font-weight: 700; }
+.ta-sev-critical { color: var(--sev-critical); font-weight: 700; }
+.ta-sev-high     { color: var(--sev-high);     font-weight: 700; }
+.ta-sev-medium   { color: var(--sev-medium);   font-weight: 700; }
+.ta-sev-low      { color: var(--sev-low);      font-weight: 700; }
 
-.bh-status-compliant         { color: var(--sev-compliant); font-weight: 700; }
-.bh-status-partial           { color: var(--sev-medium);    font-weight: 700; }
-.bh-status-non-compliant     { color: var(--sev-critical);  font-weight: 700; }
+.ta-status-compliant         { color: var(--sev-compliant); font-weight: 700; }
+.ta-status-partial           { color: var(--sev-medium);    font-weight: 700; }
+.ta-status-non-compliant     { color: var(--sev-critical);  font-weight: 700; }
 
 /* Metric-Tiles (KPI-Row) */
 [data-testid="stMetricValue"] {

@@ -11,10 +11,10 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ### Hinzugefügt
 
-- **CI-Branding Streamlit-UI (#78, Sprint 13a)** — Bauhaus-Branding (interner Styleguide) auf das Streamlit-Dashboard übertragen. Neu:
+- **CI-Branding Streamlit-UI (#78, Sprint 13a)** — Internes Branding (Rostrot/Gold/Grün, reduzierte Geometrie) auf das Streamlit-Dashboard übertragen. Neu:
   - `.streamlit/config.toml` — Theme-Mapping (Rostrot `#9B4A2F` als Primary).
   - `src/ui/static/branding.css` — globales CSS mit allen 9 Farb-Tokens (`--c-acc`, `--c-gold`, `--c-green`, `--c-ink`, `--c-bright`, `--c-bg`, `--c-layer`, `--c-mid`, `--c-line`), Schriften (DM Sans 400/700/900 + Share Tech Mono via Google-Fonts-Import), Spacing-Skala `--s-1`..`--s-10`, 10×2 Rostrot-Bullets, Button-Hover-Invert, Streamlit-Tabs als Mono-Chips, Severity-/Compliance-Status-Farb-Klassen.
-  - `src/ui/static/favicon.svg` — Bauhaus-Lineal als Bildmarke (3 Rechtecke: 6 px Rostrot · 2 px Ink · 16 px Gold).
+  - `src/ui/static/favicon.svg` — Lineal-Bildmarke (3 Rechtecke: 6 px Rostrot · 2 px Ink · 16 px Gold).
   - `src/ui/static/plotly_telemetrie_theme.json` — CI-konforme Plotly-Layout-Sequenz (`colorway` startet mit Rostrot/Gold/Grün, Mono-Achsen-Ticks).
   - `src/ui/branding.py` — `inject_global_css()` (idempotent über Session-Flag), `render_lineal()` (Sidebar + Page-Top), `severity_color(level)`, `compliance_status_color(status)`, `get_plotly_template()`.
   - `app.py` — Favicon via `page_config(page_icon=str(FAVICON_PATH))`, `inject_global_css()` einmalig pro Run, Lineal in Sidebar + vor Page-Dispatch.

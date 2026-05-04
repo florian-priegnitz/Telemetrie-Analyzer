@@ -59,7 +59,7 @@ Status: **abgeschlossen** · Issue [#77](https://github.com/florian-priegnitz/Te
 
 ## Offene Tracking-Issues
 
-- [ ] [#78](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/78) CI-Branding (Bauhaus, interner Styleguide) (P2)
+- [ ] [#78](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/78) CI-Branding (interner Styleguide) (P2)
 
 ---
 

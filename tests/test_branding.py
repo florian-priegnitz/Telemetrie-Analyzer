@@ -1,8 +1,7 @@
-"""Tests fuer src/ui/branding.py — CI-Branding-Wrapper (Bauhaus, Sprint 13).
+"""Tests für src/ui/branding.py — CI-Branding der Telemetrie-Analyzer-UI.
 
-Branding-Logik liegt in `bauhaus-streamlit` (Issue #89). Diese Tests
-verifizieren primaer, dass der Re-Export funktioniert und die fuer den
-Telemetrie-Analyzer relevanten Severity-/Status-Mappings stimmen.
+Verifiziert die Severity-/Compliance-Status-Mappings, das Plotly-Template,
+die CSS-Token-Vollständigkeit und den Favicon-Pfad.
 """
 
 from __future__ import annotations
@@ -59,14 +58,13 @@ def test_compliance_status_color_unknown_falls_back() -> None:
     assert compliance_status_color("xyz") == COMPLIANCE_STATUS_COLORS["needs_review"]
 
 
-def test_favicon_path_is_provided_by_package() -> None:
-    """FAVICON_PATH wird aus dem bauhaus-streamlit-Paket re-exportiert."""
+def test_favicon_path_points_to_existing_svg() -> None:
+    """FAVICON_PATH zeigt auf das Lineal-SVG unter src/ui/static/."""
     assert isinstance(FAVICON_PATH, Path)
-    # Pfad zeigt in die Paket-Resources, Datei existiert.
-    assert FAVICON_PATH.exists(), f"favicon.svg fehlt im Paket: {FAVICON_PATH}"
+    assert FAVICON_PATH.exists(), f"favicon.svg fehlt: {FAVICON_PATH}"
     svg = FAVICON_PATH.read_text(encoding="utf-8")
     for marker in ("#9B4A2F", "#0C1A32", "#B07A10", "<svg", "<rect"):
-        assert marker in svg, f"Lineal-Geometrie unvollstaendig: {marker!r} fehlt"
+        assert marker in svg, f"Lineal-Geometrie unvollständig: {marker!r} fehlt"
 
 
 def test_plotly_template_uses_ci_palette() -> None:
@@ -80,16 +78,21 @@ def test_plotly_template_uses_ci_palette() -> None:
     assert layout["font"]["family"].startswith("DM Sans")
 
 
-def test_branding_module_re_exports_from_package() -> None:
-    """Smoke-Test: branding.py ist nun ein Wrapper auf bauhaus_streamlit."""
-    from src._vendor import bauhaus_streamlit
-    from src.ui import branding
+def test_branding_css_has_required_tokens() -> None:
+    """CSS-Token-Vollständigkeit: alle CI-Custom-Properties + Klassen sind da."""
+    from src.ui.branding import _read_css
 
-    assert branding.severity_color is bauhaus_streamlit.severity_color
-    assert branding.compliance_status_color is bauhaus_streamlit.compliance_status_color
-    assert branding.inject_global_css is bauhaus_streamlit.inject_global_css
-    assert branding.render_lineal is bauhaus_streamlit.render_lineal
-    assert branding.SEVERITY_COLORS is bauhaus_streamlit.SEVERITY_COLORS
+    css = _read_css()
+    for token in (
+        "--c-bg",
+        "--c-acc",
+        "--c-ink",
+        ".ta-lineal",
+        ".ta-sev-critical",
+        "DM Sans",
+        "Share Tech Mono",
+    ):
+        assert token in css, f"CI-Token fehlt in branding.css: {token!r}"
 
 
 def _has_streamlit_testing() -> bool:
