@@ -14,8 +14,8 @@ PAGES_DIR = REPO_ROOT / "src" / "ui" / "pages"
 
 
 def test_glossary_has_at_least_20_entries():
-    assert len(GLOSSARY) >= 20, (
-        f"Glossar muss min. 20 Begriffe haben, hat aktuell {len(GLOSSARY)}"
+    assert len(GLOSSARY) >= 26, (
+        f"Glossar muss min. 26 Begriffe haben, hat aktuell {len(GLOSSARY)}"
     )
 
 
@@ -84,3 +84,17 @@ def test_each_term_has_label_and_long(key):
     assert term.label, f"{key}: leeres Label"
     assert term.long, f"{key}: leeres long"
     assert term.short, f"{key}: leeres short"
+
+
+def test_every_page_with_intro_has_glossary_block():
+    """Konsistenz: jede Page mit page_intro muss auch glossary_block am Ende haben."""
+    from pathlib import Path
+    pages_dir = Path(__file__).resolve().parent.parent / "src" / "ui" / "pages"
+    offenders = []
+    for page in pages_dir.glob("*.py"):
+        if page.name == "__init__.py":
+            continue
+        text = page.read_text(encoding="utf-8")
+        if "page_intro(" in text and "glossary_block(" not in text:
+            offenders.append(page.name)
+    assert not offenders, f"Pages mit page_intro aber ohne glossary_block: {offenders}"

@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.ui.components.framework_card import render_framework_card
-from src.ui.components.help import page_intro
+from src.ui.components.help import glossary_block, page_intro
 
 _RISK_COLORS = {"critical": "#B60205", "high": "#D93F0B", "medium": "#FBCA04", "low": "#0E8A16"}
 
@@ -110,3 +110,10 @@ def render(report_data: dict[str, Any]) -> None:
                 st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
             else:
                 st.success(f"Keine Verletzungen für {fv['framework_label']}.")
+
+    glossary_block([
+        "erfuellungsgrad",
+        "compliance_ampel",
+        "compliance_mapping",
+        "drift_guard",
+    ])

@@ -1,0 +1,22 @@
+{# Bauhaus-CI Markdown-Header (Sprint 13c, #92).
+   Mono-Meta-Block oben, ASCII-Lineal in Bauhaus-Geometrie, dann Title.
+   Lineal-Glyphen: ━ (Heavy Line, U+2501) entspricht 6px Rost-Bar,
+   ─ (Light Line, U+2500) entspricht 2px Ink-Linie, ▪ (Small Square, U+25AA)
+   entspricht 16px Gold-Quadrat. Verwendung:
+       {%- from "partials/_md_header.md.j2" import render -%}
+       {{ render("Title — Shadow AI Telemetrie", "Audience-Label") }}
+#}
+{%- macro render(title, audience_label) -%}
+*TELEMETRIE · {{ audience_label | upper }} · {{ ctx.generated_at.strftime("%Y-%m-%d") }}*
+
+━━━━━━━━━━━━ ─ ▪
+
+# {{ title }}
+
+Generiert: **{{ ctx.generated_at.strftime("%d.%m.%Y %H:%M UTC") }}**
+{% if ctx.period_start and ctx.period_end -%}
+Zeitraum: **{{ ctx.period_start.strftime("%d.%m.%Y") }}** bis **{{ ctx.period_end.strftime("%d.%m.%Y") }}**
+{%- endif %}
+
+> **DSGVO:** Alle Client-Identifikatoren sind pseudonymisiert (HMAC-SHA256). Salt-Fingerprint: `{{ ctx.salt_fingerprint }}`
+{%- endmacro -%}

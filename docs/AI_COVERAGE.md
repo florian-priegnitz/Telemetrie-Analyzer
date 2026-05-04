@@ -1,49 +1,48 @@
 # AI-Coverage-Report
 
-**DB-Version:** v2.2.0 · **Stand:** 2026-04-21 (6 Tage alt) · 🟢 Aktuell (6 Tage)
+**DB-Version:** v2.3.0 · **Stand:** 2026-05-03 (1 Tage alt) · 🟢 Aktuell (1 Tage)
 
-_Auto-generiert via `scripts/db_coverage_report.py` am 2026-04-27. Manuelle Bearbeitung wird beim naechsten Skript-Lauf ueberschrieben._
+_Auto-generiert via `scripts/db_coverage_report.py` am 2026-05-04. Manuelle Bearbeitung wird beim naechsten Skript-Lauf ueberschrieben._
 
 ## Kennzahlen
 
-- **Endpoints:** 178
+- **Endpoints:** 175
 - **Provider:** 168
 - **Kategorien:** 21
-- **Risk-Verteilung:** critical: 20 · high: 69 · medium: 78 · low: 11
+- **Risk-Verteilung:** critical: 19 · high: 69 · medium: 76 · low: 11
 
 ## Per Kategorie
 
 | Kategorie | Endpoints | Anteil |
 |-----------|----------:|-------:|
-| LLM-Chatbots (`llm_chatbot`) | 20 | 11.2% |
-| Code-Assistenten (`code_assistant`) | 17 | 9.6% |
-| Bild-Generierung (`image_generation`) | 15 | 8.4% |
-| Video-AI (`video_ai`) | 13 | 7.3% |
-| Enterprise-Embedded (`enterprise_embedded`) | 12 | 6.7% |
-| Meeting-AI (`meeting_ai`) | 10 | 5.6% |
+| LLM-Chatbots (`llm_chatbot`) | 20 | 11.4% |
+| Code-Assistenten (`code_assistant`) | 16 | 9.1% |
+| Bild-Generierung (`image_generation`) | 14 | 8.0% |
+| Video-AI (`video_ai`) | 13 | 7.4% |
+| Enterprise-Embedded (`enterprise_embedded`) | 11 | 6.3% |
+| Meeting-AI (`meeting_ai`) | 10 | 5.7% |
 | Autonome AI-Agenten (`ai_agent`) | 9 | 5.1% |
 | Präsentations-AI (`presentation_ai`) | 9 | 5.1% |
 | Schreib-Assistenten (`writing_assistant`) | 9 | 5.1% |
-| ML-Plattformen (`ml_platform`) | 8 | 4.5% |
-| Daten-Analyse (`data_analysis_ai`) | 7 | 3.9% |
+| ML-Plattformen (`ml_platform`) | 8 | 4.6% |
+| Daten-Analyse (`data_analysis_ai`) | 7 | 4.0% |
 | Customer-Support-AI (`customer_support_ai`) | 6 | 3.4% |
 | Audio-Generierung (`audio_generation`) | 6 | 3.4% |
 | Text-zu-Sprache (`text_to_speech`) | 6 | 3.4% |
 | HR & Recruiting (`hr_recruiting_ai`) | 6 | 3.4% |
 | Browser-Extensions (`browser_extension_ai`) | 6 | 3.4% |
-| Content-Generierung (`content_generation`) | 5 | 2.8% |
-| Produktivitäts-AI (`productivity_ai`) | 5 | 2.8% |
-| Sprach-zu-Text (`speech_to_text`) | 4 | 2.2% |
-| LLM-APIs (`llm_api`) | 4 | 2.2% |
+| Content-Generierung (`content_generation`) | 5 | 2.9% |
+| Produktivitäts-AI (`productivity_ai`) | 5 | 2.9% |
+| Sprach-zu-Text (`speech_to_text`) | 4 | 2.3% |
+| LLM-APIs (`llm_api`) | 4 | 2.3% |
 | Übersetzung (`translation`) | 1 | 0.6% |
 
 ## Top-10-Provider nach Endpoints
 
 | Provider | Endpoints |
 |----------|----------:|
-| OpenAI | 5 |
 | Stability AI | 3 |
-| Google | 2 |
+| OpenAI | 3 |
 | Hugging Face | 2 |
 | Microsoft | 2 |
 | Vercel | 2 |
@@ -51,6 +50,7 @@ _Auto-generiert via `scripts/db_coverage_report.py` am 2026-04-27. Manuelle Bear
 | Adept | 1 |
 | Adobe | 1 |
 | Reworkd | 1 |
+| Aider | 1 |
 
 ## Vollständiger Katalog (gruppiert nach Kategorie)
 
@@ -103,7 +103,6 @@ _Auto-generiert via `scripts/db_coverage_report.py` am 2026-04-27. Manuelle Bear
 | Cursor | Anysphere | critical | `cursor.sh`, `api2.cursor.sh`, `repo42.cursor.sh` |
 | GitHub Copilot | GitHub / Microsoft | critical | `copilot.github.com`, `api.githubcopilot.com`, `copilot-proxy.githubusercontent.com` _(+1 weitere)_ |
 | JetBrains AI | JetBrains | high | `jetbrains.com/ai`, `api.jetbrains.ai` |
-| OpenAI Codex / GPT API | OpenAI | critical | `codex.openai.com` |
 | Replit AI | Replit | critical | `replit.com`, `api.replit.com`, `repl.co` |
 | Sourcegraph Cody | Sourcegraph | high | `sourcegraph.com`, `cody.sourcegraph.com` |
 | Tabnine | Tabnine | high | `tabnine.com`, `api.tabnine.com` |
@@ -152,7 +151,6 @@ _Auto-generiert via `scripts/db_coverage_report.py` am 2026-04-27. Manuelle Bear
 | Atlassian Rovo | Atlassian | medium | `rovo.atlassian.com` |
 | Canva Magic Studio | Canva | medium | `canva.com/magic`, `www.canva.com` |
 | Figma AI | Figma | medium | `figma.com/ai` |
-| Google Workspace Duet | Google | medium | `duet.google.com` |
 | HubSpot AI | HubSpot | medium | `hubspot.com/ai` |
 | Microsoft 365 Copilot | Microsoft | medium | `copilot.microsoft365.com`, `m365.cloud.microsoft` |
 | Miro AI | Miro | medium | `miro.com/ai` |
@@ -180,7 +178,6 @@ _Auto-generiert via `scripts/db_coverage_report.py` am 2026-04-27. Manuelle Bear
 | Adobe Firefly | Adobe | medium | `firefly.adobe.com`, `firefly-api.adobe.io` |
 | Artbreeder | Artbreeder | low | `artbreeder.com` |
 | Civitai | Civitai | medium | `civitai.com` |
-| DALL-E | OpenAI | medium | `labs.openai.com` |
 | DreamStudio | Stability AI | medium | `dreamstudio.ai`, `beta.dreamstudio.ai` |
 | Flux | Black Forest Labs | medium | `blackforestlabs.ai`, `api.bfl.ml` |
 | Ideogram | Ideogram | medium | `ideogram.ai` |
@@ -321,7 +318,7 @@ _Auto-generiert via `scripts/db_coverage_report.py` am 2026-04-27. Manuelle Bear
 | Runway ML | Runway | medium | `runwayml.com`, `app.runwayml.com`, `api.runwayml.com` |
 | Sora | OpenAI | high | `sora.com`, `sora.openai.com` |
 | Synthesia | Synthesia | medium | `synthesia.io`, `api.synthesia.io` |
-| Veo | Google DeepMind | high | `veo.google` |
+| Veo | Google DeepMind | high | `labs.google` |
 
 ### Schreib-Assistenten (`writing_assistant`)
 

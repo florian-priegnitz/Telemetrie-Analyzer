@@ -8,7 +8,7 @@ import pandas as pd
 import streamlit as st
 
 from src.ui.components.finding_row import render_finding_expander
-from src.ui.components.help import page_intro
+from src.ui.components.help import glossary_block, page_intro, term_help
 
 _RISK_LEVELS = ["critical", "high", "medium", "low"]
 _FRAMEWORKS = ["DORA", "EU_AI_ACT", "ISO_42001", "ISO_27001", "DSGVO"]
@@ -85,8 +85,30 @@ def render(report_data: dict[str, Any]) -> None:
             "Upload": "📄" if f.get("has_document_upload") else "—",
         } for f in filtered
     ])
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(
+        df,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Sys.": st.column_config.TextColumn(
+                "Sys.",
+                help=term_help("systematic_threshold"),
+            ),
+            "Upload": st.column_config.TextColumn(
+                "Upload",
+                help=term_help("upload_threshold"),
+            ),
+        },
+    )
 
     st.markdown("### Detail")
     for f in filtered:
         render_finding_expander(f)
+
+    glossary_block([
+        "risk_score",
+        "systematic_threshold",
+        "upload_threshold",
+        "compliance_mapping",
+        "off_hours_ratio",
+    ])

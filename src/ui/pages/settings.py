@@ -14,7 +14,7 @@ from src.detection.engine import SYSTEMATIC_THRESHOLD, UPLOAD_THRESHOLD_BYTES
 from src.privacy.retention import load_policy
 from src.reports.privacy import PrivacyLeakError, assert_no_plaintext
 from src.ui.components.db_status import render_db_status
-from src.ui.components.help import page_intro
+from src.ui.components.help import glossary_block, page_intro
 from src.ui.state import reset_pipeline
 
 
@@ -155,19 +155,25 @@ def render(report_data: dict[str, Any] | None) -> None:
     )
 
     st.markdown("### Privacy Self-Check")
-    if not report_data:
+    if report_data:
+        if st.button("🔒 Auf Klartext-Daten prüfen"):
+            try:
+                payload = json.dumps(report_data, default=str)
+                assert_no_plaintext(payload)
+                st.success(
+                    "✅ **Bestanden** — keine Klartext-IPs/MAC/internen Hostnames im Report-Datensatz."
+                )
+            except PrivacyLeakError as exc:
+                st.error(f"❌ **Privacy-Leak gefunden:** {exc}")
+    else:
         st.info("Bitte zuerst eine Analyse durchführen, bevor der Self-Check ausgeführt wird.")
-        return
 
-    if st.button("🔒 Auf Klartext-Daten prüfen"):
-        try:
-            payload = json.dumps(report_data, default=str)
-            assert_no_plaintext(payload)
-            st.success(
-                "✅ **Bestanden** — keine Klartext-IPs/MAC/internen Hostnames im Report-Datensatz."
-            )
-        except PrivacyLeakError as exc:
-            st.error(f"❌ **Privacy-Leak gefunden:** {exc}")
+    glossary_block([
+        "salt_override",
+        "retention_policy",
+        "pseudonymisierung",
+        "endpoint_db_freshness",
+    ])
 
 
 def _render_backend_section() -> None:

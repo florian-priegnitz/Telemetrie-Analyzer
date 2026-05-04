@@ -371,6 +371,47 @@ GLOSSARY: dict[str, GlossaryTerm] = {
         ),
         see_also=(),
     ),
+    "edge_weight": GlossaryTerm(
+        label="Co-Occurrence-Gewicht",
+        short=(
+            "Haeufigkeit, mit der zwei KI-Dienste durch denselben Client innerhalb des "
+            "Co-Occurrence-Fensters zusammen genutzt wurden."
+        ),
+        long=(
+            "Im Session-Graph entspricht das Gewicht einer Kante der Anzahl der Pseudonyme, "
+            "die beide Services innerhalb des Co-Occurrence-Fensters genutzt haben. Hohe "
+            "Gewichte deuten auf etablierte Workflow-Verbindungen hin (z. B. ChatGPT + "
+            "GitHub Copilot fuer Code-Reviews)."
+        ),
+        see_also=("session_graph", "co_occurrence_fenster"),
+    ),
+    "spring_layout_determinism": GlossaryTerm(
+        label="Reproduzierbares Layout",
+        short=(
+            "networkx Spring-Layout mit `seed=42` — derselbe Graph rendert bei jedem Lauf "
+            "identisch (fuer Audit-Konsistenz)."
+        ),
+        long=(
+            "Die Knoten-Positionen im Session-Graph werden via "
+            "`networkx.spring_layout(graph, seed=42)` berechnet. Der feste Seed garantiert, "
+            "dass derselbe Co-Occurrence-Graph in zwei Audit-Laeufen visuell identisch "
+            "erscheint — wichtig fuer Side-by-Side-Vergleiche und Screenshot-Reproduktion."
+        ),
+        see_also=("session_graph",),
+    ),
+    "co_occurrence_confidence": GlossaryTerm(
+        label="Konfidenz",
+        short=(
+            "Verhaeltnis Edge-Weight zu Unique-Clients — > 1.0 deutet auf Workflow-Bindung "
+            "statt Mehrfachnutzung."
+        ),
+        long=(
+            "Wenn `edge_weight / unique_clients > 1.0`, haben einzelne Clients dasselbe "
+            "Service-Paar mehrfach im Co-Occurrence-Fenster genutzt. Das ist ein staerkerer "
+            "Hinweis auf eine etablierte Workflow-Bindung als blosses Vorhandensein der Kante."
+        ),
+        see_also=("edge_weight", "session_graph"),
+    ),
     "endpoint_db_freshness": GlossaryTerm(
         label="DB-Frische",
         short=(

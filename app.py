@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import streamlit as st
 
+from src.ui.branding import FAVICON_PATH, inject_global_css, render_lineal
 from src.ui.components.upload_widget import render_upload_section
 from src.ui.pages import (
     compliance,
@@ -19,7 +20,6 @@ from src.ui.pages import (
     users_patterns,
 )
 from src.ui.state import init_session_state
-
 
 _PAGE_FUNCS = {
     "📊 Übersicht": overview.render,
@@ -39,15 +39,21 @@ _STATE_INDEPENDENT_PAGES = {"📚 Formate", "⚙️ Einstellungen"}
 def main() -> None:
     st.set_page_config(
         page_title="Telemetrie Analyzer",
-        page_icon="🛡️",
+        page_icon=str(FAVICON_PATH) if FAVICON_PATH.exists() else "🛡️",
         layout="wide",
         initial_sidebar_state="expanded",
     )
     init_session_state()
+    inject_global_css()
 
     with st.sidebar:
-        st.title("🛡️ Telemetrie Analyzer")
-        st.caption("Shadow AI Detection · DORA · EU AI Act · ISO 42001 · ISO 27001 · DSGVO")
+        render_lineal()
+        st.markdown(
+            '<div class="bh-meta">SHADOW AI · COMPLIANCE</div>',
+            unsafe_allow_html=True,
+        )
+        st.title("Telemetrie Analyzer")
+        st.caption("DORA · EU AI Act · ISO 42001 · ISO 27001 · DSGVO · CRA")
         st.markdown("---")
 
         st.markdown("### 📁 Log-Upload")
@@ -80,6 +86,8 @@ def main() -> None:
     if state == "error":
         st.error(f"Fehler bei der Analyse: {st.session_state.get('error_message', 'unbekannt')}")
         return
+
+    render_lineal()
 
     if state in ("empty", "uploaded") and page not in _STATE_INDEPENDENT_PAGES:
         from src.ui.components.upload_widget import render_scenario_buttons

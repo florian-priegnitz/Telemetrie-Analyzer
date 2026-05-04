@@ -33,6 +33,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
+      - name: Compute review month
+        id: date
+        run: echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
       - name: Generate issue body
         id: body
         run: |
@@ -70,7 +74,7 @@ jobs:
       - name: Create review issue
         uses: imjohnbo/issue-bot@v3
         with:
-          title: "[DB-Review] Monatlicher AI-Endpoint-Check für ${{ github.run_id }}"
+          title: "[DB-Review] Monatlicher AI-Endpoint-Check für ${{ steps.date.outputs.month }}"
           labels: "epic:endpoint-db, documentation, priority:P2"
           body: ${{ steps.body.outputs.BODY }}
           token: ${{ secrets.GITHUB_TOKEN }}
