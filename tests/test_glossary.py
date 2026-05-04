@@ -14,8 +14,8 @@ PAGES_DIR = REPO_ROOT / "src" / "ui" / "pages"
 
 
 def test_glossary_has_at_least_20_entries():
-    assert len(GLOSSARY) >= 20, (
-        f"Glossar muss min. 20 Begriffe haben, hat aktuell {len(GLOSSARY)}"
+    assert len(GLOSSARY) >= 26, (
+        f"Glossar muss min. 26 Begriffe haben, hat aktuell {len(GLOSSARY)}"
     )
 
 
