@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY pyproject.toml README.md LICENSE ./
 COPY src/ ./src/
-COPY templates/ ./templates/
 COPY config/ ./config/
 COPY data/ ./data/
 COPY app.py ./

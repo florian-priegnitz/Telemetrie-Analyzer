@@ -7,6 +7,8 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-05-04
+
 ### Hinzugefügt
 
 - **CI-Branding Streamlit-UI (#78, Sprint 13a)** — Bauhaus-Branding aus `florian-priegnitz.de` auf das Streamlit-Dashboard übertragen. Neu:
