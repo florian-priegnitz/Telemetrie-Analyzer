@@ -124,7 +124,7 @@ Neu erforderliche Dependencies: `pyyaml` (für `config/retention.yaml`), `ruff`/
 
 ## Contributor-Credits
 
-**Maintainer:** Florian Priegnitz (flowing1978@gmail.com)
+**Maintainer:** Florian Priegnitz ([@florian-priegnitz](https://github.com/florian-priegnitz))
 
 **Pair-Programming:** Claude Opus (Anthropic) — strukturierte Implementierung der 12 Parser, UI-Page-Architektur, Multi-Fallback-Detection, Release-Workflows.
 

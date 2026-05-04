@@ -5,10 +5,8 @@
 ━━━━━━━━━━━━ ─ ▪
 
 Dieses Dokument beschreibt die Bauhaus-CI-Konventionen für UI, Reports und Doku
-des Telemetrie-Analyzers. Source-of-Truth für die Design-Tokens ist das Paket
-[`bauhaus-streamlit`](https://github.com/florian-priegnitz/bauhaus-streamlit) —
-abgeleitet vom Styleguide auf
-[`florian-priegnitz.de/docs/ci-handbook.html`](https://florian-priegnitz.de).
+des Telemetrie-Analyzers. Source-of-Truth für die Design-Tokens ist das interne
+Paket `bauhaus-streamlit` (vendored unter `src/_vendor/bauhaus_streamlit/`).
 
 Geltungsbereich: Streamlit-UI, HTML-Reports, Markdown-Reports, neue Doku-Seiten.
 
@@ -266,6 +264,5 @@ Hier gilt der Markdown-Default. Keine Custom-Bullets in roher Markdown.
 
 ## Verwandte Dokumente
 
-- [`webseite/docs/ci-handbook.html`](https://florian-priegnitz.de) — Master-Styleguide
-- [`bauhaus-streamlit` README](https://github.com/florian-priegnitz/bauhaus-streamlit) — Public API
+- `src/_vendor/bauhaus_streamlit/` — vendored Source mit den Token-Definitionen (siehe auch `VENDORED_FROM.md`)
 - [`CHANGELOG.md`](../../CHANGELOG.md) — Versionshistorie der Branding-Sprints (13a/b/c)

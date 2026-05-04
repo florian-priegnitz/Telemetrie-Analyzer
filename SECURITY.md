@@ -12,7 +12,7 @@
 
 Bitte **keine** öffentlichen Issues für Sicherheitsprobleme öffnen.
 
-**Kontakt:** flowing1978@gmail.com (PGP auf Anfrage)
+**Kontakt:** Bitte einen [Private Vulnerability Report](https://github.com/florian-priegnitz/Telemetrie-Analyzer/security/advisories/new) auf GitHub erstellen.
 
 Bitte im Report mitliefern:
 - Kurze Beschreibung der Schwachstelle

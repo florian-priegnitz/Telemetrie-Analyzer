@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [
-    { name = "Florian Priegnitz", email = "flowing1978@gmail.com" },
+    { name = "Florian Priegnitz", email = "florian-priegnitz@users.noreply.github.com" },
 ]
 keywords = [
     "shadow-ai",

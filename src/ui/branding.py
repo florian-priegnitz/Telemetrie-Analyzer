@@ -3,7 +3,7 @@
 Re-exportiert die generischen Bauhaus-Streamlit-Symbole und ergaenzt
 telemetrie-analyzer-spezifische Severity-Mappings.
 
-Quelle: bauhaus-streamlit (florian-priegnitz.de Style-Tokens).
+Quelle: bauhaus-streamlit (interner Styleguide, vendoring siehe src/_vendor/).
 """
 from __future__ import annotations
 

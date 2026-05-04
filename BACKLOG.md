@@ -59,7 +59,7 @@ Status: **abgeschlossen** · Issue [#77](https://github.com/florian-priegnitz/Te
 
 ## Offene Tracking-Issues
 
-- [ ] [#78](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/78) CI-Branding (Bauhaus florian-priegnitz.de) (P2)
+- [ ] [#78](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/78) CI-Branding (Bauhaus, interner Styleguide) (P2)
 
 ---
 
@@ -144,7 +144,7 @@ Status: **abgeschlossen** · Issue [#77](https://github.com/florian-priegnitz/Te
 - Behavior Analytics (Heatmap, Off-Hours, Bursts, k-Anon): 18
 - Testdata-Szenarien + weitere: Rest
 
-Ausführung: `pytest tests/ -v` bzw. `wsl -e bash -c "cd /home/flowing1978/projects/telemetrie-analyzer && python3 -m pytest tests/ -v"`
+Ausführung: `pytest tests/ -v` bzw. via WSL: `wsl -e bash -c "cd <repo-root> && python3 -m pytest tests/ -v"`
 
 ---
 

@@ -2,7 +2,7 @@
 
 > **Repo:** https://github.com/florian-priegnitz/Telemetrie-Analyzer
 >
-> **Relevante PKB-Skills** (bei Bedarf laden aus `//wsl$/Ubuntu/home/flowing1978/projects/my-ai-os/skills/`):
+> **Relevante PKB-Skills** (bei Bedarf laden aus `~/projects/my-ai-os/skills/`):
 > security-engineer, backend-dev, qa-engineer, software-architect, technical-writer
 
 KI-gestütztes Analyse-Tool zur Erkennung nicht-autorisierter KI-Nutzung (Shadow AI) in Unternehmensnetzen. Analysiert DNS- und Proxy-Logs, erkennt Muster und erzeugt regulatorisch eingebettete Reports (DORA, EU AI Act, ISO 42001).
