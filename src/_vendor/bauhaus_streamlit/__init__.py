@@ -1,13 +1,7 @@
-"""CI-Branding fuer Streamlit-UI — projekt-spezifischer Wrapper.
+"""Bauhaus Streamlit — wiederverwendbares CI-Theme für Streamlit-Apps."""
 
-Re-exportiert die generischen Bauhaus-Streamlit-Symbole und ergaenzt
-telemetrie-analyzer-spezifische Severity-Mappings.
-
-Quelle: bauhaus-streamlit (florian-priegnitz.de Style-Tokens).
-"""
-from __future__ import annotations
-
-from src._vendor.bauhaus_streamlit import (
+from ._config import CONFIG_TOML_TEMPLATE, install_config
+from .branding import (
     COMPLIANCE_STATUS_COLORS,
     FAVICON_PATH,
     SEVERITY_COLORS,
@@ -18,6 +12,8 @@ from src._vendor.bauhaus_streamlit import (
     severity_color,
 )
 
+__version__ = "0.1.0"
+
 __all__ = [
     "inject_global_css",
     "render_lineal",
@@ -27,4 +23,7 @@ __all__ = [
     "SEVERITY_COLORS",
     "COMPLIANCE_STATUS_COLORS",
     "FAVICON_PATH",
+    "CONFIG_TOML_TEMPLATE",
+    "install_config",
+    "__version__",
 ]
