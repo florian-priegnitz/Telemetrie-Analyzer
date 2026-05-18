@@ -1,13 +1,17 @@
 # CI Style-Guide — Telemetrie Analyzer
 
-*TELEMETRIE · CI · 2026-05-04*
+*TELEMETRIE · CI · 2026-05-18*
 
 ━━━━━━━━━━━━ ─ ▪
 
 Dieses Dokument beschreibt die CI-Konventionen für UI, Reports und Doku
-des Telemetrie-Analyzers. Source-of-Truth für die Design-Tokens ist das
+des Telemetrie-Analyzers. Das Design-System heißt **TA Design System**
+(Kurzform **TA-CI**). Source-of-Truth für die Design-Tokens ist das
 Modul [`src/ui/branding.py`](../../src/ui/branding.py) und die zugehörige
-[`src/ui/static/branding.css`](../../src/ui/static/branding.css).
+[`src/ui/static/branding.css`](../../src/ui/static/branding.css);
+HTML-Reports embeden seit Sprint 13b (#91) die Tokens inline in
+[`src/reports/templates/base.html.j2`](../../src/reports/templates/base.html.j2)
+ohne externen Font- oder JS-Call.
 
 Geltungsbereich: Streamlit-UI, HTML-Reports, Markdown-Reports, neue Doku-Seiten.
 
@@ -34,6 +38,18 @@ Geltungsbereich: Streamlit-UI, HTML-Reports, Markdown-Reports, neue Doku-Seiten.
   Achsen-Ticks.
 - **Sans für Inhalt.** Heading-Hierarchie via Schriftgewicht (700 / 900) statt
   Farbänderung.
+- **Audit-Tauglichkeit.** HTML-Reports rendern self-contained, ohne externe
+  HTTP-Calls (kein CDN, keine Google-Fonts) — verifiziert durch den Test
+  `test_default_html_has_no_external_http_calls` in
+  [`tests/test_reports.py`](../../tests/test_reports.py).
+
+### Namens-Konvention
+
+Das Design-System heißt **TA Design System** (Lang) bzw. **TA-CI** (Kurz, im
+Fließtext und in Commit-Messages). Der CSS-Klassen-Präfix ist `.ta-*` und ist
+projekt-spezifisch — andere Projekte (cloud-monitor, civicLens etc.) sollten
+beim Übernehmen der Tokens einen eigenen Präfix wählen, nicht `.ta-*` mit-
+kopieren.
 
 ## Farb-Tokens
 
@@ -67,9 +83,11 @@ font = "sans serif"
 | `--font-sans` | `'DM Sans', system-ui, -apple-system, sans-serif` | Body, Headings |
 | `--font-mono` | `'Share Tech Mono', ui-monospace, 'Courier New', monospace` | Code, Achsen-Ticks, Mono-Meta-Blocks |
 
-DM Sans wird via `@import` von Google Fonts geladen (Streamlit-UI). Für
-self-contained HTML-Reports (Sprint 13b) wird der System-Stack-Fallback
-genutzt — kein externer Font-Call, da Reports auch offline lesbar sein müssen.
+DM Sans wird via `@import` von Google Fonts geladen (Streamlit-UI; nur dort,
+weil ein laufender Browser ohnehin online ist). HTML-Reports (Sprint 13b, #91)
+nutzen ausschließlich den System-Stack — kein externer Font-Call, weil die
+Reports als Audit-Artefakt auch offline lesbar sein müssen. Markdown-Reports
+verwenden keine Fonts (System-Default des jeweiligen Viewers).
 
 ## Spacing
 
@@ -177,7 +195,9 @@ von `render_lineal()` ausgegeben. Verwendungsregeln:
 
 - **Streamlit-UI:** 1× pro Page-Load am Anfang der Sidebar (oder oberhalb des
   Main-Title-Blocks).
-- **HTML-Reports:** Im Page-Header oberhalb des Titels (Sprint 13b).
+- **HTML-Reports:** Im Page-Header oberhalb des Titels — als CSS-Block
+  (`.ta-lineal__bar` / `__line` / `__square`), gerendert direkt in
+  [`base.html.j2`](../../src/reports/templates/base.html.j2#L289).
 - **Markdown-Reports:** ASCII-Approximation `━━━━━━━━━━━━ ─ ▪` zwischen Mono-
   Meta-Block und Title (siehe `partials/_md_header.md.j2`).
 
@@ -243,4 +263,14 @@ Hier gilt der Markdown-Default. Keine Custom-Bullets in roher Markdown.
 
 - [`src/ui/branding.py`](../../src/ui/branding.py) — Branding-API (inject_global_css, render_lineal, severity_color, get_plotly_template, FAVICON_PATH)
 - [`src/ui/static/branding.css`](../../src/ui/static/branding.css) — CSS-Tokens und Komponenten-Klassen
+- [`src/reports/templates/base.html.j2`](../../src/reports/templates/base.html.j2) — HTML-Report-Master mit inline-Tokens (Sprint 13b)
+- [`src/reports/templates/partials/_md_header.md.j2`](../../src/reports/templates/partials/_md_header.md.j2) — Markdown-Header-Partial
 - [`CHANGELOG.md`](../../CHANGELOG.md) — Versionshistorie der Branding-Sprints
+
+## Sprint-Historie
+
+| Sprint | PR | Datum | Inhalt |
+|--------|----|-------|--------|
+| 13a | #85 | 2026-05-04 | TA-CI auf Streamlit-UI (config.toml, branding.css, render_lineal, plotly_theme) |
+| 13b | #94 | 2026-05-18 | HTML-Reports auf TA-CI; offline=True als Default; plotly.js once-per-report; assert_no_plaintext hardening |
+| 13c | (in Arbeit) | — | Markdown-Header-Partial, dieser Style-Guide, 21 Demo-Screenshots |
