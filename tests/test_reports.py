@@ -212,14 +212,14 @@ def test_default_html_has_no_external_http_calls():
             assert host not in body, f"{audience}: externer HTTP-Call zu {host}"
 
 
-def test_default_html_uses_bauhaus_ci_tokens():
-    """Visueller Smoke: Bauhaus-CI-Marker (Lineal, ta-meta, Rostrot-Accent) sind im Output (Sprint 13b)."""
+def test_default_html_uses_ta_ci_tokens():
+    """Visueller Smoke: TA-CI-Marker (Lineal, ta-meta, Rostrot-Accent) sind im Output (Sprint 13b)."""
     det, comp = _make_sample_results()
     html = ReportGenerator(det, comp, salt=_FIXED_SALT).render(audience="executive", format="html")
-    assert "ta-lineal" in html, "Bauhaus-Lineal-Header fehlt"
+    assert "ta-lineal" in html, "Lineal-Header fehlt"
     assert "ta-meta" in html, "ta-meta-Block fehlt"
     assert "#9B4A2F" in html, "Rostrot-Akzent (--c-acc) fehlt"
-    assert "ta-sev-" in html or "ta-kpi" in html, "Bauhaus-Komponentenklassen fehlen"
+    assert "ta-sev-" in html or "ta-kpi" in html, "TA-CI-Komponentenklassen fehlen"
 
 
 def test_write_creates_files_in_output_dir():

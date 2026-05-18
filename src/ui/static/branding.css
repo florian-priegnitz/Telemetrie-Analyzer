@@ -1,4 +1,4 @@
-/* Bauhaus Streamlit — CI Branding
+/* Telemetrie Analyzer — Design Tokens (TA Design System)
  * Reduktion: Rostrot, Gold, Grün + Schwarz/Weiß. Keine Schatten/Gradienten/Rundungen.
  * Token-getrieben via CSS-Custom-Properties (siehe :root unten).
  */
@@ -150,7 +150,7 @@ pre {
   margin-bottom: var(--s-2);
 }
 
-/* Bauhaus-Lineal */
+/* Lineal-Marker */
 .ta-lineal {
   display: flex;
   align-items: center;
