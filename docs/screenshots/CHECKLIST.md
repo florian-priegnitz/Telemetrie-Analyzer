@@ -72,3 +72,8 @@ python scripts/verify_screenshots.py --strict   # Exit 1 bei fehlenden (für Rel
 ## Hinweis
 
 Nach **CI-Branding-Rollout** ([#78](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/78)) müssen alle Screenshots neu erstellt werden — neue Farben, Schriften, Lineal-Bildmarke. Der Verifier markiert das nicht automatisch; bitte CHECKLIST nach dem Branding-Merge erneut durchgehen.
+
+**Sprint-Status (Stand 2026-05-18):**
+- Sprint 13a (Streamlit-UI auf TA-CI) — gemerged via [#85](https://github.com/florian-priegnitz/Telemetrie-Analyzer/pull/85).
+- Sprint 13b (HTML-Reports auf TA-CI) — gemerged via [#94](https://github.com/florian-priegnitz/Telemetrie-Analyzer/pull/94). Die zwei HTML-Report-Screenshots (`17_…`, `18_…`) müssen daher zwingend neu erzeugt werden — alte Reports im Browser haben das alte Styling.
+- Sprint 13c-Block-C (diese Screenshots) — offen unter [#92](https://github.com/florian-priegnitz/Telemetrie-Analyzer/issues/92).
