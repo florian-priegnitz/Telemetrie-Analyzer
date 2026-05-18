@@ -12,7 +12,10 @@ import plotly.graph_objects as go
 from src.reports.context import ReportContext
 
 _PLOTLY_KW = dict(include_plotlyjs="cdn", full_html=False)
-_OFFLINE_KW = dict(include_plotlyjs="inline", full_html=False)
+# Offline-Mode: plotly.js wird EINMAL in base.html.j2 als <script> eingebettet
+# (siehe ReportGenerator). Die Charts referenzieren die geladene Lib via
+# include_plotlyjs=False — sonst wiederholt sich der 4.7 MB-Bundle pro Chart.
+_OFFLINE_KW = dict(include_plotlyjs=False, full_html=False)
 _RISK_COLORS = {"critical": "#B60205", "high": "#D93F0B", "medium": "#FBCA04", "low": "#0E8A16"}
 _TRAFFIC_COLORS = {"green": "#0E8A16", "yellow": "#FBCA04", "red": "#B60205"}
 
@@ -136,7 +139,11 @@ def render_severity_stacked_bar(
 
 
 def build_all_charts(ctx: ReportContext, offline: bool = False) -> dict[str, str]:
-    """Rendert alle Charts und gibt ein Dict {chart_name: html_snippet} zurück."""
+    """Rendert alle Charts und gibt ein Dict {chart_name: html_snippet} zurück.
+
+    offline=True: include_plotlyjs=False — plotly.js wird EINMAL pro Report
+    via base.html.j2 inline eingebettet (siehe ReportGenerator._get_context).
+    """
     return {
         "framework_scores_bar": render_framework_scores_bar(ctx, offline=offline),
         "risk_distribution_donut": render_risk_distribution_donut(ctx, offline=offline),

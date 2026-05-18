@@ -51,13 +51,17 @@ class ReportGenerator:
         detection_result: DetectionResult,
         compliance_result: ComplianceResult,
         salt: str | None = None,
-        offline: bool = False,
+        offline: bool = True,
         db_version: str | None = None,
         db_last_updated: str | None = None,
     ):
         """Initialisiert den Generator.
 
         Args:
+            offline: True (Default) bettet plotly.js inline ein — Reports
+                rendern ohne externe HTTP-Calls (audit-tauglich offline).
+                False laedt plotly via CDN — kleinere Files, aber externe
+                Abhaengigkeit (nur fuer reine Online-Browser-Previews).
             db_version / db_last_updated: Optionaler Audit-Disclaimer (#14).
                 Wenn nicht gesetzt, wird die Default-AI-Endpoint-DB einmalig
                 gelesen, um die Metadaten zu füllen (Footer-Ausgabe).
@@ -75,6 +79,11 @@ class ReportGenerator:
             trim_blocks=True,
             lstrip_blocks=True,
         )
+        if self._offline:
+            from plotly.offline import get_plotlyjs
+            self._env.globals["plotlyjs_inline"] = get_plotlyjs()
+        else:
+            self._env.globals["plotlyjs_inline"] = ""
         self._context: ReportContext | None = None
 
     def _resolve_db_meta(self) -> tuple[str, str]:

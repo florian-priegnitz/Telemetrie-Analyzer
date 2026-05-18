@@ -4,19 +4,25 @@
 {% block content %}
 
 <h2>Compliance-Status (Gesamtbild)</h2>
-<p style="font-size:1.2em;">
-  <span class="traffic-light light-{{ ctx.compliance_traffic_light }}"></span>
+<p style="font-size:1.1em;">
+  <span class="ta-light ta-light--{{ ctx.compliance_traffic_light }}"></span>
   Erfüllungsgrad über alle 6 Frameworks:
   <strong>{{ ctx.overall_compliance_percent }}%</strong>
 </p>
 
-<div class="kpi-grid">
-  <div class="kpi"><div class="kpi-value">{{ ctx.unique_ai_services }}</div>
-    <div class="kpi-label">Erkannte KI-Dienste</div></div>
-  <div class="kpi"><div class="kpi-value">{{ ctx.unique_clients }}</div>
-    <div class="kpi-label">Betroffene Clients (pseudonymisiert)</div></div>
-  <div class="kpi"><div class="kpi-value">{{ ctx.upload_events_total }}</div>
-    <div class="kpi-label">Verdächtige Uploads (&gt;500 KB)</div></div>
+<div class="ta-kpi-grid">
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ ctx.unique_ai_services }}</div>
+    <div class="ta-kpi__label">Erkannte KI-Dienste</div>
+  </div>
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ ctx.unique_clients }}</div>
+    <div class="ta-kpi__label">Betroffene Clients (pseudonymisiert)</div>
+  </div>
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ ctx.upload_events_total }}</div>
+    <div class="ta-kpi__label">Verdächtige Uploads (&gt;500 KB)</div>
+  </div>
 </div>
 
 {{ ctx.charts.framework_scores_bar | safe }}
@@ -27,9 +33,9 @@
   {% for f in ctx.top_findings %}
     <li>
       <strong>{{ f.service }}</strong> ({{ f.provider }}) —
-      <span class="badge badge-{{ f.risk_level }}">{{ f.risk_level }}</span>
+      <span class="ta-sev ta-sev-{{ f.risk_level }}">{{ f.risk_level }}</span>
       Score <strong>{{ f.risk_score }}</strong>:
-      {{ f.queries_per_day }} Queries/Tag durch {{ f.client_pseudonym }}
+      {{ f.queries_per_day }} Queries/Tag durch <code>{{ f.client_pseudonym }}</code>
       {% if f.has_document_upload %}, <strong>Dokument-Upload erkannt</strong>{% endif %}.
     </li>
   {% endfor %}

@@ -15,10 +15,19 @@ from src.compliance.models import ComplianceResult
 from src.detection.engine import DetectionEngine, DetectionResult
 from src.reports import ReportGenerator
 from src.reports.privacy import (
+    _SCRIPT_STYLE_PATTERN,
     PrivacyLeakError,
     assert_no_plaintext,
     pseudonymize_client,
 )
+
+
+def _strip_inline_scripts(html: str) -> str:
+    """Entfernt <script>/<style>-Bloecke (z. B. inline plotly.js), bevor
+    HTML-Output auf Klartext-PII oder externe URLs geprueft wird. Library-Code
+    enthaelt naturgemaess numerische Tokens und Konfig-Strings, die nicht als
+    Datenleck zaehlen — siehe src/reports/privacy.assert_no_plaintext."""
+    return _SCRIPT_STYLE_PATTERN.sub("", html)
 
 _FIXED_SALT = "test-salt-do-not-use-in-prod"
 
@@ -115,10 +124,14 @@ def test_json_output_matches_schema():
 def test_no_plaintext_ips_in_html_output():
     det, comp = _make_sample_results()
     out = ReportGenerator(det, comp, salt=_FIXED_SALT).render(audience="all", format="html")
-    ipv4 = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
+    # Strikte IPv4-Heuristik (Oktette 0-255), <script>/<style> ausgeklammert
+    # (inline plotly.js enthaelt Library-Tokens, keine Nutzerdaten).
+    ipv4 = re.compile(
+        r"\b(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\b",
+    )
     for content in out.values():
-        # Allowlist: Plotly's CDN-URL kann keine IPs enthalten, aber zur Sicherheit:
-        matches = ipv4.findall(content)
+        body = _strip_inline_scripts(content)
+        matches = ipv4.findall(body)
         # RFC 5737 Doku-IPs sind ok, real-aussehende IPs nicht
         real_ips = [m for m in matches if m not in {"192.0.2.0", "198.51.100.0", "203.0.113.0"}]
         assert not real_ips, f"Klartext-IPs im HTML: {real_ips}"
@@ -135,9 +148,10 @@ def test_no_plaintext_ips_in_json_output():
 def test_no_internal_hostnames_in_output():
     det, comp = _make_sample_results()
     html = ReportGenerator(det, comp, salt=_FIXED_SALT).render(audience="executive", format="html")
-    assert ".local" not in html
-    assert ".lan" not in html
-    assert ".internal" not in html
+    body = _strip_inline_scripts(html)
+    assert ".local" not in body
+    assert ".lan" not in body
+    assert ".internal" not in body
 
 
 def test_empty_detection_result_renders_clean_fallback():
@@ -171,8 +185,41 @@ def test_charts_embedded_as_html_snippets():
     html = ReportGenerator(det, comp, salt=_FIXED_SALT).render(audience="it_sec", format="html")
     # plotly's to_html mit full_html=False gibt <div ...>-Wrapper zurück
     assert "<div" in html
-    # Plotly-Bibliothek wird via CDN geladen — Verweis muss vorhanden sein
+    # Plotly-Bibliothek wird inline eingebettet (offline-Default)
     assert "plotly" in html.lower()
+
+
+def test_default_html_has_no_external_http_calls():
+    """Audit-Reports muessen offline lesbar sein — keine externen HTTP-Calls (Sprint 13b / #91).
+
+    Geprueft wird der Markup-Teil ausserhalb <script>/<style>. Plotly-Library-Code
+    enthaelt zwar interne Default-URL-Strings (z. B. 'cdn.plot.ly' als Config-Wert),
+    feuert sie aber nicht im Auto-Boot der Reports.
+    """
+    det, comp = _make_sample_results()
+    out = ReportGenerator(det, comp, salt=_FIXED_SALT).render(audience="all", format="html")
+    forbidden_hosts = (
+        "fonts.googleapis.com",
+        "fonts.gstatic.com",
+        "cdn.plot.ly",
+        "cdnjs.cloudflare.com",
+        "cdn.jsdelivr.net",
+        "unpkg.com",
+    )
+    for audience, html in out.items():
+        body = _strip_inline_scripts(html).lower()
+        for host in forbidden_hosts:
+            assert host not in body, f"{audience}: externer HTTP-Call zu {host}"
+
+
+def test_default_html_uses_bauhaus_ci_tokens():
+    """Visueller Smoke: Bauhaus-CI-Marker (Lineal, ta-meta, Rostrot-Accent) sind im Output (Sprint 13b)."""
+    det, comp = _make_sample_results()
+    html = ReportGenerator(det, comp, salt=_FIXED_SALT).render(audience="executive", format="html")
+    assert "ta-lineal" in html, "Bauhaus-Lineal-Header fehlt"
+    assert "ta-meta" in html, "ta-meta-Block fehlt"
+    assert "#9B4A2F" in html, "Rostrot-Akzent (--c-acc) fehlt"
+    assert "ta-sev-" in html or "ta-kpi" in html, "Bauhaus-Komponentenklassen fehlen"
 
 
 def test_write_creates_files_in_output_dir():
