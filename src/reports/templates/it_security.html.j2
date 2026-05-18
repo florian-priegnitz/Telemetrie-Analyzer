@@ -4,19 +4,31 @@
 {% block content %}
 
 <h2>Kennzahlen</h2>
-<div class="kpi-grid">
-  <div class="kpi"><div class="kpi-value">{{ ctx.total_queries }}</div>
-    <div class="kpi-label">Gesamt-Queries</div></div>
-  <div class="kpi"><div class="kpi-value">{{ ctx.ai_queries }}</div>
-    <div class="kpi-label">AI-Queries ({{ (ctx.ai_query_ratio * 100)|round(2) }}%)</div></div>
-  <div class="kpi"><div class="kpi-value">{{ ctx.unique_clients }}</div>
-    <div class="kpi-label">Unique Clients</div></div>
-  <div class="kpi"><div class="kpi-value">{{ ctx.unique_ai_services }}</div>
-    <div class="kpi-label">Unique AI-Dienste</div></div>
-  <div class="kpi"><div class="kpi-value">{{ ctx.upload_events_total }}</div>
-    <div class="kpi-label">Document-Uploads</div></div>
-  <div class="kpi"><div class="kpi-value">{{ (ctx.total_bytes_uploaded / 1024 / 1024)|round(2) }}</div>
-    <div class="kpi-label">MB Upload-Volumen total</div></div>
+<div class="ta-kpi-grid">
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ ctx.total_queries }}</div>
+    <div class="ta-kpi__label">Gesamt-Queries</div>
+  </div>
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ ctx.ai_queries }}</div>
+    <div class="ta-kpi__label">AI-Queries ({{ (ctx.ai_query_ratio * 100)|round(2) }}%)</div>
+  </div>
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ ctx.unique_clients }}</div>
+    <div class="ta-kpi__label">Unique Clients</div>
+  </div>
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ ctx.unique_ai_services }}</div>
+    <div class="ta-kpi__label">Unique AI-Dienste</div>
+  </div>
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ ctx.upload_events_total }}</div>
+    <div class="ta-kpi__label">Document-Uploads</div>
+  </div>
+  <div class="ta-kpi">
+    <div class="ta-kpi__value">{{ (ctx.total_bytes_uploaded / 1024 / 1024)|round(2) }}</div>
+    <div class="ta-kpi__label">MB Upload-Volumen total</div>
+  </div>
 </div>
 
 <h2>Risiko-Verteilung</h2>

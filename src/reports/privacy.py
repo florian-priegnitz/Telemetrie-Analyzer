@@ -18,7 +18,15 @@ class PrivacyLeakError(Exception):
     """Geworfen, wenn personenbezogene/identifizierende Daten im Output entdeckt werden."""
 
 
-_IPV4_PATTERN = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
+_IPV4_OCTET = r"(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)"
+_IPV4_PATTERN = re.compile(rf"\b(?:{_IPV4_OCTET}\.){{3}}{_IPV4_OCTET}\b")
+
+# Strip <script>/<style>-Bloecke vor der PII-Pruefung: Diese enthalten
+# Library-Code (z.B. inline plotly.js) mit numerischen Tokens, die wie IPs
+# aussehen koennen, aber keine Nutzerdaten sind.
+_SCRIPT_STYLE_PATTERN = re.compile(
+    r"<(script|style)\b[^>]*>.*?</\1>", re.IGNORECASE | re.DOTALL,
+)
 _IPV6_PATTERN = re.compile(
     r"\b(?:[0-9a-fA-F]{1,4}:){2,7}[0-9a-fA-F]{1,4}\b"
 )
@@ -50,7 +58,11 @@ def assert_no_plaintext(text: str) -> None:
     """Wirft PrivacyLeakError wenn Klartext-IPs/MAC/interne Hostnames im Text vorkommen.
 
     IPv4-Allowlist deckt RFC 5737 Dokumentations-IPs ab.
+    <script>- und <style>-Bloecke werden vor der Pruefung entfernt, da
+    eingebettete Bibliotheken (z. B. inline plotly.js) numerische Tokens
+    enthalten koennen, die wie IPs aussehen, aber keine Nutzerdaten sind.
     """
+    text = _SCRIPT_STYLE_PATTERN.sub("", text)
     for match in _IPV4_PATTERN.findall(text):
         if match not in _ALLOWLIST:
             raise PrivacyLeakError(f"Klartext-IPv4 im Report: {match}")

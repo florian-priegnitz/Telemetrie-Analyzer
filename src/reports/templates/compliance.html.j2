@@ -16,19 +16,20 @@
 <h2>Detail: Compliance-Mappings je Finding</h2>
 {% if ctx.findings %}
   {% for f in ctx.findings %}
-    <div class="framework-card">
-      <h3>{{ f.service }} — {{ f.provider }}
-        <span style="float:right;">
-          <span class="badge badge-{{ f.risk_level }}">{{ f.risk_level }}</span>
-          Score {{ f.risk_score }}
+    <div class="ta-card">
+      <div class="ta-card__head">
+        <h3>{{ f.service }} — {{ f.provider }}</h3>
+        <span>
+          <span class="ta-sev ta-sev-{{ f.risk_level }}">{{ f.risk_level }}</span>
+          Score <strong>{{ f.risk_score }}</strong>
         </span>
-      </h3>
-      <p style="color:#57606a; margin:.3rem 0;">
+      </div>
+      <p class="ta-card__meta">
         Client: <code>{{ f.client_pseudonym }}</code> ·
         {{ f.total_queries }} Queries ·
-        {{ f.queries_per_day }}/Tag ·
+        {{ f.queries_per_day }}/Tag
         {% if f.has_document_upload %}
-          <strong>Upload: {{ f.upload_events }}× ({{ (f.total_bytes_uploaded / 1024)|round(1) }} KB)</strong>
+          · <strong>Upload: {{ f.upload_events }}× ({{ (f.total_bytes_uploaded / 1024)|round(1) }} KB)</strong>
         {% endif %}
       </p>
       {% if f.compliance_mappings %}
@@ -41,8 +42,8 @@
             <tr>
               <td><strong>{{ m.framework.value }}</strong></td>
               <td><code>{{ m.control_id }}</code><br><small>{{ m.control_name }}</small></td>
-              <td><span class="badge badge-{{ m.severity.value }}">{{ m.severity.value }}</span></td>
-              <td><span class="badge badge-{{ m.assessment_status.value }}">{{ m.assessment_status.value }}</span></td>
+              <td><span class="ta-sev ta-sev-{{ m.severity.value }}">{{ m.severity.value }}</span></td>
+              <td><span class="ta-status ta-status-{{ m.assessment_status.value | replace('_', '-') }}">{{ m.assessment_status.value }}</span></td>
               <td>{{ m.rationale }}</td>
             </tr>
           {% endfor %}

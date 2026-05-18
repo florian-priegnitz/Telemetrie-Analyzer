@@ -7,6 +7,23 @@ Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Hinzugefügt
+
+- **HTML-Reports auf Bauhaus-CI (#91, Sprint 13b)** — Jinja2-Templates der drei Audience-Reports (Executive / IT-Security / Compliance) auf die interne CI umgestellt; self-contained, offline lesbar (audit-tauglich):
+  - `src/reports/templates/base.html.j2` — neue Master-Vorlage mit inline-CSS (Bauhaus-Tokens `--c-acc` Rostrot / `--c-gold` / `--c-green` / `--c-ink`), System-Font-Stack ohne externen Google-Fonts-Call, ASCII-Lineal-Header, flache Tabellen, Rostrot-Bullets, Print-Stylesheet.
+  - Severity-/Status-Klassen `.ta-sev-*` und `.ta-status-*` ersetzen die alten `badge-*`.
+  - KPI-Tiles als `.ta-kpi` (2 px Ink-Rahmen), Framework-Cards als `.ta-card` (Ink-Akzent links).
+  - plotly.js wird einmal pro Report inline via Jinja-Global `plotlyjs_inline` eingebettet — Folge-Charts referenzieren die geladene Lib (`include_plotlyjs=False`); spart ~3 MB pro zusätzlichem Chart.
+  - `ReportGenerator(... offline=True)` ist neuer Default — keine externen HTTP-Calls (kein CDN, keine Google-Fonts) in den erzeugten Reports.
+
+### Geändert
+
+- **Privacy-Guard (`src/reports/privacy.py`)** — `assert_no_plaintext` ignoriert ab jetzt `<script>`/`<style>`-Blöcke (inline plotly.js enthält numerische Library-Tokens, keine Nutzerdaten); IPv4-Regex auf gültige Oktette 0–255 verschärft (vorher zu lockerer `\d{1,3}`-Matcher).
+
+### Tests
+
+- 2 neue Report-Tests: `test_default_html_has_no_external_http_calls` (Akzeptanzkriterium #91) und `test_default_html_uses_bauhaus_ci_tokens`. Bestehende PII-Heuristik-Tests strippen Inline-Scripts analog zum Privacy-Helper. **Gesamt: 713 Tests (vorher 711).**
+
 ## [1.4.0] — 2026-05-04
 
 ### Hinzugefügt

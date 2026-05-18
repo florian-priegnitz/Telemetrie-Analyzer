@@ -17,14 +17,14 @@
     <tr>
       <td>{{ f.service }}</td>
       <td>{{ f.provider }}</td>
-      <td><span class="badge badge-{{ f.risk_level }}">{{ f.risk_level }}</span></td>
+      <td><span class="ta-sev ta-sev-{{ f.risk_level }}">{{ f.risk_level }}</span></td>
       <td><strong>{{ f.risk_score }}</strong></td>
       <td><code>{{ f.client_pseudonym }}</code></td>
       <td>{{ "%.1f"|format(f.queries_per_day) }}</td>
-      <td>{{ "✓" if f.is_systematic else "—" }}</td>
+      <td>{{ "+" if f.is_systematic else "—" }}</td>
       <td>
         {% if f.has_document_upload %}
-          <span class="badge badge-high">{{ f.upload_events }}× ({{ (f.total_bytes_uploaded / 1024)|round(1) }} KB)</span>
+          <span class="ta-sev ta-sev-high">{{ f.upload_events }}× ({{ (f.total_bytes_uploaded / 1024)|round(1) }} KB)</span>
         {% else %}—{% endif %}
       </td>
     </tr>

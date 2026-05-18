@@ -3,47 +3,280 @@
 <head>
 <meta charset="utf-8">
 <title>{% block title %}Telemetrie Analyzer Report{% endblock %}</title>
+{% if plotlyjs_inline %}<script type="text/javascript">{{ plotlyjs_inline | safe }}</script>{% endif %}
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-         color: #1f2328; max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem;
-         background: #fafbfc; line-height: 1.5; }
-  h1, h2, h3 { color: #24292f; margin-top: 1.8em; }
-  h1 { border-bottom: 2px solid #d0d7de; padding-bottom: .4rem; }
-  table { border-collapse: collapse; width: 100%; margin: 1rem 0; background: white; }
-  th, td { padding: .5rem .8rem; border: 1px solid #d0d7de; text-align: left; vertical-align: top; }
-  th { background: #f6f8fa; font-weight: 600; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.85em;
-           font-weight: 600; color: white; }
-  .badge-critical { background: #B60205; }
-  .badge-high { background: #D93F0B; }
-  .badge-medium { background: #FBCA04; color: #1f2328; }
-  .badge-low { background: #0E8A16; }
-  .badge-non_compliant { background: #B60205; }
-  .badge-partially_compliant { background: #FBCA04; color: #1f2328; }
-  .badge-needs_review { background: #BFD4F2; color: #1f2328; }
-  .badge-compliant { background: #0E8A16; }
-  .traffic-light { display: inline-block; width: 24px; height: 24px; border-radius: 50%;
-                   vertical-align: middle; margin-right: .5rem; }
-  .light-green { background: #0E8A16; }
-  .light-yellow { background: #FBCA04; }
-  .light-red { background: #B60205; }
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-              gap: 1rem; margin: 1rem 0; }
-  .kpi { background: white; border: 1px solid #d0d7de; border-radius: 6px; padding: 1rem; }
-  .kpi-value { font-size: 1.8em; font-weight: 700; color: #0969da; }
-  .kpi-label { font-size: 0.9em; color: #57606a; margin-top: .2rem; }
-  .framework-card { background: white; border: 1px solid #d0d7de; border-radius: 6px;
-                    padding: 1rem; margin-bottom: .8rem; }
-  .disclaimer { background: #fff8c5; border-left: 4px solid #d4a72c; padding: .8rem 1rem;
-                margin: 1rem 0; font-size: 0.92em; }
-  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #d0d7de;
-           font-size: 0.85em; color: #57606a; }
-  code { background: #f6f8fa; padding: 1px 4px; border-radius: 3px; }
+  :root {
+    --c-bg: #FFFFFF;
+    --c-layer: #F6F8FC;
+    --c-ink: #0C1A32;
+    --c-bright: #060D1E;
+    --c-acc: #9B4A2F;
+    --c-gold: #B07A10;
+    --c-green: #1A6B3A;
+    --c-line: rgba(12, 26, 50, 0.16);
+    --c-soft: rgba(12, 26, 50, 0.60);
+    --sev-critical: #9B4A2F;
+    --sev-high:     #C26B4A;
+    --sev-medium:   #B07A10;
+    --sev-low:      rgba(12, 26, 50, 0.55);
+    --sev-compliant: #1A6B3A;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", "Roboto Mono", Consolas, "Courier New", monospace;
+    --bw-2: 2px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: var(--font-sans);
+    color: var(--c-ink);
+    background: var(--c-bg);
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 4rem;
+    line-height: 1.55;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-sans);
+    color: var(--c-bright);
+    font-weight: 900;
+    margin: 0 0 0.6rem 0;
+  }
+  h1 { font-size: clamp(22px, 3.2vw, 36px); line-height: 1.05; }
+  h2 {
+    font-size: clamp(18px, 2vw, 24px);
+    border-bottom: var(--bw-2) solid var(--c-ink);
+    padding-bottom: 0.4rem;
+    margin-top: 2rem;
+  }
+  h3 { font-size: 17px; font-weight: 700; margin-top: 1.2rem; }
+  p { margin: 0.6rem 0; }
+  a { color: var(--c-acc); text-decoration: none; border-bottom: 1px solid transparent; }
+  a:hover, a:focus-visible { border-bottom-color: var(--c-acc); }
+  code, kbd {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--c-layer);
+    padding: 1px 5px;
+    border-radius: 0;
+  }
+  pre {
+    font-family: var(--font-mono);
+    border-left: var(--bw-2) solid var(--c-acc);
+    padding: 0.8rem 1rem;
+    background: var(--c-layer);
+    border-radius: 0;
+    overflow-x: auto;
+  }
+
+  /* Tables — flat, 1px lines, no radius */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    background: var(--c-bg);
+    font-size: 0.95em;
+  }
+  th, td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--c-line);
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--c-layer);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--c-bright);
+  }
+  tr:nth-child(even) td { background: rgba(12, 26, 50, 0.025); }
+
+  /* Lists — Rostrot-Balken statt Bullet (Bauhaus-Marker) */
+  ul { list-style: none; padding-left: 0; margin: 0.6rem 0; }
+  ul li {
+    position: relative;
+    padding-left: 22px;
+    margin: 6px 0;
+  }
+  ul li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 14px;
+    height: 2px;
+    background: var(--c-acc);
+  }
+  ol { padding-left: 1.4rem; }
+  ol li { margin: 6px 0; }
+
+  /* Mono-Meta-Block (kleine Caps) */
+  .ta-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-acc);
+    margin: 0 0 0.4rem 0;
+  }
+  .ta-period {
+    color: var(--c-soft);
+    font-size: 0.95em;
+    margin-bottom: 1rem;
+  }
+
+  /* Bauhaus-Lineal als Sektion-Marker */
+  .ta-lineal {
+    display: flex;
+    align-items: center;
+    width: 240px;
+    margin: 0.6rem 0 1.4rem 0;
+  }
+  .ta-lineal__bar    { flex: 3; height: 6px; background: var(--c-acc); }
+  .ta-lineal__line   { flex: 1; height: 2px; background: var(--c-ink); }
+  .ta-lineal__square { width: 16px; height: 16px; background: var(--c-gold); flex-shrink: 0; }
+
+  /* Severity-Klassen — Akzentfarben, keine Pillen */
+  .ta-sev {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 1px 6px;
+    border: 1px solid currentColor;
+  }
+  .ta-sev-critical { color: var(--sev-critical); }
+  .ta-sev-high     { color: var(--sev-high); }
+  .ta-sev-medium   { color: var(--sev-medium); }
+  .ta-sev-low      { color: var(--sev-low); }
+
+  .ta-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 1px 6px;
+    border: 1px solid currentColor;
+  }
+  .ta-status-compliant            { color: var(--sev-compliant); }
+  .ta-status-partial              { color: var(--sev-medium); }
+  .ta-status-partially-compliant  { color: var(--sev-medium); }
+  .ta-status-non-compliant        { color: var(--sev-critical); }
+  .ta-status-needs-review         { color: var(--c-soft); }
+
+  /* KPI-Grid (Executive / IT-Security) */
+  .ta-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .ta-kpi {
+    background: var(--c-bg);
+    border: var(--bw-2) solid var(--c-ink);
+    padding: 1rem;
+  }
+  .ta-kpi__value {
+    font-family: var(--font-sans);
+    font-weight: 900;
+    font-size: 1.8em;
+    color: var(--c-bright);
+    line-height: 1.1;
+  }
+  .ta-kpi__label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-acc);
+    margin-top: 0.3rem;
+  }
+
+  /* Framework-Card */
+  .ta-card {
+    background: var(--c-bg);
+    border: 1px solid var(--c-line);
+    border-left: var(--bw-2) solid var(--c-ink);
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.8rem;
+  }
+  .ta-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .ta-card__head h3 { margin: 0; }
+  .ta-card__score {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+  }
+  .ta-card__score--ok  { color: var(--sev-compliant); }
+  .ta-card__score--mid { color: var(--sev-medium); }
+  .ta-card__score--bad { color: var(--sev-critical); }
+  .ta-card__meta {
+    color: var(--c-soft);
+    font-size: 0.92em;
+    margin: 0.4rem 0 0 0;
+  }
+
+  /* Disclaimer — Bauhaus-Hinweisblock */
+  .ta-disclaimer {
+    background: var(--c-layer);
+    border-left: var(--bw-2) solid var(--c-gold);
+    padding: 0.8rem 1rem;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.92em;
+  }
+  .ta-disclaimer strong { color: var(--c-bright); }
+
+  /* Traffic-Light (Compliance-Gesamtbild) */
+  .ta-light {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 0.4rem;
+    vertical-align: middle;
+    border: 1px solid var(--c-ink);
+  }
+  .ta-light--green  { background: var(--sev-compliant); }
+  .ta-light--yellow { background: var(--sev-medium); }
+  .ta-light--red    { background: var(--sev-critical); }
+
+  /* Footer */
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--c-line);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--c-soft);
+    line-height: 1.6;
+  }
+
+  /* Print */
+  @media print {
+    body { max-width: none; margin: 0; padding: 1cm; }
+    .ta-kpi, .ta-card { break-inside: avoid; }
+    table { break-inside: auto; }
+  }
 </style>
 </head>
 <body>
+<p class="ta-meta">Telemetrie Analyzer · Shadow-AI Audit</p>
 <h1>{% block report_title %}Telemetrie Analyzer Report{% endblock %}</h1>
-<p style="color:#57606a;">
+<div class="ta-lineal" aria-hidden="true">
+  <span class="ta-lineal__bar"></span>
+  <span class="ta-lineal__line"></span>
+  <span class="ta-lineal__square"></span>
+</div>
+<p class="ta-period">
   Erzeugt am <strong>{{ ctx.generated_at.strftime("%d.%m.%Y %H:%M UTC") }}</strong>
   {% if ctx.period_start and ctx.period_end %}
     · Analysezeitraum:
